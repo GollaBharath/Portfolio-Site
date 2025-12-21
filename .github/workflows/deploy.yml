@@ -17,6 +17,9 @@ jobs:
       - run: npm install
       - run: npm run build
 
+      - name: Add CNAME
+        run: echo "gollabharath.me" > dist/CNAME
+
       - name: Deploy to Pages repo
         uses: peaceiris/actions-gh-pages@v4
         with:
