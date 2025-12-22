@@ -1,0 +1,235 @@
+.terminal-container {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(20px);
+	border-top: 1px solid rgba(255, 80, 80, 0.2);
+	padding: 1rem 1.5rem;
+	z-index: 1000;
+	font-family: "Courier New", Courier, monospace;
+	pointer-events: auto;
+	box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.terminal-input-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	max-width: 800px;
+	margin: 0 auto;
+	transition: all 0.3s ease;
+	height: 2.2rem;
+}
+
+/* ---- ALIGNMENT FIXES ---- */
+
+.terminal-prompt,
+.terminal-input {
+	line-height: 1.4;
+	height: 1.4em;
+	display: flex;
+	align-items: center;
+}
+
+.terminal-prompt {
+	color: rgba(255, 120, 120, 0.8);
+	font-weight: bold;
+	font-size: 1rem;
+	transform: scale(1.15);
+	transform-origin: left center;
+	user-select: none;
+}
+
+.terminal-input {
+	width: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: rgba(255, 255, 255, 0.87);
+	font-family: inherit;
+	font-size: 1rem;
+	padding: 0;
+	caret-color: rgba(255, 120, 120, 0.8);
+}
+
+.input-container {
+	position: relative;
+	flex: 1;
+}
+
+/* Autocomplete Dropdown */
+.autocomplete-dropdown {
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-bottom: 0.5rem;
+	background: rgba(20, 20, 20, 0.95);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 6px;
+	padding: 0.5rem;
+	min-width: 200px;
+	max-width: 400px;
+	box-shadow: 0 4px 20px rgba(255, 80, 80, 0.1), 0 0 30px rgba(0, 0, 0, 0.5);
+	animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+.autocomplete-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.5rem;
+	border-radius: 4px;
+	background: rgba(255, 80, 80, 0.05);
+	transition: background 0.2s ease;
+}
+
+.autocomplete-item.selected {
+	background: rgba(255, 80, 80, 0.12);
+	border-left: 2px solid rgba(255, 120, 120, 0.5);
+	padding-left: calc(0.5rem - 2px);
+}
+
+.autocomplete-item:hover {
+	background: rgba(255, 80, 80, 0.1);
+}
+
+.autocomplete-icon {
+	color: rgba(255, 120, 120, 0.7);
+	font-size: 0.9rem;
+	flex-shrink: 0;
+}
+
+.autocomplete-text {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 0.95rem;
+	font-weight: 500;
+	flex: 1;
+}
+
+.autocomplete-hint {
+	color: rgba(255, 120, 120, 0.5);
+	font-size: 0.75rem;
+	font-style: italic;
+	flex-shrink: 0;
+}
+
+.terminal-input::placeholder {
+	color: rgba(255, 255, 255, 0.3);
+}
+
+/* Inline suggestion (grey text) */
+.terminal-suggestion {
+	position: absolute;
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	color: transparent;
+	font-size: 1rem;
+	font-family: inherit;
+	white-space: pre;
+	padding: 0;
+	line-height: 1.4;
+	height: 1.4em;
+	display: flex;
+	align-items: center;
+}
+
+.suggestion-text {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+/* Error state */
+.terminal-input-wrapper.error {
+	border: 1px solid rgba(255, 100, 100, 0.4);
+	border-radius: 4px;
+	padding: 0.25rem 0.5rem;
+	background: rgba(255, 100, 100, 0.05);
+}
+
+.terminal-input-wrapper.error .terminal-prompt,
+.terminal-input-wrapper.error .terminal-input {
+	color: rgba(255, 150, 150, 0.8);
+}
+
+/* ---- SUBTLE SHAKE ANIMATION ---- */
+
+@keyframes shake {
+	0% {
+		transform: translateX(0);
+	}
+	25% {
+		transform: translateX(-2px);
+	}
+	50% {
+		transform: translateX(2px);
+	}
+	75% {
+		transform: translateX(-1px);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+.terminal-input-wrapper.shake {
+	animation: shake 0.35s ease-out;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+	.terminal-container {
+		padding: 0.75rem 1rem;
+	}
+
+	.terminal-input-wrapper {
+		gap: 0.5rem;
+		height: 2rem;
+	}
+
+	.terminal-prompt {
+		font-size: 0.9rem;
+		transform: scale(1.1);
+	}
+
+	.terminal-input {
+		font-size: 0.9rem;
+	}
+
+	.autocomplete-dropdown {
+		min-width: 150px;
+		padding: 0.4rem;
+	}
+
+	.autocomplete-item {
+		gap: 0.5rem;
+		padding: 0.4rem;
+	}
+
+	.autocomplete-text {
+		font-size: 0.85rem;
+	}
+
+	.autocomplete-hint {
+		display: none;
+	}
+}
+
+/* Glow effect on focus */
+.terminal-input:focus {
+	text-shadow: 0 0 8px rgba(255, 120, 120, 0.2);
+}
