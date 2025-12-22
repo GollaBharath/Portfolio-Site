@@ -6,10 +6,11 @@ function Navbar() {
 
 	const navItems = [
 		{ name: "Home", sectionId: "home" },
-		{ name: "Help", sectionId: "commands" },
+		{ name: "About", sectionId: null },
 		{ name: "Projects", sectionId: null },
-		{ name: "Experience", sectionId: null },
-		{ name: "Contact", sectionId: null },
+		{ name: "Experience", sectionId: "experience" },
+		{ name: "Socials", sectionId: null },
+		{ name: "Help", sectionId: "commands" },
 	];
 
 	const handleNavClick = (sectionId, itemName) => {

@@ -1,0 +1,5 @@
+.scroll-pause-marker {
+	height: 1px;
+	width: 100%;
+	pointer-events: none;
+}

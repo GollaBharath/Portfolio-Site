@@ -12,8 +12,8 @@ function Hero() {
 					I'm <span className="name">Bharath</span>, a guy who loves his laptop
 				</h1>
 				<p className="hero-subtitle">
-					Software Development Intern | Open Source Enthusiast | Community
-					Manager
+					Software Development Intern | Open Source Enthusiast | Hardcore Linux
+					User
 				</p>
 				<div className="scroll-indicator">
 					<svg

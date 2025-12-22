@@ -3,13 +3,13 @@ import "./CommandCarousel.css";
 
 function CommandCarousel() {
 	const [currentSlide, setCurrentSlide] = useState(0);
-	const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 	const [isDragging, setIsDragging] = useState(false);
 	const [startX, setStartX] = useState(0);
 	const [currentX, setCurrentX] = useState(0);
 	const [dragOffset, setDragOffset] = useState(0);
 	const trackRef = useRef(null);
 	const viewportRef = useRef(null);
+	const startYRef = useRef(0);
 
 	// All commands grouped by category
 	const commandSlides = [
@@ -18,36 +18,47 @@ function CommandCarousel() {
 			icon: "📍",
 			color: "#ff5050",
 			commands: [
-				{ name: "home", desc: "Scroll to the home section", action: "home" },
-				{ name: "about", desc: "Scroll to about section", action: "about" },
+				{ name: "home", desc: "Scroll to the beginning.", action: "home" },
+				{
+					name: "experience",
+					desc: "Scroll to experience section",
+					action: "experience",
+				},
+				{
+					name: "projects",
+					desc: "Scroll to projects section",
+					action: "projects",
+				},
+				{
+					name: "socials",
+					desc: "Scroll to socials section",
+					action: "socials",
+				},
 				{ name: "help", desc: "View this command reference", action: "help" },
 				{ name: "clear", desc: "Clear the terminal input", action: "clear" },
 			],
 		},
 		{
-			category: "Social",
+			category: "Socials",
 			icon: "🔗",
 			color: "#ff6b6b",
 			commands: [
-				{ name: "github", desc: "Open my GitHub profile", action: "github" },
+				{
+					name: "github",
+					desc: "Check out my GitHub profile",
+					action: "github",
+				},
 				{
 					name: "linkedin",
 					desc: "Visit my LinkedIn profile",
 					action: "linkedin",
 				},
-				{ name: "resume", desc: "View/download my resume", action: "resume" },
+				{ name: "resume", desc: "View my resume online", action: "resume" },
 				{
 					name: "instagram",
 					desc: "Follow me on Instagram",
 					action: "instagram",
 				},
-			],
-		},
-		{
-			category: "More Links",
-			icon: "🌐",
-			color: "#ff8080",
-			commands: [
 				{
 					name: "reddit",
 					desc: "Check out my Reddit profile",
@@ -58,12 +69,20 @@ function CommandCarousel() {
 					desc: "Listen to my Spotify playlists",
 					action: "spotify",
 				},
-				{ name: "discord", desc: "Connect on Discord", action: "discord" },
-				{ name: "youtube", desc: "Subscribe to my YouTube", action: "youtube" },
+				{
+					name: "discord",
+					desc: "Connect with me on Discord",
+					action: "discord",
+				},
+				{
+					name: "youtube",
+					desc: "Subscribe to my YouTube channel",
+					action: "youtube",
+				},
 			],
 		},
 		{
-			category: "Shortcuts",
+			category: "Keyboard Shortcuts",
 			icon: "⌨️",
 			color: "#ff9999",
 			commands: [
@@ -82,39 +101,26 @@ function CommandCarousel() {
 
 	const totalSlides = commandSlides.length;
 
-	// Auto-play carousel
-	useEffect(() => {
-		if (!isAutoPlaying) return;
-
-		const interval = setInterval(() => {
-			setCurrentSlide((prev) => (prev + 1) % totalSlides);
-		}, 5000);
-
-		return () => clearInterval(interval);
-	}, [isAutoPlaying, totalSlides]);
-
 	const goToSlide = (index) => {
 		setCurrentSlide(index);
-		setIsAutoPlaying(false);
 	};
 
 	const nextSlide = () => {
 		setCurrentSlide((prev) => (prev + 1) % totalSlides);
-		setIsAutoPlaying(false);
 	};
 
 	const prevSlide = () => {
 		setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
-		setIsAutoPlaying(false);
 	};
 
 	// Drag/Swipe handlers
 	const handleDragStart = (e) => {
 		setIsDragging(true);
-		setIsAutoPlaying(false);
 		const x = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
+		const y = e.type.includes("mouse") ? e.pageY : e.touches[0].pageY;
 		setStartX(x);
 		setCurrentX(x);
+		startYRef.current = y;
 	};
 
 	const handleDragMove = (e) => {
@@ -130,7 +136,6 @@ function CommandCarousel() {
 
 	const handleDragEnd = () => {
 		if (!isDragging) return;
-		setIsDragging(false);
 
 		const diff = currentX - startX;
 		const threshold = 50; // minimum drag distance to trigger slide change
@@ -145,6 +150,8 @@ function CommandCarousel() {
 			}
 		}
 
+		// Reset all drag state
+		setIsDragging(false);
 		setDragOffset(0);
 		setStartX(0);
 		setCurrentX(0);
@@ -169,11 +176,21 @@ function CommandCarousel() {
 
 		const handleTouchMove = (e) => {
 			if (isDragging) {
-				e.preventDefault();
+				const currentY = e.touches[0].pageY;
 				const x = e.touches[0].pageX;
-				setCurrentX(x);
-				const diff = x - startX;
-				setDragOffset(diff);
+				const diffX = Math.abs(x - startX);
+				const diffY = Math.abs(currentY - startYRef.current);
+
+				// Only prevent default and update carousel if horizontal movement is greater
+				if (diffX > diffY && diffX > 10) {
+					// Only prevent default if the event is cancelable
+					if (e.cancelable) {
+						e.preventDefault();
+					}
+					setCurrentX(x);
+					const diff = x - startX;
+					setDragOffset(diff);
+				}
 			}
 		};
 

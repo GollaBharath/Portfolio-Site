@@ -16,12 +16,21 @@ function Terminal() {
 			if (element)
 				element.scrollIntoView({ behavior: "smooth", block: "center" });
 		},
+		about: () => {
+			const element = document.getElementById("about");
+			if (element)
+				element.scrollIntoView({ behavior: "smooth", block: "center" });
+		},
 		home: () => {
 			const element = document.getElementById("home");
 			if (element)
 				element.scrollIntoView({ behavior: "smooth", block: "start" });
 		},
-		experience: () => alert("Experience section coming soon!"),
+		experience: () => {
+			const element = document.getElementById("experience");
+			if (element)
+				element.scrollIntoView({ behavior: "smooth", block: "start" });
+		},
 		projects: () => alert("Projects section coming soon!"),
 		contact: () => alert("Contact section coming soon!"),
 		reddit: () =>
@@ -68,28 +77,45 @@ function Terminal() {
 		}
 	}, []);
 
+	// Listen for "/" key globally to focus terminal
+	useEffect(() => {
+		const handleGlobalKeyPress = (e) => {
+			// Check if "/" is pressed and not already focused on an input
+			if (
+				e.key === "/" &&
+				document.activeElement !== inputRef.current &&
+				document.activeElement.tagName !== "INPUT" &&
+				document.activeElement.tagName !== "TEXTAREA"
+			) {
+				e.preventDefault();
+				if (inputRef.current) {
+					inputRef.current.focus();
+				}
+			}
+		};
+
+		window.addEventListener("keydown", handleGlobalKeyPress);
+		return () => window.removeEventListener("keydown", handleGlobalKeyPress);
+	}, []);
+
 	// Handle input changes and suggest commands
 	useEffect(() => {
 		if (input) {
+			// Remove leading slash for matching
+			const cleanInput = input.toLowerCase().replace(/^\/+/, "");
 			const matchingCommands = Object.keys(commands).filter((cmd) =>
-				cmd.startsWith(input.toLowerCase())
+				cmd.startsWith(cleanInput)
 			);
 
 			// Set first match for inline suggestion
-			if (
-				matchingCommands.length > 0 &&
-				matchingCommands[0] !== input.toLowerCase()
-			) {
+			if (matchingCommands.length > 0 && matchingCommands[0] !== cleanInput) {
 				setSuggestion(matchingCommands[0]);
 			} else {
 				setSuggestion("");
 			}
 
 			// Set all matches for dropdown
-			if (
-				matchingCommands.length > 0 &&
-				input.toLowerCase() !== matchingCommands[0]
-			) {
+			if (matchingCommands.length > 0 && cleanInput !== matchingCommands[0]) {
 				setSuggestions(matchingCommands);
 				setSelectedIndex(0); // Reset selection when suggestions change
 			} else {
@@ -152,7 +178,8 @@ function Terminal() {
 		// Enter to execute command
 		if (e.key === "Enter") {
 			e.preventDefault();
-			const command = input.toLowerCase().trim();
+			// Remove leading slash if present and trim
+			const command = input.toLowerCase().trim().replace(/^\/+/, "");
 
 			if (commands[command]) {
 				commands[command]();
@@ -227,13 +254,13 @@ function Terminal() {
 						onKeyDown={handleKeyDown}
 						spellCheck="false"
 						autoComplete="off"
-						placeholder="Type help to see list of commands..."
+						placeholder="Press / to use CLI..."
 					/>
 					{suggestion && (
 						<span className="terminal-suggestion">
 							{input}
 							<span className="suggestion-text">
-								{suggestion.slice(input.length)}
+								{suggestion.slice(input.replace(/^\/+/, "").length)}
 							</span>
 						</span>
 					)}

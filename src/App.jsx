@@ -4,6 +4,8 @@ import PixelBlast from "./components/PixelBlast-background/PixelBlast";
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
+import Experience from "./components/Experience/Experience";
+import ScrollPause from "./components/ScrollPause/ScrollPause";
 
 function App() {
 	return (
@@ -34,9 +36,15 @@ function App() {
 				<section id="home">
 					<Hero />
 				</section>
+
+				<section id="experience">
+					<Experience />
+				</section>
+				<ScrollPause />
 				<section id="commands">
 					<CommandCarousel />
 				</section>
+
 				<Terminal />
 			</div>
 		</div>
