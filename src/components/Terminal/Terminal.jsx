@@ -137,6 +137,16 @@ function Terminal() {
 		}
 	};
 
+	const handleSuggestionClick = (cmd) => {
+		setInput(cmd);
+		setSuggestion("");
+		setSuggestions([]);
+		// Refocus input after clicking suggestion
+		if (inputRef.current) {
+			inputRef.current.focus();
+		}
+	};
+
 	return (
 		<div className="terminal-container">
 			{suggestions.length > 0 && (
@@ -146,7 +156,12 @@ function Terminal() {
 							key={cmd}
 							className={`autocomplete-item ${
 								index === selectedIndex ? "selected" : ""
-							}`}>
+							}`}
+							onClick={() => handleSuggestionClick(cmd)}
+							onTouchEnd={(e) => {
+								e.preventDefault();
+								handleSuggestionClick(cmd);
+							}}>
 							<span className="autocomplete-icon">
 								{index === selectedIndex ? "⌘" : "›"}
 							</span>
