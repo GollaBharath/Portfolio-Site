@@ -11,12 +11,36 @@ function Terminal() {
 
 	// Define available commands
 	const commands = {
-		help: () =>
-			alert(`Available commands:\n${Object.keys(commands).join("\n")}`),
-		home: () => (window.location.hash = "/"),
-		about: () => (window.location.hash = "/about"),
-		projects: () => (window.location.hash = "/projects"),
-		contact: () => (window.location.hash = "/contact"),
+		help: () => {
+			const element = document.getElementById("commands");
+			if (element)
+				element.scrollIntoView({ behavior: "smooth", block: "center" });
+		},
+		home: () => {
+			const element = document.getElementById("home");
+			if (element)
+				element.scrollIntoView({ behavior: "smooth", block: "start" });
+		},
+		experience: () => alert("Experience section coming soon!"),
+		projects: () => alert("Projects section coming soon!"),
+		contact: () => alert("Contact section coming soon!"),
+		reddit: () =>
+			window.open("https://www.reddit.com/user/Dead-Indian/", "_blank"),
+		spotify: () =>
+			window.open(
+				"https://open.spotify.com/user/31enxavrkyobb5lbp4phl33jgnwq",
+				"_blank"
+			),
+		discord: () =>
+			window.open("https://discordapp.com/users/972801524092776479", "_blank"),
+		instagram: () =>
+			window.open("https://www.instagram.com/gollabharath_/", "_blank"),
+		whatsapp: () => window.open("https://wa.me/919059158791", "_blank"),
+		youtube: () =>
+			window.open(
+				"https://www.youtube.com/channel/UCQn4-TWf2So7nvGOPesGoaQ",
+				"_blank"
+			),
 		github: () => window.open("https://github.com/GollaBharath", "_blank"),
 		linkedin: () =>
 			window.open("https://linkedin.com/in/golla-bharath", "_blank"),
@@ -98,6 +122,23 @@ function Terminal() {
 				setSuggestion(suggestions[newIndex]);
 				return newIndex;
 			});
+		}
+
+		// Escape to dismiss suggestions
+		if (e.key === "Escape") {
+			e.preventDefault();
+			setSuggestion("");
+			setSuggestions("");
+			return;
+		}
+
+		// Ctrl+C to clear input immediately
+		if (e.ctrlKey && e.key === "c") {
+			e.preventDefault();
+			setInput("");
+			setSuggestion("");
+			setSuggestions([]);
+			return;
 		}
 
 		// Tab to autocomplete

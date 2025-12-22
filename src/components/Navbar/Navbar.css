@@ -42,6 +42,10 @@
 	padding: 0.5rem 1rem;
 	border-radius: 20px;
 	display: block;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-family: inherit;
 }
 
 .nav-link:hover {

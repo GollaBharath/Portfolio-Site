@@ -4,7 +4,26 @@ import "./Navbar.css";
 function Navbar() {
 	const [isOpen, setIsOpen] = useState(false);
 
-	const navItems = ["Home", "About", "Projects", "Contact"];
+	const navItems = [
+		{ name: "Home", sectionId: "home" },
+		{ name: "Help", sectionId: "commands" },
+		{ name: "Projects", sectionId: null },
+		{ name: "Experience", sectionId: null },
+		{ name: "Contact", sectionId: null },
+	];
+
+	const handleNavClick = (sectionId, itemName) => {
+		setIsOpen(false);
+
+		if (sectionId) {
+			const element = document.getElementById(sectionId);
+			if (element) {
+				element.scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		} else {
+			alert(`${itemName} section coming soon!`);
+		}
+	};
 
 	return (
 		<nav className="navbar">
@@ -18,13 +37,12 @@ function Navbar() {
 
 				<ul className={`nav-menu ${isOpen ? "active" : ""}`}>
 					{navItems.map((item) => (
-						<li key={item} className="nav-item">
-							<a
-								href={`#${item.toLowerCase()}`}
+						<li key={item.name} className="nav-item">
+							<button
 								className="nav-link"
-								onClick={() => setIsOpen(false)}>
-								{item}
-							</a>
+								onClick={() => handleNavClick(item.sectionId, item.name)}>
+								{item.name}
+							</button>
 						</li>
 					))}
 				</ul>

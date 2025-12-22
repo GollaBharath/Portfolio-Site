@@ -3,6 +3,7 @@ import Terminal from "./components/Terminal/Terminal";
 import PixelBlast from "./components/PixelBlast-background/PixelBlast";
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
+import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
 
 function App() {
 	return (
@@ -30,7 +31,12 @@ function App() {
 			/>
 			<div className="app-content">
 				<Navbar />
-				<Hero />
+				<section id="home">
+					<Hero />
+				</section>
+				<section id="commands">
+					<CommandCarousel />
+				</section>
 				<Terminal />
 			</div>
 		</div>
