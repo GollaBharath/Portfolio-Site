@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./Experience.css";
+import luhLogo from "../../assets/luh-new.jpg";
+import osciLogo from "../../assets/osci.jpg";
 
 function Experience() {
 	const [visibleItems, setVisibleItems] = useState(new Set());
@@ -19,7 +21,7 @@ function Experience() {
 				"Set up a local Gitea and implemented CI/CD pipelines to auto-deploy code.",
 				"Co-designed a lightweight container orchestration system for cybersecurity labs.",
 			],
-			logo: "/src/assets/luh-new.jpg", // Add your logo here
+			logo: luhLogo,
 			icon: "💼",
 		},
 		{
@@ -32,7 +34,7 @@ function Experience() {
 				"Gamify is a platform to help communities engage and interact via gamification.",
 				"Collaborated with many contributors and reviewed PRs and finished the event as a successful Project Admin.",
 			],
-			logo: "/src/assets/osci.jpg", // Add your logo here
+			logo: osciLogo,
 			icon: "🚀",
 		},
 	];

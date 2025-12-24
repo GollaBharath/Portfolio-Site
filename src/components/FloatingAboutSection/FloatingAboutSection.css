@@ -1,0 +1,343 @@
+/* 
+ * FloatingAboutSection Styles
+ * 
+ * Animation Strategy:
+ * - floatDrift: Subtle x/y translation for ambient movement
+ * - Each element has staggered delays and durations (see inline styles)
+ * - Uses will-change for performance optimization
+ * - Pauses animation on hover via animation-play-state
+ */
+
+.floating-about-container {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	padding: 4rem 2rem;
+	overflow: hidden;
+}
+
+.floating-about-content {
+	max-width: 1200px;
+	width: 100%;
+	text-align: center;
+	position: relative;
+	z-index: 1;
+}
+
+.floating-about-title {
+	font-size: 3rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.95);
+	margin: 0 0 1rem 0;
+	font-family: "Courier New", Courier, monospace;
+	letter-spacing: 2px;
+}
+
+.floating-about-subtitle {
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, 0.6);
+	margin: 0 0 4rem 0;
+	font-weight: 300;
+}
+
+/* 
+ * Floating Elements Grid
+ * - Uses CSS Grid for responsive layout
+ * - Elements are positioned relatively to allow animation
+ */
+.floating-elements-wrapper {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 2rem;
+	padding: 2rem;
+	perspective: 1000px;
+}
+
+/* 
+ * Individual Floating Element
+ * - Button for accessibility
+ * - Transform-based animation for performance
+ * - Draggable via mouse/touch
+ * - Pauses animation while dragging
+ */
+.floating-element {
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 16px;
+	padding: 2rem 1.5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	cursor: grab;
+	transition: box-shadow 0.3s ease, border-color 0.3s ease;
+	position: relative;
+	/* Animation applied - continuous drift */
+	animation: floatDrift infinite alternate ease-in-out;
+	will-change: transform;
+	/* Touch-friendly tap target */
+	min-height: 140px;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	outline: none;
+	touch-action: none;
+	/* CSS variables for drag position - defaults to 0 */
+	--drag-x: 0px;
+	--drag-y: 0px;
+}
+
+/* Dragging state - pause animation and change cursor */
+.floating-element.dragging {
+	animation-play-state: paused;
+	cursor: grabbing;
+	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.4),
+		0 0 30px var(--accent-color, rgba(255, 80, 80, 0.3));
+	border-color: var(--accent-color, rgba(255, 80, 80, 0.5));
+	z-index: 200;
+}
+
+/* 
+ * Subtle Drift Animation
+ * - Small translate values for calm movement
+ * - Rotates slightly for depth
+ * - Alternate direction creates organic back-and-forth
+ * - Combines with drag position using CSS calc()
+ */
+@keyframes floatDrift {
+	0% {
+		transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
+			rotate(0deg);
+	}
+	25% {
+		transform: translate(
+				calc(var(--drag-x) + -8px),
+				calc(var(--drag-y) + -12px)
+			)
+			rotate(-1deg);
+	}
+	50% {
+		transform: translate(calc(var(--drag-x) + 10px), calc(var(--drag-y) + -8px))
+			rotate(0.5deg);
+	}
+	75% {
+		transform: translate(calc(var(--drag-x) + -6px), calc(var(--drag-y) + 10px))
+			rotate(-0.5deg);
+	}
+	100% {
+		transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
+			rotate(0deg);
+	}
+}
+
+/* Pause animation on hover (desktop) - but not while dragging */
+.floating-element.hovered:not(.dragging),
+.floating-element:hover:not(.dragging) {
+	animation-play-state: paused;
+	border-color: var(--accent-color, rgba(255, 80, 80, 0.5));
+	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.3),
+		0 0 30px var(--accent-color, rgba(255, 80, 80, 0.2));
+	transform: translate(var(--drag-x), var(--drag-y)) translateY(-8px)
+		scale(1.05);
+}
+
+.floating-element:active:not(.dragging) {
+	transform: translate(var(--drag-x), var(--drag-y)) translateY(-4px)
+		scale(1.02);
+}
+
+/* Accent glow on hover */
+.floating-element::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		var(--accent-color, rgba(255, 80, 80, 0.5)),
+		transparent
+	);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.floating-element:hover::before {
+	opacity: 1;
+}
+
+.floating-element-icon {
+	font-size: 2.5rem;
+	line-height: 1;
+	filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.floating-element-label {
+	font-size: 1rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.9);
+	text-align: center;
+	font-family: "Courier New", Courier, monospace;
+	letter-spacing: 0.5px;
+}
+
+/* Profile Element Styles */
+.profile-element {
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	padding: 0;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	border: 3px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	min-height: auto;
+}
+
+.profile-element:hover {
+	border-color: rgba(255, 80, 80, 0.5);
+	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.3);
+}
+
+.profile-element.dragging {
+	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.4), 0 0 30px rgba(255, 80, 80, 0.3);
+	border-color: rgba(255, 80, 80, 0.6);
+}
+
+.profile-img-floating {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	pointer-events: none;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+	position: fixed;
+	bottom: 2rem;
+	left: 50%;
+	transform: translateX(-50%);
+	color: rgba(255, 255, 255, 0.6);
+	animation: bounce 2s infinite;
+	pointer-events: none;
+	z-index: 1000;
+}
+
+@keyframes bounce {
+	0%,
+	20%,
+	50%,
+	80%,
+	100% {
+		transform: translateX(-50%) translateY(0);
+	}
+	40% {
+		transform: translateX(-50%) translateY(-10px);
+	}
+	60% {
+		transform: translateX(-50%) translateY(-5px);
+	}
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+	.floating-elements-wrapper {
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: 1.5rem;
+		padding: 1.5rem;
+	}
+
+	.floating-about-title {
+		font-size: 2.5rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.floating-about-container {
+		min-height: auto;
+		padding: 3rem 1.5rem;
+	}
+
+	.floating-about-title {
+		font-size: 2rem;
+	}
+
+	.floating-about-subtitle {
+		font-size: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.floating-elements-wrapper {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1rem;
+		padding: 1rem;
+	}
+
+	.floating-element {
+		padding: 1.5rem 1rem;
+		min-height: 120px;
+	}
+
+	.floating-element-icon {
+		font-size: 2rem;
+	}
+
+	.floating-element-label {
+		font-size: 0.9rem;
+	}
+
+	/* Reduce animation intensity on mobile */
+	@keyframes floatDrift {
+		0% {
+			transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
+				rotate(0deg);
+		}
+		50% {
+			transform: translate(
+					calc(var(--drag-x) + -4px),
+					calc(var(--drag-y) + -6px)
+				)
+				rotate(-0.5deg);
+		}
+		100% {
+			transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
+				rotate(0deg);
+		}
+	}
+}
+
+@media (max-width: 480px) {
+	.floating-elements-wrapper {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.floating-element {
+		padding: 1.25rem 1rem;
+		min-height: 100px;
+	}
+
+	.floating-element-icon {
+		font-size: 1.75rem;
+	}
+
+	.floating-element-label {
+		font-size: 0.85rem;
+	}
+}
+
+/* Accessibility: Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	.floating-element {
+		animation: none;
+	}
+
+	.floating-element:hover {
+		transform: translateY(-4px);
+	}
+}

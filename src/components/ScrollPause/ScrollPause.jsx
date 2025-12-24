@@ -41,11 +41,11 @@ function ScrollPause() {
 			if (!pauseRef.current) return;
 
 			const rect = pauseRef.current.getBoundingClientRect();
-			const viewportHeight = window.innerHeight;
+			const navbarHeight = 80; // Approximate navbar height, adjust if needed
 
-			// Reset trigger when marker is completely out of trigger zone
+			// Reset trigger when marker is far from top
 			if (hasTriggered.current && !isLocked.current) {
-				if (rect.bottom < viewportHeight * 0.6 || rect.top > viewportHeight) {
+				if (rect.top < navbarHeight - 100 || rect.top > navbarHeight + 100) {
 					hasTriggered.current = false;
 				}
 			}
@@ -53,8 +53,8 @@ function ScrollPause() {
 			// Don't lock if already locked or triggered
 			if (isLocked.current || hasTriggered.current) return;
 
-			// Trigger when marker enters bottom 40% of viewport
-			if (rect.top < viewportHeight && rect.top > viewportHeight * 0.6) {
+			// Trigger when marker reaches just below the navbar (top of screen)
+			if (rect.top <= navbarHeight && rect.top >= navbarHeight - 50) {
 				lock();
 			}
 		};
