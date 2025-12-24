@@ -5,7 +5,7 @@ import LightPillar from "./components/LightPillar/LightPillar";
 import Navbar from "./components/Navbar/Navbar";
 import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
 import Experience from "./components/Experience/Experience";
-import FloatingAboutSection from "./components/FloatingAboutSection/FloatingAboutSection";
+import Home from "./components/Home/Home";
 import CardModal from "./components/CardModal/CardModal";
 import { ReactLenis } from "lenis/react";
 
@@ -15,27 +15,30 @@ function App() {
 
 	// Handler for floating topic clicks - opens modal with card
 	const handleTopicClick = (topicId) => {
-		// Only show modal for stat cards
-		if (["spotify", "discord", "github", "wakatime"].includes(topicId)) {
-			setActiveCard(topicId);
-			setModalOpen(true);
-		} else {
-			// For other topics, scroll to section
-			let targetId;
-			switch (topicId) {
-				case "about":
-					targetId = "experience";
-					break;
-				case "skills":
-					targetId = "commands";
-					break;
-				default:
-					targetId = "home";
-			}
-			const element = document.getElementById(targetId);
-			if (element) {
-				element.scrollIntoView({ behavior: "smooth", block: "center" });
-			}
+		// Handle stats folder - show modal with card
+		if (topicId === "stats") {
+			// For now, keep the original behavior for stat cards
+			// TODO: Update this when stats folder has its own popup
+			return;
+		}
+
+		// Handle other folders
+		switch (topicId) {
+			case "socials":
+			case "projects":
+			case "help":
+				// Future: Open folder-specific popups
+				console.log(`Opening ${topicId} folder`);
+				break;
+			case "experience":
+				// Scroll to experience section
+				const experienceEl = document.getElementById("experience");
+				if (experienceEl) {
+					experienceEl.scrollIntoView({ behavior: "smooth", block: "center" });
+				}
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -71,9 +74,8 @@ function App() {
 					/>
 				</div>
 				<div className="app-content">
-					<Navbar />
 					<section id="home">
-						<FloatingAboutSection onTopicClick={handleTopicClick} />
+						<Home onTopicClick={handleTopicClick} />
 					</section>
 
 					<section id="experience">

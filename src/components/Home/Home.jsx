@@ -1,14 +1,20 @@
 import { useState, useRef } from "react";
-import "./FloatingAboutSection.css";
+import "./Home.css";
 import profileImage from "../../assets/Profile.jpg";
+import Folder from "../Folder/Folder";
+import globeIcon from "../../assets/SVGs/globe-svgrepo-com.svg";
+import projectIcon from "../../assets/SVGs/project-14px-fill-arrow-svgrepo-com.svg";
+import chartIcon from "../../assets/SVGs/chart-line-svgrepo-com.svg";
+import helpIcon from "../../assets/SVGs/help-circle-svgrepo-com.svg";
+import timeSandIcon from "../../assets/SVGs/time-sand-svgrepo-com.svg";
 
 /**
- * FloatingAboutSection Component
+ * Home Component
  *
- * Draggable floating elements with smooth collision avoidance.
+ * Draggable floating folder elements with smooth collision avoidance.
  */
 
-function FloatingAboutSection({ onTopicClick }) {
+function Home({ onTopicClick }) {
 	const [hoveredId, setHoveredId] = useState(null);
 	const [draggedId, setDraggedId] = useState(null);
 	const [positions, setPositions] = useState({});
@@ -17,49 +23,48 @@ function FloatingAboutSection({ onTopicClick }) {
 	const elementsRef = useRef({});
 	const containerRef = useRef(null);
 
-	// Define floating topics - customize these based on your content
-	const topics = [
+	// Define floating folders - customize these based on your content
+	const folders = [
 		{
 			id: "profile",
 			isProfile: true,
 			label: "Profile",
-			color: "#970505",
-		},
-		{
-			id: "spotify",
-			label: "What I'm Listening To",
-			icon: "🎵",
-			color: "#1DB954",
-		},
-		{
-			id: "discord",
-			label: "My Discord Status",
-			icon: "💬",
-			color: "#5865F2",
-		},
-		{
-			id: "github",
-			label: "GitHub Activity",
-			icon: "⚡",
-			color: "#970505",
-		},
-		{
-			id: "wakatime",
-			label: "Coding Stats",
-			icon: "⏱️",
 			color: "#FF5050",
 		},
 		{
-			id: "about",
-			label: "About Me",
-			icon: "👨‍💻",
-			color: "#970505",
+			id: "socials",
+			label: "Socials",
+			logoSrc: globeIcon,
+			color: "#FF5050",
+			onPopup: null, // Future: Add popup component
 		},
 		{
-			id: "skills",
-			label: "Tech Stack",
-			icon: "🛠️",
+			id: "projects",
+			label: "Projects",
+			logoSrc: projectIcon,
 			color: "#FF5050",
+			onPopup: null, // Future: Add popup component
+		},
+		{
+			id: "stats",
+			label: "Stats",
+			logoSrc: chartIcon,
+			color: "#FF5050",
+			onPopup: null, // Future: Add popup component
+		},
+		{
+			id: "help",
+			label: "Help",
+			logoSrc: helpIcon,
+			color: "#FF5050",
+			onPopup: null, // Future: Add popup component
+		},
+		{
+			id: "experience",
+			label: "Experience",
+			logoSrc: timeSandIcon,
+			color: "#FF5050",
+			onPopup: null, // Future: Add popup component
 		},
 	];
 
@@ -153,14 +158,14 @@ function FloatingAboutSection({ onTopicClick }) {
 			newDraggedRect.bottom += clampOffset.y;
 
 			// Check for collisions and push other elements (only once per frame)
-			topics.forEach((topic) => {
-				if (topic.id === draggedId) return;
+			folders.forEach((folder) => {
+				if (folder.id === draggedId) return;
 
-				const otherElement = elementsRef.current[topic.id];
+				const otherElement = elementsRef.current[folder.id];
 				if (!otherElement) return;
 
 				const otherRect = otherElement.getBoundingClientRect();
-				const prevOtherPos = prev[topic.id] || { x: 0, y: 0 };
+				const prevOtherPos = prev[folder.id] || { x: 0, y: 0 };
 
 				// Use previous frame's position for collision detection to avoid accumulation
 				const otherAdjustedRect = {
@@ -211,7 +216,7 @@ function FloatingAboutSection({ onTopicClick }) {
 					newOtherX += otherClampOffset.x;
 					newOtherY += otherClampOffset.y;
 
-					newPositions[topic.id] = { x: newOtherX, y: newOtherY };
+					newPositions[folder.id] = { x: newOtherX, y: newOtherY };
 				}
 			});
 
@@ -240,6 +245,13 @@ function FloatingAboutSection({ onTopicClick }) {
 	const handleTopicClick = (topicId) => {
 		if (topicId === "profile") return;
 
+		// Future: Handle popup opening here if onPopup is defined
+		const folder = folders.find((f) => f.id === topicId);
+		if (folder?.onPopup) {
+			folder.onPopup();
+			return;
+		}
+
 		if (onTopicClick) {
 			onTopicClick(topicId);
 		}
@@ -248,37 +260,37 @@ function FloatingAboutSection({ onTopicClick }) {
 	return (
 		<div
 			ref={containerRef}
-			className="floating-about-container"
+			className="home-container"
 			onMouseMove={handleDragMove}
 			onMouseUp={() => draggedId && handleDragEnd(draggedId)}
 			onTouchMove={handleDragMove}
 			onTouchEnd={() => draggedId && handleDragEnd(draggedId)}>
-			<div className="floating-about-content">
+			<div className="home-content">
 				<div className="floating-elements-wrapper">
-					{topics.map((topic, index) => {
-						const pos = positions[topic.id] || { x: 0, y: 0 };
-						const isDragging = draggedId === topic.id;
+					{folders.map((folder, index) => {
+						const pos = positions[folder.id] || { x: 0, y: 0 };
+						const isDragging = draggedId === folder.id;
 
 						// Render profile image differently
-						if (topic.isProfile) {
+						if (folder.isProfile) {
 							return (
 								<div
-									key={topic.id}
-									ref={(el) => (elementsRef.current[topic.id] = el)}
+									key={folder.id}
+									ref={(el) => (elementsRef.current[folder.id] = el)}
 									className={`floating-element profile-element ${
 										isDragging ? "dragging" : ""
 									}`}
 									style={{
 										animationDelay: `${index * 0.5}s`,
 										animationDuration: `${8 + index}s`,
-										"--accent-color": topic.color,
+										"--accent-color": folder.color,
 										"--drag-x": `${pos.x}px`,
 										"--drag-y": `${pos.y}px`,
 										cursor: isDragging ? "grabbing" : "grab",
 									}}
-									onMouseDown={(e) => handleDragStart(e, topic.id)}
-									onTouchStart={(e) => handleDragStart(e, topic.id)}
-									onMouseEnter={() => !isDragging && setHoveredId(topic.id)}
+									onMouseDown={(e) => handleDragStart(e, folder.id)}
+									onTouchStart={(e) => handleDragStart(e, folder.id)}
+									onMouseEnter={() => !isDragging && setHoveredId(folder.id)}
 									onMouseLeave={() => setHoveredId(null)}>
 									<img
 										src={profileImage}
@@ -289,30 +301,33 @@ function FloatingAboutSection({ onTopicClick }) {
 							);
 						}
 
+						// Render folder components
 						return (
-							<button
-								key={topic.id}
-								ref={(el) => (elementsRef.current[topic.id] = el)}
-								className={`floating-element ${
-									hoveredId === topic.id ? "hovered" : ""
+							<div
+								key={folder.id}
+								ref={(el) => (elementsRef.current[folder.id] = el)}
+								className={`floating-element folder-element ${
+									hoveredId === folder.id ? "hovered" : ""
 								} ${isDragging ? "dragging" : ""}`}
-								// Each element gets unique animation timing for organic movement
 								style={{
 									animationDelay: `${index * 0.5}s`,
 									animationDuration: `${8 + index}s`,
-									"--accent-color": topic.color,
+									"--accent-color": folder.color,
 									"--drag-x": `${pos.x}px`,
 									"--drag-y": `${pos.y}px`,
 									cursor: isDragging ? "grabbing" : "grab",
 								}}
-								onMouseDown={(e) => handleDragStart(e, topic.id)}
-								onTouchStart={(e) => handleDragStart(e, topic.id)}
-								onMouseEnter={() => !isDragging && setHoveredId(topic.id)}
-								onMouseLeave={() => setHoveredId(null)}
-								aria-label={`Open ${topic.label}`}>
-								<span className="floating-element-icon">{topic.icon}</span>
-								<span className="floating-element-label">{topic.label}</span>
-							</button>
+								onMouseDown={(e) => handleDragStart(e, folder.id)}
+								onTouchStart={(e) => handleDragStart(e, folder.id)}
+								onMouseEnter={() => !isDragging && setHoveredId(folder.id)}
+								onMouseLeave={() => setHoveredId(null)}>
+								<Folder
+									label={folder.label}
+									logoSrc={folder.logoSrc}
+									color={folder.color}
+									onClick={() => handleTopicClick(folder.id)}
+								/>
+							</div>
 						);
 					})}
 				</div>
@@ -334,4 +349,4 @@ function FloatingAboutSection({ onTopicClick }) {
 	);
 }
 
-export default FloatingAboutSection;
+export default Home;

@@ -1,5 +1,5 @@
 /* 
- * FloatingAboutSection Styles
+ * Home Styles
  * 
  * Animation Strategy:
  * - floatDrift: Subtle x/y translation for ambient movement
@@ -8,7 +8,7 @@
  * - Pauses animation on hover via animation-play-state
  */
 
-.floating-about-container {
+.home-container {
 	min-height: 100vh;
 	display: flex;
 	align-items: center;
@@ -18,7 +18,7 @@
 	overflow: hidden;
 }
 
-.floating-about-content {
+.home-content {
 	max-width: 1200px;
 	width: 100%;
 	text-align: center;
@@ -26,7 +26,7 @@
 	z-index: 1;
 }
 
-.floating-about-title {
+.home-title {
 	font-size: 3rem;
 	font-weight: 700;
 	color: rgba(255, 255, 255, 0.95);
@@ -35,7 +35,7 @@
 	letter-spacing: 2px;
 }
 
-.floating-about-subtitle {
+.home-subtitle {
 	font-size: 1.1rem;
 	color: rgba(255, 255, 255, 0.6);
 	margin: 0 0 4rem 0;
@@ -89,13 +89,28 @@
 	--drag-y: 0px;
 }
 
+/* Folder-specific styling */
+.folder-element {
+	background: transparent;
+	backdrop-filter: none;
+	border: none;
+	padding: 0;
+	min-height: auto;
+}
+
+.folder-element .folder-container {
+	pointer-events: none;
+	width: 280px;
+}
+
+.folder-element.dragging .folder-container {
+	box-shadow: none;
+}
+
 /* Dragging state - pause animation and change cursor */
 .floating-element.dragging {
 	animation-play-state: paused;
 	cursor: grabbing;
-	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.4),
-		0 0 30px var(--accent-color, rgba(255, 80, 80, 0.3));
-	border-color: var(--accent-color, rgba(255, 80, 80, 0.5));
 	z-index: 200;
 }
 
@@ -136,9 +151,6 @@
 .floating-element.hovered:not(.dragging),
 .floating-element:hover:not(.dragging) {
 	animation-play-state: paused;
-	border-color: var(--accent-color, rgba(255, 80, 80, 0.5));
-	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.3),
-		0 0 30px var(--accent-color, rgba(255, 80, 80, 0.2));
 	transform: translate(var(--drag-x), var(--drag-y)) translateY(-8px)
 		scale(1.05);
 }
@@ -146,28 +158,6 @@
 .floating-element:active:not(.dragging) {
 	transform: translate(var(--drag-x), var(--drag-y)) translateY(-4px)
 		scale(1.02);
-}
-
-/* Accent glow on hover */
-.floating-element::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 3px;
-	background: linear-gradient(
-		90deg,
-		transparent,
-		var(--accent-color, rgba(255, 80, 80, 0.5)),
-		transparent
-	);
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.floating-element:hover::before {
-	opacity: 1;
 }
 
 .floating-element-icon {
@@ -200,13 +190,11 @@
 }
 
 .profile-element:hover {
-	border-color: rgba(255, 80, 80, 0.5);
-	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.3);
+	border-color: rgba(255, 255, 255, 0.3);
 }
 
 .profile-element.dragging {
-	box-shadow: 0 12px 40px rgba(151, 5, 5, 0.4), 0 0 30px rgba(255, 80, 80, 0.3);
-	border-color: rgba(255, 80, 80, 0.6);
+	border-color: rgba(255, 255, 255, 0.4);
 }
 
 .profile-img-floating {
@@ -252,22 +240,22 @@
 		padding: 1.5rem;
 	}
 
-	.floating-about-title {
+	.home-title {
 		font-size: 2.5rem;
 	}
 }
 
 @media (max-width: 768px) {
-	.floating-about-container {
+	.home-container {
 		min-height: auto;
 		padding: 3rem 1.5rem;
 	}
 
-	.floating-about-title {
+	.home-title {
 		font-size: 2rem;
 	}
 
-	.floating-about-subtitle {
+	.home-subtitle {
 		font-size: 1rem;
 		margin-bottom: 2rem;
 	}
