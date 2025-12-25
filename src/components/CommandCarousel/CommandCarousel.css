@@ -199,8 +199,17 @@
 }
 
 .slide-icon {
-	font-size: 2rem;
-	filter: drop-shadow(0 0 10px rgba(255, 80, 80, 0.3));
+	font-size: 2rem; /* Keep for potential fallback or other icons */
+}
+
+.slide-icon svg {
+	width: 2rem;
+	height: 2rem;
+	fill: #ff5050; /* Set fill to a theme-aligned red */
+	stroke: #ff5050; /* Also set stroke for SVGs that use it */
+	filter: drop-shadow(
+		0 0 10px rgba(255, 80, 80, 0.3)
+	); /* Apply filter directly to SVG */
 }
 
 .slide-category {

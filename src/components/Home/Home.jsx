@@ -6,6 +6,7 @@ import projectIcon from "../../assets/SVGs/project-14px-fill-arrow-svgrepo-com.s
 import chartIcon from "../../assets/SVGs/chart-line-svgrepo-com.svg";
 import helpIcon from "../../assets/SVGs/help-circle-svgrepo-com.svg";
 import timeSandIcon from "../../assets/SVGs/time-sand-svgrepo-com.svg";
+import pinIcon from "../../assets/SVGs/pin-rounded-circle-620-svgrepo-com.svg";
 
 /**
  * Home Component
@@ -18,11 +19,15 @@ function Home({
 	helpPopupTrigger,
 	helpPopupOpen,
 	onHelpPopupChange,
+	socialsPopupTrigger,
+	socialsPopupOpen,
+	onSocialsPopupChange,
 }) {
 	const [hoveredId, setHoveredId] = useState(null);
 	const [draggedId, setDraggedId] = useState(null);
 	const [positions, setPositions] = useState({});
 	const [helpFolderOpen, setHelpFolderOpen] = useState(false);
+	const [socialsFolderOpen, setSocialsFolderOpen] = useState(false);
 	const isUpdatingFromParent = useRef(false);
 	const dragStart = useRef({ x: 0, y: 0 });
 	const dragInitialPos = useRef({ x: 0, y: 0 });
@@ -39,6 +44,16 @@ function Home({
 		}
 	}, [helpPopupTrigger, onHelpPopupChange]);
 
+	// Watch for socials popup trigger from Terminal
+	useEffect(() => {
+		if (socialsPopupTrigger > 0 && onSocialsPopupChange) {
+			isUpdatingFromParent.current = true;
+			onSocialsPopupChange(true);
+			setSocialsFolderOpen(true);
+			isUpdatingFromParent.current = false;
+		}
+	}, [socialsPopupTrigger, onSocialsPopupChange]);
+
 	// Watch helpPopupOpen state and sync folder state
 	useEffect(() => {
 		if (helpPopupOpen !== undefined) {
@@ -54,6 +69,21 @@ function Home({
 		}
 	}, [helpPopupOpen]);
 
+	// Watch socialsPopupOpen state and sync folder state
+	useEffect(() => {
+		if (socialsPopupOpen !== undefined) {
+			isUpdatingFromParent.current = true;
+			if (!socialsPopupOpen) {
+				// Close folder immediately when popup closes
+				setSocialsFolderOpen(false);
+				isUpdatingFromParent.current = false;
+			} else {
+				setSocialsFolderOpen(true);
+				isUpdatingFromParent.current = false;
+			}
+		}
+	}, [socialsPopupOpen]);
+
 	// Watch for folder being manually closed and close popup too
 	useEffect(() => {
 		if (!helpFolderOpen && onHelpPopupChange && !isUpdatingFromParent.current) {
@@ -61,23 +91,20 @@ function Home({
 		}
 	}, [helpFolderOpen, onHelpPopupChange]);
 
+	// Watch for socials folder being manually closed and close popup too
+	useEffect(() => {
+		if (
+			!socialsFolderOpen &&
+			onSocialsPopupChange &&
+			!isUpdatingFromParent.current
+		) {
+			onSocialsPopupChange(false);
+		}
+	}, [socialsFolderOpen, onSocialsPopupChange]);
+
 	// Define floating folders - customize these based on your content
 	// Note: Profile image is now handled by SystemCore component
 	const folders = [
-		{
-			id: "projects",
-			label: "Projects",
-			logoSrc: projectIcon,
-			color: "#991414",
-			onPopup: null, // Future: Add popup component
-		},
-		{
-			id: "stats",
-			label: "Stats",
-			logoSrc: chartIcon,
-			color: "#991414",
-			onPopup: null, // Future: Add popup component
-		},
 		{
 			id: "help",
 			label: "Help",
@@ -93,6 +120,20 @@ function Home({
 			},
 		},
 		{
+			id: "projects",
+			label: "Projects",
+			logoSrc: projectIcon,
+			color: "#991414",
+			onPopup: null, // Future: Add popup component
+		},
+		{
+			id: "stats",
+			label: "Stats",
+			logoSrc: chartIcon,
+			color: "#991414",
+			onPopup: null, // Future: Add popup component
+		},
+		{
 			id: "experience",
 			label: "Experience",
 			logoSrc: timeSandIcon,
@@ -104,7 +145,14 @@ function Home({
 			label: "Socials",
 			logoSrc: globeIcon,
 			color: "#991414",
-			onPopup: null, // Future: Add popup component
+			isOpen: socialsFolderOpen,
+			onOpenChange: setSocialsFolderOpen,
+			onPopup: () => {
+				if (onSocialsPopupChange) {
+					onSocialsPopupChange(true);
+					setSocialsFolderOpen(true);
+				}
+			},
 		},
 	];
 

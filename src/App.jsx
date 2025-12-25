@@ -4,6 +4,7 @@ import Terminal from "./components/Terminal/Terminal";
 import Home from "./components/Home/Home";
 import CardModal from "./components/CardModal/CardModal";
 import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
+import SocialsPopup from "./components/SocialsPopup/SocialsPopup";
 import BootSequence from "./components/BootSequence/BootSequence";
 import SplashScreen from "./components/SplashScreen/SplashScreen";
 import SystemBackground from "./components/SystemBackground/SystemBackground";
@@ -22,6 +23,8 @@ function AppShell() {
 	const [activeCard, setActiveCard] = useState(null);
 	const [helpPopupTrigger, setHelpPopupTrigger] = useState(0);
 	const [helpPopupOpen, setHelpPopupOpen] = useState(false);
+	const [socialsPopupTrigger, setSocialsPopupTrigger] = useState(0);
+	const [socialsPopupOpen, setSocialsPopupOpen] = useState(false);
 
 	const {
 		systemState,
@@ -76,6 +79,11 @@ function AppShell() {
 		setHelpPopupTrigger((prev) => prev + 1);
 	};
 
+	// Handler for opening socials popup
+	const handleOpenSocials = () => {
+		setSocialsPopupTrigger((prev) => prev + 1);
+	};
+
 	// Handler for SystemCore click - scrolls to about section
 	const handleAboutClick = () => {
 		const aboutElement = document.getElementById("about");
@@ -120,10 +128,16 @@ function AppShell() {
 									helpPopupTrigger={helpPopupTrigger}
 									helpPopupOpen={helpPopupOpen}
 									onHelpPopupChange={setHelpPopupOpen}
+									socialsPopupTrigger={socialsPopupTrigger}
+									socialsPopupOpen={socialsPopupOpen}
+									onSocialsPopupChange={setSocialsPopupOpen}
 								/>
 							</section>
 						</div>
-						<Terminal onHelpClick={handleOpenHelp} />
+						<Terminal
+							onHelpClick={handleOpenHelp}
+							onSocialsClick={handleOpenSocials}
+						/>
 						<CardModal
 							isOpen={modalOpen}
 							cardId={activeCard}
@@ -132,6 +146,10 @@ function AppShell() {
 						<CommandCarousel
 							isOpen={helpPopupOpen}
 							onClose={() => setHelpPopupOpen(false)}
+						/>
+						<SocialsPopup
+							isOpen={socialsPopupOpen}
+							onClose={() => setSocialsPopupOpen(false)}
 						/>
 					</div>
 				)}

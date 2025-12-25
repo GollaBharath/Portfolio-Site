@@ -1,0 +1,275 @@
+/* ================= Overlay & Popup ================= */
+
+.socials-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(12px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10100;
+	padding: 1rem;
+	animation: fadeIn 0.3s ease-out;
+}
+
+.socials-popup {
+	background: rgba(0, 0, 0, 0.85);
+	backdrop-filter: blur(20px);
+	border: 2px solid rgba(255, 80, 80, 0.5);
+	border-radius: 12px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 100px rgba(151, 5, 5, 0.4);
+	max-width: 600px;
+	width: 100%;
+	max-height: 90vh;
+	overflow: hidden;
+	position: relative;
+	z-index: 10101;
+	animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ================= Header ================= */
+
+.socials-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.5rem;
+	background: rgba(15, 15, 15, 0.95);
+	border-bottom: 2px solid rgba(255, 80, 80, 0.4);
+}
+
+.terminal-controls {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+
+.terminal-prompt {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.3rem;
+	font-weight: bold;
+	color: rgba(255, 80, 80, 0.95);
+}
+
+.terminal-title {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, 0.95);
+}
+
+.socials-close {
+	background: transparent;
+	border: none;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: rgba(255, 80, 80, 0.7);
+	border-radius: 6px;
+	transition: all 0.2s ease;
+}
+
+.socials-close:hover {
+	background: rgba(255, 80, 80, 0.1);
+	color: rgba(255, 80, 80, 1);
+}
+
+/* ================= Content ================= */
+
+.socials-content {
+	padding: 2rem 1.5rem;
+	max-height: calc(90vh - 80px);
+	overflow-y: auto;
+}
+
+.socials-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
+}
+
+/* ================= Social Item ================= */
+
+.social-item {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 1.5rem 1rem;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 16px;
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.9);
+	cursor: pointer;
+	outline: none;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== ONLY hover + selected control visual lift ===== */
+
+.social-item:hover,
+.social-item.selected {
+	transform: translateY(-4px);
+	border-color: rgba(255, 80, 80, 0.6);
+	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 80, 80, 0.3),
+		0 0 0 1px rgba(255, 80, 80, 0.4) inset;
+}
+
+/* ===== Focus kept separate (NO lift, NO glow) ===== */
+
+.social-item:focus-visible {
+	outline: 2px solid rgba(255, 80, 80, 0.9);
+	outline-offset: 3px;
+	transform: none;
+}
+
+/* ================= Background glow ================= */
+
+.social-item::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: var(--social-color);
+	opacity: 0;
+	border-radius: 16px;
+	transition: opacity 0.3s ease;
+}
+
+.social-item:hover::before,
+.social-item.selected::before {
+	opacity: 0.1;
+}
+
+/* ================= Key Badge ================= */
+
+.social-key-badge {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	font-weight: 700;
+	background: rgba(255, 80, 80, 0.2);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 6px;
+	color: rgba(255, 80, 80, 0.9);
+	z-index: 2;
+	transition: all 0.2s ease;
+}
+
+.social-item:hover .social-key-badge,
+.social-item.selected .social-key-badge {
+	background: rgba(255, 80, 80, 0.4);
+	border-color: rgba(255, 80, 80, 0.6);
+	color: white;
+	box-shadow: 0 0 10px rgba(255, 80, 80, 0.4);
+}
+
+/* ================= Icon ================= */
+
+.social-icon-wrapper {
+	width: 48px;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 12px;
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	transition: all 0.3s ease;
+}
+
+.social-item:hover .social-icon-wrapper {
+	background: rgba(255, 80, 80, 0.1);
+	border-color: rgba(255, 80, 80, 0.6);
+	transform: scale(1.1);
+	box-shadow: 0 0 20px rgba(255, 80, 80, 0.3);
+}
+
+.social-icon {
+	width: 28px;
+	height: 28px;
+	filter: brightness(0) invert(1);
+	transition: filter 0.3s ease;
+}
+
+.social-item:hover .social-icon,
+.social-item.selected .social-icon {
+	filter: brightness(1) drop-shadow(0 0 8px var(--social-color));
+}
+
+/* ================= Name ================= */
+
+.social-name {
+	font-size: 0.875rem;
+	font-family: "Courier New", Courier, monospace;
+	letter-spacing: 0.5px;
+	color: rgba(255, 255, 255, 0.8);
+	transition: color 0.3s ease;
+}
+
+.social-item:hover .social-name,
+.social-item.selected .social-name {
+	color: white;
+}
+
+/* ================= Footer ================= */
+
+.socials-footer {
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgb(78, 12, 12);
+	text-align: center;
+}
+
+.socials-footer-text {
+	font-size: 0.813rem;
+	color: rgb(142, 136, 136);
+	font-family: "Courier New", Courier, monospace;
+}
+
+/* ================= Animations ================= */
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* ================= Reduced motion ================= */
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation: none !important;
+		transition: none !important;
+	}
+}
+
+.social-item:hover .instagram-icon,
+.social-item.selected .instagram-icon {
+	filter: brightness(0) drop-shadow(0 0 8px var(--social-color));
+}

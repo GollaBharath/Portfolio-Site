@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import GlobeIcon from "@/assets/SVGs/globe-svgrepo-com.svg?react";
+import PinIcon from "@/assets/SVGs/pin-rounded-circle-620-svgrepo-com.svg?react";
+import KeyboardIcon from "@/assets/SVGs/keyboard-alt-1-svgrepo-com.svg?react";
 import "./CommandCarousel.css";
 
 function CommandCarousel({ isOpen, onClose }) {
@@ -15,7 +18,7 @@ function CommandCarousel({ isOpen, onClose }) {
 	const commandSlides = [
 		{
 			category: "Navigation",
-			icon: "📍",
+			icon: <PinIcon />,
 			color: "#ff5050",
 			commands: [
 				{ name: "home", desc: "Scroll to the beginning.", action: "home" },
@@ -40,7 +43,7 @@ function CommandCarousel({ isOpen, onClose }) {
 		},
 		{
 			category: "Socials",
-			icon: "🔗",
+			icon: <GlobeIcon />,
 			color: "#ff6b6b",
 			commands: [
 				{
@@ -83,7 +86,7 @@ function CommandCarousel({ isOpen, onClose }) {
 		},
 		{
 			category: "Keyboard Shortcuts",
-			icon: "⌨️",
+			icon: <KeyboardIcon />,
 			color: "#ff9999",
 			commands: [
 				{ name: "Tab", desc: "Autocomplete command", action: "autocomplete" },

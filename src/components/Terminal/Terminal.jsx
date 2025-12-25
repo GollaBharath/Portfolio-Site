@@ -9,7 +9,7 @@ import {
 } from "../../context/SystemStateContext";
 import "./Terminal.css";
 
-function Terminal({ onHelpClick }) {
+function Terminal({ onHelpClick, onSocialsClick }) {
 	const [input, setInput] = useState("");
 	const [isShaking, setIsShaking] = useState(false);
 	const [suggestion, setSuggestion] = useState("");
@@ -27,8 +27,16 @@ function Terminal({ onHelpClick }) {
 	// Define available commands
 	const commands = {
 		help: () => {
+			// Hide the hint when help is used
+			setHintVisible(false);
+			setHintExiting(false);
 			if (onHelpClick) {
 				onHelpClick();
+			}
+		},
+		socials: () => {
+			if (onSocialsClick) {
+				onSocialsClick();
 			}
 		},
 		about: () => {
