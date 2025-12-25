@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./Folder.css";
 
 const darkenColor = (hex, percent) => {
@@ -31,14 +31,26 @@ const Folder = ({
 	logoSrc,
 	onClick,
 	className = "",
+	isOpen,
+	onOpenChange,
 }) => {
 	const maxItems = 3;
 	const papers = Array(maxItems).fill(null);
 
-	const [open, setOpen] = useState(false);
+	const [internalOpen, setInternalOpen] = useState(false);
 	const [paperOffsets, setPaperOffsets] = useState(
 		Array.from({ length: maxItems }, () => ({ x: 0, y: 0 }))
 	);
+
+	// Use controlled state if provided, otherwise use internal state
+	const open = isOpen !== undefined ? isOpen : internalOpen;
+
+	// Reset paper offsets when folder closes via controlled prop
+	useEffect(() => {
+		if (isOpen !== undefined && !isOpen) {
+			setPaperOffsets(Array.from({ length: maxItems }, () => ({ x: 0, y: 0 })));
+		}
+	}, [isOpen, maxItems]);
 
 	// Drag detection refs
 	const mouseDownPos = useRef(null);
@@ -75,8 +87,16 @@ const Folder = ({
 			return;
 		}
 
-		setOpen((prev) => !prev);
-		if (open) {
+		const newOpenState = !open;
+
+		// Update state based on whether component is controlled
+		if (isOpen !== undefined && onOpenChange) {
+			onOpenChange(newOpenState);
+		} else {
+			setInternalOpen(newOpenState);
+		}
+
+		if (!newOpenState) {
 			setPaperOffsets(Array.from({ length: maxItems }, () => ({ x: 0, y: 0 })));
 		}
 		if (onClick) onClick();

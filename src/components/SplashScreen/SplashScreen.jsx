@@ -24,15 +24,6 @@ export default function SplashScreen({ onComplete }) {
 
 	// Start the splash sequence
 	useEffect(() => {
-		// Respect reduced motion preference
-		const prefersReducedMotion = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		).matches;
-		if (prefersReducedMotion) {
-			onComplete?.();
-			return;
-		}
-
 		// Show image after initial delay
 		const imageTimer = setTimeout(() => {
 			setImageVisible(true);

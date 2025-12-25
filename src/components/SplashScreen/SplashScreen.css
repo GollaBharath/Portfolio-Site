@@ -24,13 +24,6 @@
 	}
 }
 
-/* Reduced motion: skip animations */
-@media (prefers-reduced-motion: reduce) {
-	.splash-overlay {
-		display: none;
-	}
-}
-
 .splash-content {
 	display: flex;
 	flex-direction: column;

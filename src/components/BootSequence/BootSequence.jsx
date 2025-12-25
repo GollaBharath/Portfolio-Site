@@ -77,31 +77,11 @@ function TypewriterLine({ text, type, isActive, onComplete }) {
 /**
  * BootSequence - System initialization overlay
  * Runs once per session, blocks interaction until complete or skipped.
- * Respects prefers-reduced-motion by not rendering at all.
+ * Reduced-motion handling is managed by the system state model (parent).
  */
 export default function BootSequence({ onComplete }) {
-	const [isActive, setIsActive] = useState(false);
 	const [isExiting, setIsExiting] = useState(false);
 	const [currentLine, setCurrentLine] = useState(-1); // -1 = not started
-	const hasInitialized = useRef(false);
-
-	// Check if we should show boot sequence
-	useEffect(() => {
-		if (hasInitialized.current) return;
-		hasInitialized.current = true;
-
-		// Respect reduced motion preference - skip entirely
-		const prefersReducedMotion = window.matchMedia(
-			"(prefers-reduced-motion: reduce)"
-		).matches;
-		if (prefersReducedMotion) {
-			onComplete?.();
-			return;
-		}
-
-		// Activate the boot sequence
-		setIsActive(true);
-	}, [onComplete]);
 
 	// Complete the boot sequence with fade out
 	const complete = useCallback(() => {
@@ -110,7 +90,6 @@ export default function BootSequence({ onComplete }) {
 
 		// Wait for fade animation to finish before fully removing
 		setTimeout(() => {
-			setIsActive(false);
 			onComplete?.();
 		}, 400);
 	}, [isExiting, onComplete]);
@@ -136,18 +115,18 @@ export default function BootSequence({ onComplete }) {
 
 	// Start the sequence
 	useEffect(() => {
-		if (!isActive || isExiting || currentLine >= 0) return;
+		if (isExiting || currentLine >= 0) return;
 
 		const timeoutId = setTimeout(() => {
 			setCurrentLine(0);
 		}, TIMING.initialDelay);
 
 		return () => clearTimeout(timeoutId);
-	}, [isActive, isExiting, currentLine]);
+	}, [isExiting, currentLine]);
 
 	// Skip handlers - any key or click completes the sequence
 	useEffect(() => {
-		if (!isActive || isExiting) return;
+		if (isExiting) return;
 
 		const handleSkip = (e) => {
 			// Prevent default for space/enter to avoid page scroll
@@ -164,10 +143,7 @@ export default function BootSequence({ onComplete }) {
 			window.removeEventListener("keydown", handleSkip);
 			window.removeEventListener("click", handleSkip);
 		};
-	}, [isActive, isExiting, complete]);
-
-	// Don't render if not active
-	if (!isActive) return null;
+	}, [isExiting, complete]);
 
 	return (
 		<div

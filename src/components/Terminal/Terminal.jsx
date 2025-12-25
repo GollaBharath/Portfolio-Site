@@ -1,20 +1,35 @@
 import { useState, useEffect, useRef } from "react";
+import {
+	REACTIVE_COMMANDS,
+	useSystemEvents,
+} from "../../context/SystemEventContext";
+import {
+	SYSTEM_STATES,
+	useSystemState,
+} from "../../context/SystemStateContext";
 import "./Terminal.css";
 
-function Terminal() {
+function Terminal({ onHelpClick }) {
 	const [input, setInput] = useState("");
 	const [isShaking, setIsShaking] = useState(false);
 	const [suggestion, setSuggestion] = useState("");
 	const [suggestions, setSuggestions] = useState([]);
 	const [selectedIndex, setSelectedIndex] = useState(0);
+	const [hintVisible, setHintVisible] = useState(false);
+	const [hintExiting, setHintExiting] = useState(false);
 	const inputRef = useRef(null);
+
+	// Get system event emitter for background reactions
+	const { emitCommand } = useSystemEvents();
+	const { systemState, terminalHintShown, markTerminalHintShown, runCommand } =
+		useSystemState();
 
 	// Define available commands
 	const commands = {
 		help: () => {
-			const element = document.getElementById("commands");
-			if (element)
-				element.scrollIntoView({ behavior: "smooth", block: "center" });
+			if (onHelpClick) {
+				onHelpClick();
+			}
 		},
 		about: () => {
 			const element = document.getElementById("about");
@@ -76,6 +91,33 @@ function Terminal() {
 			inputRef.current.focus();
 		}
 	}, []);
+
+	// Minimal discoverability: show a one-time hint on the first idle state only.
+	useEffect(() => {
+		if (terminalHintShown) return;
+		const isIdleLike =
+			systemState === SYSTEM_STATES.IDLE ||
+			systemState === SYSTEM_STATES.REDUCED_MOTION;
+		if (!isIdleLike) return;
+
+		setHintVisible(true);
+		markTerminalHintShown();
+
+		// Start exit animation after 4.6s, then fully hide after animation completes
+		const exitTimer = setTimeout(() => {
+			setHintExiting(true);
+		}, 4600);
+
+		const hideTimer = setTimeout(() => {
+			setHintVisible(false);
+			setHintExiting(false);
+		}, 5000);
+
+		return () => {
+			clearTimeout(exitTimer);
+			clearTimeout(hideTimer);
+		};
+	}, [systemState, terminalHintShown, markTerminalHintShown]);
 
 	// Listen for "/" key globally to focus terminal
 	useEffect(() => {
@@ -180,13 +222,21 @@ function Terminal() {
 			e.preventDefault();
 			// Remove leading slash if present and trim
 			const command = input.toLowerCase().trim().replace(/^\/+/, "");
+			const isReactive = REACTIVE_COMMANDS.includes(command);
 
 			if (commands[command]) {
+				// State transition is the primary driver for short-lived system reactions.
+				runCommand(command, { isReactive });
+
+				// Emit command event for background reactions
+				emitCommand(command);
+
 				commands[command]();
 				setInput("");
 				setSuggestion("");
 				setSuggestions([]);
 			} else if (input.trim()) {
+				runCommand(command, { isReactive });
 				// Invalid command - shake and clear
 				setIsShaking(true);
 				setTimeout(() => {
@@ -217,6 +267,14 @@ function Terminal() {
 
 	return (
 		<div className="terminal-container">
+			{hintVisible && (
+				<div
+					className="terminal-hint"
+					data-state={hintExiting ? "exiting" : "visible"}>
+					Try typing <span className="terminal-hint__kbd">help</span> to get
+					started
+				</div>
+			)}
 			{suggestions.length > 0 && (
 				<div className="autocomplete-dropdown">
 					{suggestions.map((cmd, index) => (

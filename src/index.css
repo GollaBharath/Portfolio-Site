@@ -78,6 +78,14 @@ body {
 	overflow-x: hidden;
 }
 
+/* Desktop: lock page scrolling (single-screen UX) */
+@media (min-width: 769px) {
+	html,
+	body {
+		overflow: hidden;
+	}
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -87,6 +95,7 @@ body {
 body {
 	min-height: 100vh;
 	overflow-x: hidden;
+	background: #000;
 }
 
 #root {

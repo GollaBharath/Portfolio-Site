@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./Home.css";
-import profileImage from "../../assets/Profile.jpg";
 import Folder from "../Folder/Folder";
 import globeIcon from "../../assets/SVGs/globe-svgrepo-com.svg";
 import projectIcon from "../../assets/SVGs/project-14px-fill-arrow-svgrepo-com.svg";
@@ -14,56 +13,97 @@ import timeSandIcon from "../../assets/SVGs/time-sand-svgrepo-com.svg";
  * Draggable floating folder elements with smooth collision avoidance.
  */
 
-function Home({ onTopicClick }) {
+function Home({
+	onTopicClick,
+	helpPopupTrigger,
+	helpPopupOpen,
+	onHelpPopupChange,
+}) {
 	const [hoveredId, setHoveredId] = useState(null);
 	const [draggedId, setDraggedId] = useState(null);
 	const [positions, setPositions] = useState({});
+	const [helpFolderOpen, setHelpFolderOpen] = useState(false);
+	const isUpdatingFromParent = useRef(false);
 	const dragStart = useRef({ x: 0, y: 0 });
 	const dragInitialPos = useRef({ x: 0, y: 0 });
 	const elementsRef = useRef({});
 	const containerRef = useRef(null);
 
+	// Watch for help popup trigger from Terminal
+	useEffect(() => {
+		if (helpPopupTrigger > 0 && onHelpPopupChange) {
+			isUpdatingFromParent.current = true;
+			onHelpPopupChange(true);
+			setHelpFolderOpen(true);
+			isUpdatingFromParent.current = false;
+		}
+	}, [helpPopupTrigger, onHelpPopupChange]);
+
+	// Watch helpPopupOpen state and sync folder state
+	useEffect(() => {
+		if (helpPopupOpen !== undefined) {
+			isUpdatingFromParent.current = true;
+			if (!helpPopupOpen) {
+				// Close folder immediately when popup closes
+				setHelpFolderOpen(false);
+				isUpdatingFromParent.current = false;
+			} else {
+				setHelpFolderOpen(true);
+				isUpdatingFromParent.current = false;
+			}
+		}
+	}, [helpPopupOpen]);
+
+	// Watch for folder being manually closed and close popup too
+	useEffect(() => {
+		if (!helpFolderOpen && onHelpPopupChange && !isUpdatingFromParent.current) {
+			onHelpPopupChange(false);
+		}
+	}, [helpFolderOpen, onHelpPopupChange]);
+
 	// Define floating folders - customize these based on your content
+	// Note: Profile image is now handled by SystemCore component
 	const folders = [
-		{
-			id: "profile",
-			isProfile: true,
-			label: "Profile",
-			color: "#FF5050",
-		},
-		{
-			id: "socials",
-			label: "Socials",
-			logoSrc: globeIcon,
-			color: "#FF5050",
-			onPopup: null, // Future: Add popup component
-		},
 		{
 			id: "projects",
 			label: "Projects",
 			logoSrc: projectIcon,
-			color: "#FF5050",
+			color: "#991414",
 			onPopup: null, // Future: Add popup component
 		},
 		{
 			id: "stats",
 			label: "Stats",
 			logoSrc: chartIcon,
-			color: "#FF5050",
+			color: "#991414",
 			onPopup: null, // Future: Add popup component
 		},
 		{
 			id: "help",
 			label: "Help",
 			logoSrc: helpIcon,
-			color: "#FF5050",
-			onPopup: null, // Future: Add popup component
+			color: "#991414",
+			isOpen: helpFolderOpen,
+			onOpenChange: setHelpFolderOpen,
+			onPopup: () => {
+				if (onHelpPopupChange) {
+					onHelpPopupChange(true);
+					setHelpFolderOpen(true);
+				}
+			},
 		},
 		{
 			id: "experience",
 			label: "Experience",
 			logoSrc: timeSandIcon,
-			color: "#FF5050",
+			color: "#991414",
+			onPopup: null, // Future: Add popup component
+		},
+		{
+			id: "socials",
+			label: "Socials",
+			logoSrc: globeIcon,
+			color: "#991414",
 			onPopup: null, // Future: Add popup component
 		},
 	];
@@ -98,7 +138,10 @@ function Home({ onTopicClick }) {
 	};
 
 	const handleDragStart = (e, topicId) => {
-		e.preventDefault();
+		// Only preventDefault on mouse events - touch events are passive by default
+		if (e.type === "mousedown") {
+			e.preventDefault();
+		}
 		setDraggedId(topicId);
 
 		const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
@@ -258,48 +301,18 @@ function Home({ onTopicClick }) {
 	};
 
 	return (
-		<div
-			ref={containerRef}
-			className="home-container"
-			onMouseMove={handleDragMove}
-			onMouseUp={() => draggedId && handleDragEnd(draggedId)}
-			onTouchMove={handleDragMove}
-			onTouchEnd={() => draggedId && handleDragEnd(draggedId)}>
-			<div className="home-content">
+		<div className="home-container">
+			<div
+				ref={containerRef}
+				className="drag-region"
+				onMouseMove={handleDragMove}
+				onMouseUp={() => draggedId && handleDragEnd(draggedId)}
+				onTouchMove={handleDragMove}
+				onTouchEnd={() => draggedId && handleDragEnd(draggedId)}>
 				<div className="floating-elements-wrapper">
 					{folders.map((folder, index) => {
 						const pos = positions[folder.id] || { x: 0, y: 0 };
 						const isDragging = draggedId === folder.id;
-
-						// Render profile image differently
-						if (folder.isProfile) {
-							return (
-								<div
-									key={folder.id}
-									ref={(el) => (elementsRef.current[folder.id] = el)}
-									className={`floating-element profile-element ${
-										isDragging ? "dragging" : ""
-									}`}
-									style={{
-										animationDelay: `${index * 0.5}s`,
-										animationDuration: `${8 + index}s`,
-										"--accent-color": folder.color,
-										"--drag-x": `${pos.x}px`,
-										"--drag-y": `${pos.y}px`,
-										cursor: isDragging ? "grabbing" : "grab",
-									}}
-									onMouseDown={(e) => handleDragStart(e, folder.id)}
-									onTouchStart={(e) => handleDragStart(e, folder.id)}
-									onMouseEnter={() => !isDragging && setHoveredId(folder.id)}
-									onMouseLeave={() => setHoveredId(null)}>
-									<img
-										src={profileImage}
-										alt="Profile"
-										className="profile-img-floating"
-									/>
-								</div>
-							);
-						}
 
 						// Render folder components
 						return (
@@ -321,28 +334,19 @@ function Home({ onTopicClick }) {
 								onTouchStart={(e) => handleDragStart(e, folder.id)}
 								onMouseEnter={() => !isDragging && setHoveredId(folder.id)}
 								onMouseLeave={() => setHoveredId(null)}>
-								<Folder
-									label={folder.label}
-									logoSrc={folder.logoSrc}
-									color={folder.color}
-									onClick={() => handleTopicClick(folder.id)}
-								/>
+								<div className="floating-element-inner">
+									<Folder
+										label={folder.label}
+										logoSrc={folder.logoSrc}
+										color={folder.color}
+										isOpen={folder.isOpen}
+										onOpenChange={folder.onOpenChange}
+										onClick={() => handleTopicClick(folder.id)}
+									/>
+								</div>
 							</div>
 						);
 					})}
-				</div>
-
-				{/* Scroll indicator */}
-				<div className="scroll-indicator">
-					<svg
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="2">
-						<polyline points="6 9 12 15 18 9" />
-					</svg>
 				</div>
 			</div>
 		</div>

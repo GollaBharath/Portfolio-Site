@@ -16,13 +16,6 @@
 	animation: boot-fade-out 400ms ease-out forwards;
 }
 
-/* Reduced motion: skip all animations, show final state immediately */
-@media (prefers-reduced-motion: reduce) {
-	.boot-overlay {
-		display: none;
-	}
-}
-
 @keyframes boot-fade-out {
 	from {
 		opacity: 1;

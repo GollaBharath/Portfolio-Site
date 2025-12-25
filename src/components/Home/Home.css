@@ -6,24 +6,29 @@
  * - Each element has staggered delays and durations (see inline styles)
  * - Uses will-change for performance optimization
  * - Pauses animation on hover via animation-play-state
+ * 
+ * Z-Index: 10 for folders (above SystemCore at z-index 5)
  */
 
 .home-container {
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	position: relative;
-	padding: 4rem 2rem;
+	width: 100vw;
+	height: 100vh;
 	overflow: hidden;
 }
 
-.home-content {
-	max-width: 1200px;
-	width: 100%;
-	text-align: center;
-	position: relative;
-	z-index: 1;
+/*
+ * Full-screen draggable region
+ * - Padding creates a safe boundary so folders never feel clipped
+ * - Extra bottom padding avoids the fixed Terminal bar
+ */
+.drag-region {
+	position: absolute;
+	inset: 0;
+	padding: 2rem;
+	padding-bottom: 8rem;
+	overflow: hidden;
+	z-index: 10; /* Below modals, above background */
 }
 
 .home-title {
@@ -44,42 +49,95 @@
 
 /* 
  * Floating Elements Grid
- * - Uses CSS Grid for responsive layout
- * - Elements are positioned relatively to allow animation
+ * - Uses absolute positioning for orbital layout on desktop
+ * - Falls back to flexbox column on mobile
  */
 .floating-elements-wrapper {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 2rem;
-	padding: 2rem;
-	perspective: 1000px;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
+
+/*
+ * Intermediate layout (tablet / narrow desktop)
+ * Switch from orbital layout to a 2-row grid.
+ */
+/* 
+ @media (max-width: 1100px) and (min-width: 769px) {
+	.floating-elements-wrapper {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		/* Reserve a middle row for the fixed SystemCore circle 
+		grid-template-rows: auto 220px auto;
+		column-gap: 2.25rem;
+		row-gap: 2.25rem;
+		width: 100%;
+		max-width: 820px;
+		margin: 0 auto;
+		padding: 2rem 0;
+		justify-items: center;
+		align-content: center;
+	}
+
+	.floating-element {
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+		right: auto !important;
+		bottom: auto !important;
+		transform: translate(var(--drag-x), var(--drag-y)) !important;
+	}
+
+	/* Place 3 items on top row 
+	.floating-element:nth-child(1) {
+		grid-row: 1;
+		grid-column: 1;
+	}
+	.floating-element:nth-child(2) {
+		grid-row: 1;
+		grid-column: 2;
+	}
+	.floating-element:nth-child(3) {
+		grid-row: 1;
+		grid-column: 3;
+	}
+
+	/* Place 2 items on bottom row, centered 
+	.floating-element:nth-child(4) {
+		grid-row: 3;
+		grid-column: 1 / 3;
+		justify-self: end;
+	}
+	.floating-element:nth-child(5) {
+		grid-row: 3;
+		grid-column: 2 / 4;
+		justify-self: start;
+	}
+}
+*/
 
 /* 
  * Individual Floating Element
- * - Button for accessibility
- * - Transform-based animation for performance
- * - Draggable via mouse/touch
- * - Pauses animation while dragging
+ * - Positioned absolutely around center on desktop
+ * - Uses nth-child for orbital positioning
  */
 .floating-element {
-	background: rgba(0, 0, 0, 0.6);
-	backdrop-filter: blur(20px);
-	border: 1px solid rgba(255, 80, 80, 0.2);
-	border-radius: 16px;
-	padding: 2rem 1.5rem;
+	position: absolute;
+	background: transparent;
+	border: none;
+	padding: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 1rem;
+	gap: 0.5rem;
 	cursor: grab;
 	transition: box-shadow 0.3s ease, border-color 0.3s ease;
-	position: relative;
-	/* Animation applied - continuous drift */
-	animation: floatDrift infinite alternate ease-in-out;
+	/* Animation is applied on .floating-element-inner to avoid fighting drag transforms */
 	will-change: transform;
-	/* Touch-friendly tap target */
-	min-height: 140px;
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
 	outline: none;
@@ -87,6 +145,53 @@
 	/* CSS variables for drag position - defaults to 0 */
 	--drag-x: 0px;
 	--drag-y: 0px;
+}
+
+.floating-element-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+/* Orbital positioning for 5 folders around center */
+/* Position 1: Top */
+.floating-element:nth-child(1) {
+	top: 8%;
+	left: 50%;
+	transform: translate(-50%, 0) translate(var(--drag-x), var(--drag-y));
+}
+
+/* Position 2: Top-Left */
+.floating-element:nth-child(2) {
+	top: 30%;
+	left: 20%;
+	transform: translate(var(--drag-x), var(--drag-y));
+}
+
+/* Position 3: Top-Right */
+.floating-element:nth-child(3) {
+	top: 30%;
+	right: 20%;
+	left: auto;
+	transform: translate(var(--drag-x), var(--drag-y));
+}
+
+/* Position 4: Bottom-Left */
+.floating-element:nth-child(4) {
+	bottom: 20%;
+	left: 25%;
+	top: auto;
+	transform: translate(var(--drag-x), var(--drag-y));
+}
+
+/* Position 5: Bottom-Right */
+.floating-element:nth-child(5) {
+	bottom: 20%;
+	right: 25%;
+	left: auto;
+	top: auto;
+	transform: translate(var(--drag-x), var(--drag-y));
 }
 
 /* Folder-specific styling */
@@ -100,7 +205,6 @@
 
 .folder-element .folder-container {
 	pointer-events: none;
-	width: 280px;
 }
 
 .folder-element.dragging .folder-container {
@@ -111,39 +215,77 @@
 .floating-element.dragging {
 	animation-play-state: paused;
 	cursor: grabbing;
-	z-index: 200;
+	z-index: 50;
 }
 
 /* 
  * Subtle Drift Animation
  * - Small translate values for calm movement
- * - Rotates slightly for depth
  * - Alternate direction creates organic back-and-forth
- * - Combines with drag position using CSS calc()
  */
-@keyframes floatDrift {
+@keyframes floatMobile {
 	0% {
-		transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
-			rotate(0deg);
-	}
-	25% {
-		transform: translate(
-				calc(var(--drag-x) + -8px),
-				calc(var(--drag-y) + -12px)
-			)
-			rotate(-1deg);
+		transform: translate(0px, 0px);
 	}
 	50% {
-		transform: translate(calc(var(--drag-x) + 10px), calc(var(--drag-y) + -8px))
-			rotate(0.5deg);
-	}
-	75% {
-		transform: translate(calc(var(--drag-x) + -6px), calc(var(--drag-y) + 10px))
-			rotate(-0.5deg);
+		transform: translate(-6px, -10px);
 	}
 	100% {
-		transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
-			rotate(0deg);
+		transform: translate(0px, 0px);
+	}
+}
+
+/* Mobile layout: Stack folders below SystemCore */
+@media (max-width: 768px) {
+	.drag-region {
+		padding: 1rem;
+		padding-top: 180px; /* Space for SystemCore at top */
+		padding-bottom: 7.5rem; /* Extra room for Terminal */
+	}
+
+	.floating-elements-wrapper {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+
+		/* Key changes */
+		grid-auto-rows: max-content;
+		align-content: space-between;
+
+		column-gap: 4.5rem;
+		row-gap: 1.5rem;
+
+		height: calc(100vh - 260px); /* SystemCore + terminal buffer */
+		padding: 2rem;
+
+		width: 100%;
+		max-width: 280px;
+		margin: 0 auto;
+
+		justify-items: center;
+	}
+
+	.floating-element {
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+		right: auto !important;
+		bottom: auto !important;
+		transform: translate(var(--drag-x), var(--drag-y)) !important;
+		animation: none;
+	}
+
+	/* Enable floating animation on mobile (applied to inner wrapper so drag works) */
+	.floating-element-inner {
+		animation: floatMobile infinite alternate ease-in-out;
+		animation-delay: inherit;
+		animation-duration: inherit;
+		will-change: transform;
+	}
+
+	/* Center the last item if odd number */
+	.floating-element:last-child:nth-child(odd) {
+		grid-column: 1 / -1;
+		justify-self: center;
 	}
 }
 
@@ -151,19 +293,21 @@
 .floating-element.hovered:not(.dragging),
 .floating-element:hover:not(.dragging) {
 	animation-play-state: paused;
-	transform: translate(var(--drag-x), var(--drag-y)) translateY(-8px)
-		scale(1.05);
 }
 
-.floating-element:active:not(.dragging) {
-	transform: translate(var(--drag-x), var(--drag-y)) translateY(-4px)
-		scale(1.02);
+.floating-element.hovered:not(.dragging) .floating-element-inner,
+.floating-element:hover:not(.dragging) .floating-element-inner {
+	transform: translateY(-8px) scale(1.05);
+}
+
+.floating-element:active:not(.dragging) .floating-element-inner {
+	transform: translateY(-4px) scale(1.02);
 }
 
 .floating-element-icon {
 	font-size: 2.5rem;
 	line-height: 1;
-	filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+	filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }
 
 .floating-element-label {
@@ -234,68 +378,15 @@
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-	.floating-elements-wrapper {
-		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-		gap: 1.5rem;
-		padding: 1.5rem;
-	}
-
 	.home-title {
 		font-size: 2.5rem;
 	}
 }
 
-@media (max-width: 768px) {
-	.home-container {
-		min-height: auto;
-		padding: 3rem 1.5rem;
-	}
-
-	.home-title {
-		font-size: 2rem;
-	}
-
-	.home-subtitle {
-		font-size: 1rem;
-		margin-bottom: 2rem;
-	}
-
-	.floating-elements-wrapper {
-		grid-template-columns: repeat(2, 1fr);
-		gap: 1rem;
-		padding: 1rem;
-	}
-
-	.floating-element {
-		padding: 1.5rem 1rem;
-		min-height: 120px;
-	}
-
-	.floating-element-icon {
-		font-size: 2rem;
-	}
-
-	.floating-element-label {
-		font-size: 0.9rem;
-	}
-
-	/* Reduce animation intensity on mobile */
-	@keyframes floatDrift {
-		0% {
-			transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
-				rotate(0deg);
-		}
-		50% {
-			transform: translate(
-					calc(var(--drag-x) + -4px),
-					calc(var(--drag-y) + -6px)
-				)
-				rotate(-0.5deg);
-		}
-		100% {
-			transform: translate(calc(var(--drag-x) + 0px), calc(var(--drag-y) + 0px))
-				rotate(0deg);
-		}
+/* Hide the scroll hint on desktop since we lock scrolling */
+@media (min-width: 769px) {
+	.scroll-indicator {
+		display: none;
 	}
 }
 
@@ -322,6 +413,10 @@
 /* Accessibility: Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
 	.floating-element {
+		animation: none;
+	}
+
+	.floating-element-inner {
 		animation: none;
 	}
 

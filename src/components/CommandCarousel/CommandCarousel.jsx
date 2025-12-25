@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./CommandCarousel.css";
 
-function CommandCarousel() {
+function CommandCarousel({ isOpen, onClose }) {
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [isDragging, setIsDragging] = useState(false);
 	const [startX, setStartX] = useState(0);
@@ -115,6 +115,11 @@ function CommandCarousel() {
 
 	// Drag/Swipe handlers
 	const handleDragStart = (e) => {
+		// Don't start dragging if clicking on scrollable content
+		if (e.target.closest(".commands-grid")) {
+			return;
+		}
+
 		setIsDragging(true);
 		const x = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
 		const y = e.type.includes("mouse") ? e.pageY : e.touches[0].pageY;
@@ -125,8 +130,13 @@ function CommandCarousel() {
 
 	const handleDragMove = (e) => {
 		if (!isDragging) return;
+		// Don't interfere with scrollable content
+		if (e.target.closest(".commands-grid")) {
+			return;
+		}
 		// Only handle mouse events here (touch is handled separately)
 		if (e.type.includes("mouse")) {
+			e.preventDefault(); // Prevent text selection during drag
 			const x = e.pageX;
 			setCurrentX(x);
 			const diff = x - startX;
@@ -169,6 +179,29 @@ function CommandCarousel() {
 		};
 	}, [isDragging]);
 
+	// Handle escape key to close modal
+	useEffect(() => {
+		const handleEscape = (e) => {
+			if (e.key === "Escape" && isOpen) {
+				onClose();
+			}
+		};
+		window.addEventListener("keydown", handleEscape);
+		return () => window.removeEventListener("keydown", handleEscape);
+	}, [isOpen, onClose]);
+
+	// Prevent body scroll when modal is open
+	useEffect(() => {
+		if (isOpen) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "";
+		}
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, [isOpen]);
+
 	// Add touch event listeners with passive: false to allow preventDefault
 	useEffect(() => {
 		const viewport = viewportRef.current;
@@ -176,6 +209,11 @@ function CommandCarousel() {
 
 		const handleTouchMove = (e) => {
 			if (isDragging) {
+				// Don't interfere with scrolling on commands grid
+				if (e.target.closest(".commands-grid")) {
+					return;
+				}
+
 				const currentY = e.touches[0].pageY;
 				const x = e.touches[0].pageX;
 				const diffX = Math.abs(x - startX);
@@ -194,138 +232,172 @@ function CommandCarousel() {
 			}
 		};
 
+		const handleWheel = (e) => {
+			// Allow wheel scrolling on commands grid
+			const commandsGrid = e.target.closest(".commands-grid");
+			if (commandsGrid) {
+				// Let the browser handle scrolling within the commands grid
+				e.stopPropagation();
+				return;
+			}
+		};
+
 		viewport.addEventListener("touchmove", handleTouchMove, { passive: false });
+		viewport.addEventListener("wheel", handleWheel, { passive: false });
 
 		return () => {
 			viewport.removeEventListener("touchmove", handleTouchMove);
+			viewport.removeEventListener("wheel", handleWheel);
 		};
 	}, [isDragging, startX]);
 
+	if (!isOpen) return null;
+
 	return (
-		<section className="command-carousel-section">
-			<div className="carousel-container">
-				{/* Terminal Header */}
-				<div className="carousel-header">
-					<div className="terminal-controls">
-						<span className="terminal-prompt">&gt;</span>
-						<span className="terminal-title">Command Reference</span>
-					</div>
-					<div className="carousel-counter">
-						<span className="current-slide">{currentSlide + 1}</span>
-						<span className="slide-separator">/</span>
-						<span className="total-slides">{totalSlides}</span>
-					</div>
-				</div>
-
-				{/* Carousel Viewport */}
-				<div
-					ref={viewportRef}
-					className="carousel-viewport"
-					onMouseDown={handleDragStart}
-					onMouseMove={handleDragMove}
-					onMouseUp={handleDragEnd}
-					onMouseLeave={handleDragEnd}
-					onTouchStart={handleDragStart}
-					onTouchEnd={handleDragEnd}>
-					<div
-						ref={trackRef}
-						className={`carousel-track ${isDragging ? "dragging" : ""}`}
-						style={{
-							transform: `translateX(calc(-${
-								currentSlide * 100
-							}% + ${dragOffset}px))`,
-							transition: isDragging
-								? "none"
-								: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-						}}>
-						{commandSlides.map((slide, slideIndex) => (
-							<div key={slideIndex} className="carousel-slide">
-								{/* Slide Header */}
-								<div className="slide-header">
-									<span className="slide-icon">{slide.icon}</span>
-									<h3 className="slide-category">{slide.category}</h3>
-								</div>
-
-								{/* Commands Grid */}
-								<div className="commands-grid">
-									{slide.commands.map((cmd, cmdIndex) => (
-										<div
-											key={cmdIndex}
-											className="command-item"
-											style={{
-												animationDelay: `${cmdIndex * 0.1}s`,
-											}}>
-											<div className="command-line">
-												<span className="cmd-prompt">$</span>
-												<span className="cmd-name">{cmd.name}</span>
-											</div>
-											<div className="command-desc">
-												<span className="desc-arrow">&gt;</span>
-												<span className="desc-text">{cmd.desc}</span>
-											</div>
-										</div>
-									))}
-								</div>
+		<>
+			<div className="carousel-overlay" onClick={onClose} />
+			<div className="command-carousel-modal">
+				<div className="carousel-container">
+					{/* Terminal Header */}
+					<div className="carousel-header">
+						<div className="terminal-controls">
+							<span className="terminal-prompt">&gt;</span>
+							<span className="terminal-title">Command Reference</span>
+						</div>
+						<div className="carousel-header-right">
+							<div className="carousel-counter">
+								<span className="current-slide">{currentSlide + 1}</span>
+								<span className="slide-separator">/</span>
+								<span className="total-slides">{totalSlides}</span>
 							</div>
-						))}
-					</div>
-				</div>
-
-				{/* Navigation Controls */}
-				<div className="carousel-controls">
-					<button
-						onClick={prevSlide}
-						className="carousel-nav prev"
-						aria-label="Previous slide">
-						<svg
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="3">
-							<polyline points="15 18 9 12 15 6" />
-						</svg>
-					</button>
-
-					<div className="carousel-dots">
-						{commandSlides.map((_, index) => (
 							<button
-								key={index}
-								onClick={() => goToSlide(index)}
-								className={`carousel-dot ${
-									index === currentSlide ? "active" : ""
-								}`}
-								aria-label={`Go to slide ${index + 1}`}>
-								<span className="dot-inner"></span>
+								className="carousel-close-btn"
+								onClick={onClose}
+								aria-label="Close">
+								<svg
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2.5">
+									<line x1="18" y1="6" x2="6" y2="18" />
+									<line x1="6" y1="6" x2="18" y2="18" />
+								</svg>
 							</button>
-						))}
+						</div>
 					</div>
 
-					<button
-						onClick={nextSlide}
-						className="carousel-nav next"
-						aria-label="Next slide">
-						<svg
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="3">
-							<polyline points="9 18 15 12 9 6" />
-						</svg>
-					</button>
-				</div>
+					{/* Carousel Viewport */}
+					<div
+						ref={viewportRef}
+						className="carousel-viewport"
+						onMouseDown={handleDragStart}
+						onMouseMove={handleDragMove}
+						onMouseUp={handleDragEnd}
+						onMouseLeave={handleDragEnd}
+						onTouchStart={handleDragStart}
+						onTouchEnd={handleDragEnd}>
+						<div
+							ref={trackRef}
+							className={`carousel-track ${isDragging ? "dragging" : ""}`}
+							style={{
+								transform: `translateX(calc(-${
+									currentSlide * 100
+								}% + ${dragOffset}px))`,
+								transition: isDragging
+									? "none"
+									: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+							}}>
+							{commandSlides.map((slide, slideIndex) => (
+								<div key={slideIndex} className="carousel-slide">
+									{/* Slide Header */}
+									<div className="slide-header">
+										<span className="slide-icon">{slide.icon}</span>
+										<h3 className="slide-category">{slide.category}</h3>
+									</div>
 
-				{/* Footer Hint */}
-				<div className="carousel-footer">
-					<span className="footer-text">
-						Try these commands in the terminal below ↓
-					</span>
+									{/* Commands Grid */}
+									<div className="commands-grid">
+										{slide.commands.map((cmd, cmdIndex) => (
+											<div
+												key={cmdIndex}
+												className="command-item"
+												style={{
+													animationDelay: `${cmdIndex * 0.1}s`,
+												}}>
+												<div className="command-line">
+													<span className="cmd-prompt">$</span>
+													<span className="cmd-name">{cmd.name}</span>
+												</div>
+												<div className="command-desc">
+													<span className="desc-arrow">&gt;</span>
+													<span className="desc-text">{cmd.desc}</span>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+
+					{/* Navigation Controls */}
+					<div className="carousel-controls">
+						<button
+							onClick={prevSlide}
+							className="carousel-nav prev"
+							aria-label="Previous slide">
+							<svg
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="3">
+								<polyline points="15 18 9 12 15 6" />
+							</svg>
+						</button>
+
+						<div className="carousel-dots">
+							{commandSlides.map((_, index) => (
+								<button
+									key={index}
+									onClick={() => goToSlide(index)}
+									className={`carousel-dot ${
+										index === currentSlide ? "active" : ""
+									}`}
+									aria-label={`Go to slide ${index + 1}`}>
+									<span className="dot-inner"></span>
+								</button>
+							))}
+						</div>
+
+						<button
+							onClick={nextSlide}
+							className="carousel-nav next"
+							aria-label="Next slide">
+							<svg
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="3">
+								<polyline points="9 18 15 12 9 6" />
+							</svg>
+						</button>
+					</div>
+
+					{/* Footer Hint */}
+					<div className="carousel-footer">
+						<span className="footer-text">
+							Try these commands in the terminal below ↓
+						</span>
+					</div>
 				</div>
 			</div>
-		</section>
+		</>
 	);
 }
 

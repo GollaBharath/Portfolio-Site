@@ -1,0 +1,31 @@
+.reduced-intro {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	background: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	user-select: none;
+}
+
+.reduced-intro__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.reduced-intro__title {
+	font-family: "SF Mono", "Fira Code", "Consolas", "Monaco", monospace;
+	font-size: 1.05rem;
+	letter-spacing: 0.08em;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.reduced-intro__subtitle {
+	font-family: "SF Mono", "Fira Code", "Consolas", "Monaco", monospace;
+	font-size: 0.9rem;
+	letter-spacing: 0.06em;
+	color: rgba(255, 255, 255, 0.45);
+}

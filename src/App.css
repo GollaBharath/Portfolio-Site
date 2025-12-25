@@ -1,3 +1,15 @@
+/*
+ * Z-INDEX LAYER STACK (from bottom to top):
+ * 
+ * 0    - SystemBackground (ambient visuals)
+ * 1    - App content (scrollable sections)
+ * 12   - Terminal (fixed bottom bar)
+ * 15   - Draggable folders (within Home component)
+ * 20   - SystemCore (center profile image)
+ * 9999 - CardModal overlay (popups)
+ * 10000+ - BootSequence, SplashScreen (intro overlays)
+ */
+
 .app-container {
 	position: relative;
 	min-height: 100vh;
@@ -5,6 +17,18 @@
 	max-width: 100vw;
 	overflow-x: hidden;
 	background-color: #000000; /* Fallback background */
+}
+
+/*
+ * Intro underlay
+ * Ensures there is no blank/white frame between Boot → Splash → main UI.
+ * Lives below intro overlays and above the browser default page background.
+ */
+.intro-underlay {
+	position: fixed;
+	inset: 0;
+	background: #000;
+	z-index: 9990;
 }
 
 .app-content {
@@ -16,4 +40,18 @@
 
 .app-content > * {
 	pointer-events: auto;
+}
+
+/*
+ * State-driven global behavior
+ * - Keeps reactions deterministic and short-lived
+ * - Enforces the "single speaker" hierarchy
+ */
+
+.app-container[data-system-state="ACTIVE_COMMAND"] .system-core__glow {
+	opacity: 1;
+}
+
+.app-container[data-system-state="MODAL_OPEN"] .system-core__glow {
+	opacity: 0.4;
 }

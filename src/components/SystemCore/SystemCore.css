@@ -1,0 +1,307 @@
+/* 
+ * SystemCore Styles
+ * 
+ * Center-fixed image representing the system core / identity.
+ * This is the visual anchor of the portfolio.
+ * 
+ * Z-Index: 5 (above background, below folders)
+ * 
+ * Interaction:
+ * - Focusable via keyboard
+ * - Hover intensifies glow
+ * - Click/Enter triggers about panel
+ */
+
+.system-core {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: auto;
+}
+
+/* Mobile: Position at top instead of center */
+@media (max-width: 768px) {
+	.system-core {
+		top: 60px;
+		transform: translate(-50%, 0);
+	}
+}
+
+/* Tooltip - theme appropriate terminal style */
+.system-core__tooltip {
+	position: absolute;
+	top: -40px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(30, 30, 30, 0.95);
+	border: 1px solid rgba(255, 80, 80, 0.4);
+	border-radius: 4px;
+	padding: 6px 12px;
+	color: rgba(255, 80, 80, 0.9);
+	font-family: "Courier New", monospace;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+	z-index: 6;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.system-core__tooltip::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border: 5px solid transparent;
+	border-top-color: rgba(255, 80, 80, 0.4);
+}
+
+.system-core:hover .system-core__tooltip {
+	opacity: 1;
+	transform: translateX(-50%) translateY(-4px);
+}
+
+/* Image wrapper - handles the actual image and its border */
+.system-core__image-wrapper {
+	position: relative;
+	border-radius: 50%;
+	padding: 3px;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 80, 80, 0.4) 0%,
+		rgba(200, 50, 50, 0.2) 50%,
+		rgba(255, 80, 80, 0.4) 100%
+	);
+	cursor: default;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	outline: none;
+}
+
+.system-core__image-wrapper:hover,
+.system-core__image-wrapper:focus-visible {
+	cursor: pointer;
+}
+
+.system-core__image-wrapper:hover {
+	transform: scale(1.03);
+	box-shadow: 0 0 26px rgba(255, 80, 80, 0.22), 0 0 52px rgba(255, 80, 80, 0.12);
+}
+
+.system-core__image-wrapper:focus-visible {
+	box-shadow: 0 0 0 3px rgba(255, 80, 80, 0.4), 0 0 26px rgba(255, 80, 80, 0.22);
+}
+
+.system-core__image-wrapper:active {
+	transform: scale(0.98);
+}
+
+/* Idle pulse rings - continuous subtle wave animation */
+.system-core__pulse-ring {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 80, 80, 0.6);
+	pointer-events: none;
+	animation: idle-pulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	z-index: -1;
+	filter: blur(1.5px);
+}
+
+/* Staggered delays for wave layers */
+.system-core__pulse-ring--1 {
+	animation-delay: 0s;
+	border-color: rgba(255, 80, 80, 0.7);
+}
+
+.system-core__pulse-ring--2 {
+	animation-delay: 1s;
+	border-color: rgba(255, 80, 80, 0.5);
+}
+
+.system-core__pulse-ring--3 {
+	animation-delay: 2s;
+	border-color: rgba(255, 80, 80, 0.3);
+}
+
+@keyframes idle-pulse {
+	0% {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 0;
+	}
+	10% {
+		opacity: 0.6;
+	}
+	60% {
+		opacity: 0.3;
+	}
+	100% {
+		transform: translate(-50%, -50%) scale(4);
+		opacity: 0;
+	}
+}
+
+/* Click pulse - large dramatic wave on interaction */
+.system-core__click-pulse {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+	background: rgba(255, 80, 80, 0.4);
+	border: 3px solid rgba(255, 80, 80, 0.8);
+	pointer-events: none;
+	animation: click-pulse 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+	z-index: -1;
+	filter: blur(2px);
+}
+
+/* Staggered delays for click wave layers */
+.system-core__click-pulse--1 {
+	animation-delay: 0s;
+	border-color: rgba(255, 80, 80, 0.9);
+	background: rgba(255, 80, 80, 0.5);
+}
+
+.system-core__click-pulse--2 {
+	animation-delay: 0.15s;
+	border-color: rgba(255, 80, 80, 0.7);
+	background: rgba(255, 80, 80, 0.35);
+	border-width: 2px;
+}
+
+.system-core__click-pulse--3 {
+	animation-delay: 0.3s;
+	border-color: rgba(255, 80, 80, 0.5);
+	background: rgba(255, 80, 80, 0.2);
+	border-width: 2px;
+}
+
+@keyframes click-pulse {
+	0% {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 0.7;
+	}
+	15% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 0.2;
+	}
+	100% {
+		transform: translate(-50%, -50%) scale(6);
+		opacity: 0;
+	}
+}
+
+/* The actual profile image */
+.system-core__image {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	display: block;
+	filter: grayscale(20%) contrast(1.05);
+	transition: filter 0.3s ease;
+}
+
+.system-core__image-wrapper:hover .system-core__image {
+	filter: grayscale(0%) contrast(1.1);
+}
+
+/* Screen reader only text for accessibility */
+.system-core__sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Reduced motion: disable pulse animation */
+@media (prefers-reduced-motion: reduce) {
+	.system-core__image-wrapper {
+		transition: none;
+	}
+
+	.system-core__tooltip {
+		transition: opacity 0.1s ease;
+	}
+
+	.system-core__pulse-ring,
+	.system-core__click-pulse {
+		display: none;
+	}
+}
+
+/* Responsive adjustments - larger screens */
+@media (min-width: 1200px) {
+	.system-core__image {
+		width: 150px;
+		height: 150px;
+	}
+
+	.system-core__pulse-ring,
+	.system-core__click-pulse {
+		width: 170px;
+		height: 170px;
+	}
+}
+
+@media (min-width: 1600px) {
+	.system-core__image {
+		width: 180px;
+		height: 180px;
+	}
+
+	.system-core__pulse-ring,
+	.system-core__click-pulse {
+		width: 200px;
+		height: 200px;
+	}
+}
+
+/* Responsive adjustments - smaller screens */
+@media (max-width: 768px) {
+	.system-core__image {
+		width: 100px;
+		height: 100px;
+	}
+
+	.system-core__pulse-ring,
+	.system-core__click-pulse {
+		width: 120px;
+		height: 120px;
+	}
+}
+
+@media (max-width: 480px) {
+	.system-core__image {
+		width: 80px;
+		height: 80px;
+	}
+
+	.system-core__pulse-ring,
+	.system-core__click-pulse {
+		width: 100px;
+		height: 100px;
+	}
+}

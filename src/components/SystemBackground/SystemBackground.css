@@ -1,0 +1,208 @@
+/* 
+ * SystemBackground Styles
+ * 
+ * Base background layer that creates the "powered-on system" feel.
+ * All animations respect prefers-reduced-motion.
+ * 
+ * Z-index: 0 (lowest layer, behind everything)
+ */
+
+.system-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 0;
+	overflow: hidden;
+	pointer-events: none;
+	background: radial-gradient(
+		ellipse at center,
+		#060000 0%,
+		#030000 45%,
+		#000000 100%
+	);
+}
+
+/* Ambient gradient overlay - creates depth */
+.system-background__ambient {
+	position: absolute;
+	inset: 0;
+	background: 
+		/* Subtle vignette */ radial-gradient(
+			ellipse at center,
+			transparent 0%,
+			transparent 50%,
+			rgba(0, 0, 0, 0.4) 100%
+		),
+		/* Deep red ambient glow from center */
+			radial-gradient(
+				ellipse 60% 60% at 50% 50%,
+				rgba(80, 0, 0, 0.1) 0%,
+				rgba(40, 0, 0, 0.06) 40%,
+				transparent 70%
+			);
+	opacity: 1;
+}
+
+/* Slow-moving gradient flow */
+.system-background__flow {
+	position: absolute;
+	inset: -50%;
+	width: 200%;
+	height: 200%;
+	background: conic-gradient(
+		from 0deg at 50% 50%,
+		transparent 0deg,
+		rgba(80, 10, 10, 0.02) 60deg,
+		transparent 120deg,
+		rgba(60, 5, 5, 0.015) 180deg,
+		transparent 240deg,
+		rgba(80, 10, 10, 0.02) 300deg,
+		transparent 360deg
+	);
+	animation: system-flow 120s linear infinite;
+	opacity: 0.28;
+}
+
+@keyframes system-flow {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* Scan line effect - appears on command */
+.system-background__scanline {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 80, 80, 0.18) 20%,
+		rgba(255, 80, 80, 0.55) 50%,
+		rgba(255, 80, 80, 0.18) 80%,
+		transparent 100%
+	);
+	box-shadow: 0 0 16px rgba(255, 80, 80, 0.25), 0 0 28px rgba(255, 80, 80, 0.15);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-100vh);
+}
+
+.system-background__scanline--active {
+	animation: scan-sweep 0.6s ease-out forwards;
+}
+
+@keyframes scan-sweep {
+	0% {
+		opacity: 1;
+		transform: translateY(-10vh);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(110vh);
+	}
+}
+
+/* Radial pulse effect - subtle acknowledgment */
+.system-background__pulse {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	height: 200px;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.system-background__pulse--active {
+	animation: radial-pulse 0.8s ease-out forwards;
+}
+
+@keyframes radial-pulse {
+	0% {
+		opacity: 0.8;
+		width: 100px;
+		height: 100px;
+		border-width: 2px;
+	}
+	100% {
+		opacity: 0;
+		width: 400px;
+		height: 400px;
+		border-width: 1px;
+	}
+}
+
+/* Data arc effect - for status/scan commands */
+.system-background__arc {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 300px;
+	height: 300px;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-top-color: rgba(255, 80, 80, 0.45);
+	opacity: 0;
+	pointer-events: none;
+}
+
+.system-background__arc--active {
+	animation: arc-spin 0.6s ease-out forwards;
+}
+
+@keyframes arc-spin {
+	0% {
+		opacity: 1;
+		transform: translate(-50%, -50%) rotate(0deg) scale(0.5);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) rotate(180deg) scale(1.5);
+	}
+}
+
+/* Grid overlay - very subtle structural element */
+.system-background__grid {
+	position: absolute;
+	inset: 0;
+	background-image: linear-gradient(
+			rgba(255, 80, 80, 0.02) 1px,
+			transparent 1px
+		),
+		linear-gradient(90deg, rgba(255, 80, 80, 0.02) 1px, transparent 1px);
+	background-size: 50px 50px;
+	opacity: 0.18;
+}
+
+/* Reduced motion: disable all animations */
+@media (prefers-reduced-motion: reduce) {
+	.system-background__flow {
+		animation: none;
+	}
+
+	.system-background__scanline--active {
+		animation: none;
+		opacity: 0;
+	}
+
+	.system-background__pulse--active {
+		animation: none;
+		opacity: 0;
+	}
+
+	.system-background__arc--active {
+		animation: none;
+		opacity: 0;
+	}
+}
