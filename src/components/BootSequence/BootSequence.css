@@ -1,0 +1,77 @@
+.boot-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background-color: #000;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding-left: clamp(2rem, 8vw, 6rem);
+	padding-right: 2rem;
+	cursor: pointer;
+	user-select: none;
+}
+
+.boot-overlay[data-state="exiting"] {
+	animation: boot-fade-out 400ms ease-out forwards;
+}
+
+/* Reduced motion: skip all animations, show final state immediately */
+@media (prefers-reduced-motion: reduce) {
+	.boot-overlay {
+		display: none;
+	}
+}
+
+@keyframes boot-fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
+.boot-log {
+	font-family: "SF Mono", "Fira Code", "Consolas", "Monaco", monospace;
+	font-size: clamp(0.8rem, 1.4vw, 1rem);
+	line-height: 1.8;
+	color: #a0a0a0;
+	white-space: pre;
+}
+
+.boot-line {
+	opacity: 0;
+	min-height: 1.8em; /* Reserve space to prevent layout shift */
+}
+
+.boot-line[data-visible="true"] {
+	opacity: 1;
+}
+
+/* Status prefix styling */
+.boot-line .status-ok {
+	color: #4a9f4a;
+}
+
+/* User info block - slightly brighter */
+.boot-line.user-info {
+	color: #c8c8c8;
+}
+
+/* Final prompt line */
+.boot-line.prompt-line {
+	color: #606060;
+	margin-top: 1.5em;
+}
+
+/* Spacer between log and user block */
+.boot-spacer {
+	height: 0;
+	transition: height 100ms ease-out;
+}
+
+.boot-spacer[data-visible="true"] {
+	height: 1.2em;
+}
