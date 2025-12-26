@@ -8,6 +8,7 @@ import SocialsPopup from "./components/SocialsPopup/SocialsPopup";
 import ProjectsModal from "./components/Projects/Projects";
 import ExperiencePopup from "./components/ExperiencePopup/ExperiencePopup";
 import ProfilePopup from "./components/ProfilePopup/ProfilePopup";
+import StatsPopup from "./components/StatsPopup/StatsPopup";
 import BootSequence from "./components/BootSequence/BootSequence";
 import SplashScreen from "./components/SplashScreen/SplashScreen";
 import SystemBackground from "./components/SystemBackground/SystemBackground";
@@ -34,6 +35,8 @@ function AppShell() {
 	const [experiencePopupOpen, setExperiencePopupOpen] = useState(false);
 	const [profilePopupTrigger, setProfilePopupTrigger] = useState(0);
 	const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+	const [statsPopupTrigger, setStatsPopupTrigger] = useState(0);
+	const [statsPopupOpen, setStatsPopupOpen] = useState(false);
 
 	const {
 		systemState,
@@ -108,6 +111,11 @@ function AppShell() {
 		setProfilePopupOpen(true);
 	};
 
+	// Handler for opening stats popup
+	const handleOpenStats = () => {
+		setStatsPopupTrigger((prev) => prev + 1);
+	};
+
 	// Handler for SystemCore click - scrolls to about section
 	const handleAboutClick = () => {
 		const aboutElement = document.getElementById("about");
@@ -161,6 +169,9 @@ function AppShell() {
 									experiencePopupTrigger={experiencePopupTrigger}
 									experiencePopupOpen={experiencePopupOpen}
 									onExperiencePopupChange={setExperiencePopupOpen}
+									statsPopupTrigger={statsPopupTrigger}
+									statsPopupOpen={statsPopupOpen}
+									onStatsPopupChange={setStatsPopupOpen}
 								/>
 							</section>
 						</div>
@@ -189,6 +200,10 @@ function AppShell() {
 						<ProfilePopup
 							isOpen={profilePopupOpen}
 							onClose={() => setProfilePopupOpen(false)}
+						/>
+						<StatsPopup
+							isOpen={statsPopupOpen}
+							onClose={() => setStatsPopupOpen(false)}
 						/>
 						<ProjectsModal
 							isOpen={projectsPopupOpen}

@@ -29,6 +29,9 @@ function Home({
 	experiencePopupTrigger,
 	experiencePopupOpen,
 	onExperiencePopupChange,
+	statsPopupTrigger,
+	statsPopupOpen,
+	onStatsPopupChange,
 }) {
 	const [hoveredId, setHoveredId] = useState(null);
 	const [draggedId, setDraggedId] = useState(null);
@@ -37,6 +40,7 @@ function Home({
 	const [socialsFolderOpen, setSocialsFolderOpen] = useState(false);
 	const [projectsFolderOpen, setProjectsFolderOpen] = useState(false);
 	const [experienceFolderOpen, setExperienceFolderOpen] = useState(false);
+	const [statsFolderOpen, setStatsFolderOpen] = useState(false);
 	const isUpdatingFromParent = useRef(false);
 	const dragStart = useRef({ x: 0, y: 0 });
 	const dragInitialPos = useRef({ x: 0, y: 0 });
@@ -185,6 +189,42 @@ function Home({
 		}
 	}, [experienceFolderOpen, onExperiencePopupChange]);
 
+	// Watch for stats popup trigger from Terminal
+	useEffect(() => {
+		if (statsPopupTrigger > 0 && onStatsPopupChange) {
+			isUpdatingFromParent.current = true;
+			onStatsPopupChange(true);
+			setStatsFolderOpen(true);
+			isUpdatingFromParent.current = false;
+		}
+	}, [statsPopupTrigger, onStatsPopupChange]);
+
+	// Watch statsPopupOpen state and sync folder state
+	useEffect(() => {
+		if (statsPopupOpen !== undefined) {
+			isUpdatingFromParent.current = true;
+			if (!statsPopupOpen) {
+				// Close folder immediately when popup closes
+				setStatsFolderOpen(false);
+				isUpdatingFromParent.current = false;
+			} else {
+				setStatsFolderOpen(true);
+				isUpdatingFromParent.current = false;
+			}
+		}
+	}, [statsPopupOpen]);
+
+	// Watch for stats folder being manually closed and close popup too
+	useEffect(() => {
+		if (
+			!statsFolderOpen &&
+			onStatsPopupChange &&
+			!isUpdatingFromParent.current
+		) {
+			onStatsPopupChange(false);
+		}
+	}, [statsFolderOpen, onStatsPopupChange]);
+
 	// Define floating folders - customize these based on your content
 	// Note: Profile image is now handled by SystemCore component
 	const folders = [
@@ -221,7 +261,14 @@ function Home({
 			label: "Stats",
 			logoSrc: chartIcon,
 			color: "#991414",
-			onPopup: null, // Future: Add popup component
+			isOpen: statsFolderOpen,
+			onOpenChange: setStatsFolderOpen,
+			onPopup: () => {
+				if (onStatsPopupChange) {
+					onStatsPopupChange(true);
+					setStatsFolderOpen(true);
+				}
+			},
 		},
 		{
 			id: "experience",
