@@ -1123,6 +1123,7 @@ export default function ProjectsModal({
 	const canvasRef = useRef(null);
 	const [activeItem, setActiveItem] = useState(null);
 	const [isMoving, setIsMoving] = useState(false);
+	const [error, setError] = useState(null);
 
 	// Handle escape key to close modal and arrow key navigation
 	useEffect(() => {
@@ -1158,16 +1159,28 @@ export default function ProjectsModal({
 		};
 
 		if (canvas && isOpen) {
-			sketch = new InfiniteGridMenu(
-				canvas,
-				items.length ? items : defaultItems,
-				handleActiveItem,
-				setIsMoving,
-				(sk) => sk.run(),
-				scale
-			);
-			// Store sketch instance for keyboard navigation access
-			canvas._sketch = sketch;
+			try {
+				// Check WebGL support
+				const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+				if (!gl) {
+					throw new Error("WebGL not supported in this browser");
+				}
+
+				sketch = new InfiniteGridMenu(
+					canvas,
+					items.length ? items : defaultItems,
+					handleActiveItem,
+					setIsMoving,
+					(sk) => sk.run(),
+					scale
+				);
+				// Store sketch instance for keyboard navigation access
+				canvas._sketch = sketch;
+				setError(null);
+			} catch (err) {
+				console.error("Projects modal error:", err);
+				setError(err.message || "Failed to initialize 3D projects viewer");
+			}
 		}
 
 		const handleResize = () => {
@@ -1200,6 +1213,13 @@ export default function ProjectsModal({
 
 	if (!isOpen) return null;
 
+	console.log(
+		"ProjectsModal rendering with isOpen:",
+		isOpen,
+		"items:",
+		items.length
+	);
+
 	return (
 		<>
 			<div
@@ -1226,37 +1246,66 @@ export default function ProjectsModal({
 					</button>
 
 					<div style={{ position: "relative", width: "100%", height: "100%" }}>
-						<canvas id="infinite-grid-menu-canvas" ref={canvasRef} />
-
-						{activeItem && (
-							<>
-								<h2
-									id="projects-title"
-									className={`face-title ${isMoving ? "inactive" : "active"}`}>
-									{activeItem.title}
-								</h2>
-
+						{error ? (
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									alignItems: "center",
+									justifyContent: "center",
+									height: "100%",
+									color: "#ff6b6b",
+									textAlign: "center",
+									padding: "2rem",
+								}}>
+								<h3 style={{ marginBottom: "1rem" }}>3D Viewer Unavailable</h3>
+								<p>{error}</p>
 								<p
-									className={`face-description ${
-										isMoving ? "inactive" : "active"
-									}`}>
-									{activeItem.description}
+									style={{
+										fontSize: "0.9rem",
+										opacity: 0.7,
+										marginTop: "1rem",
+									}}>
+									Please try a modern browser with WebGL support
 								</p>
+							</div>
+						) : (
+							<>
+								<canvas id="infinite-grid-menu-canvas" ref={canvasRef} />
 
-								<button
-									onClick={handleButtonClick}
-									onKeyDown={(e) => {
-										if (e.key === "Enter" || e.key === " ") {
-											e.preventDefault();
-											handleButtonClick();
-										}
-									}}
-									className={`action-button ${
-										isMoving ? "inactive" : "active"
-									}`}
-									aria-label={`Open ${activeItem.title} project`}>
-									<p className="action-button-icon">&#x2197;</p>
-								</button>
+								{activeItem && (
+									<>
+										<h2
+											id="projects-title"
+											className={`face-title ${
+												isMoving ? "inactive" : "active"
+											}`}>
+											{activeItem.title}
+										</h2>
+
+										<p
+											className={`face-description ${
+												isMoving ? "inactive" : "active"
+											}`}>
+											{activeItem.description}
+										</p>
+
+										<button
+											onClick={handleButtonClick}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													e.preventDefault();
+													handleButtonClick();
+												}
+											}}
+											className={`action-button ${
+												isMoving ? "inactive" : "active"
+											}`}
+											aria-label={`Open ${activeItem.title} project`}>
+											<p className="action-button-icon">&#x2197;</p>
+										</button>
+									</>
+								)}
 							</>
 						)}
 					</div>

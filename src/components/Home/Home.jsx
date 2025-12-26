@@ -61,7 +61,9 @@ function Home({
 
 	// Watch for projects popup trigger from Terminal
 	useEffect(() => {
+		console.log("Projects popup trigger:", projectsPopupTrigger);
 		if (projectsPopupTrigger > 0 && onProjectsPopupChange) {
+			console.log("Opening projects popup");
 			isUpdatingFromParent.current = true;
 			onProjectsPopupChange(true);
 			setProjectsFolderOpen(true);
