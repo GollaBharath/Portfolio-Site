@@ -250,7 +250,7 @@ function Home({
 
 			// Check for collisions and push other elements (desktop only)
 			// Skip collision detection on mobile for better UX
-			const isMobile = window.innerWidth <= 768 || "ontouchstart" in window;
+			const isMobile = window.innerWidth <= 768;
 			if (!isMobile) {
 				folders.forEach((folder) => {
 					if (folder.id === draggedId) return;

@@ -324,7 +324,7 @@
 
 /* Navigation Controls */
 .carousel-controls {
-	display: flex;
+	display: none;
 	align-items: center;
 	justify-content: space-between;
 	padding: 1.25rem 1.5rem;
@@ -506,4 +506,35 @@
 	.desc-text {
 		font-size: 0.85rem;
 	}
+}
+
+.carousel-nav.floating {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
+	background: rgba(255, 80, 80, 0.12);
+	backdrop-filter: blur(8px);
+}
+
+.carousel-nav.floating.prev {
+	left: 1rem;
+}
+
+.carousel-nav.floating.next {
+	right: 1rem;
+}
+.carousel-dots.floating {
+	position: absolute;
+	bottom: 1rem;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+	background: rgba(0, 0, 0, 0.35);
+	padding: 0.4rem 0.75rem;
+	border-radius: 999px;
+	backdrop-filter: blur(8px);
+}
+.carousel-footer {
+	display: none;
 }

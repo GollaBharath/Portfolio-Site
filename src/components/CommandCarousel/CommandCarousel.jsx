@@ -182,16 +182,24 @@ function CommandCarousel({ isOpen, onClose }) {
 		};
 	}, [isDragging]);
 
-	// Handle escape key to close modal
+	// Handle escape key to close modal and arrow keys for navigation
 	useEffect(() => {
-		const handleEscape = (e) => {
-			if (e.key === "Escape" && isOpen) {
+		const handleKeyDown = (e) => {
+			if (!isOpen) return;
+
+			if (e.key === "Escape") {
 				onClose();
+			} else if (e.key === "ArrowLeft") {
+				e.preventDefault();
+				prevSlide();
+			} else if (e.key === "ArrowRight") {
+				e.preventDefault();
+				nextSlide();
 			}
 		};
-		window.addEventListener("keydown", handleEscape);
-		return () => window.removeEventListener("keydown", handleEscape);
-	}, [isOpen, onClose]);
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [isOpen, onClose, prevSlide, nextSlide]);
 
 	// Prevent body scroll when modal is open
 	useEffect(() => {
@@ -267,6 +275,7 @@ function CommandCarousel({ isOpen, onClose }) {
 							<span className="terminal-prompt">&gt;</span>
 							<span className="terminal-title">Command Reference</span>
 						</div>
+
 						<div className="carousel-header-right">
 							<div className="carousel-counter">
 								<span className="current-slide">{currentSlide + 1}</span>
@@ -343,10 +352,39 @@ function CommandCarousel({ isOpen, onClose }) {
 								</div>
 							))}
 						</div>
+						<button
+							onClick={prevSlide}
+							className="carousel-nav floating prev"
+							aria-label="Previous slide">
+							<svg
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="3">
+								<polyline points="15 18 9 12 15 6" />
+							</svg>
+						</button>
+
+						<button
+							onClick={nextSlide}
+							className="carousel-nav floating next"
+							aria-label="Next slide">
+							<svg
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="3">
+								<polyline points="9 18 15 12 9 6" />
+							</svg>
+						</button>
 					</div>
 
 					{/* Navigation Controls */}
-					<div className="carousel-controls">
+					{/* <div className="carousel-controls">
 						<button
 							onClick={prevSlide}
 							className="carousel-nav prev"
@@ -390,7 +428,7 @@ function CommandCarousel({ isOpen, onClose }) {
 								<polyline points="9 18 15 12 9 6" />
 							</svg>
 						</button>
-					</div>
+					</div> */}
 
 					{/* Footer Hint */}
 					<div className="carousel-footer">
