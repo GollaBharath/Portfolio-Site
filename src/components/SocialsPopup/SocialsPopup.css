@@ -273,3 +273,28 @@
 .social-item.selected .instagram-icon {
 	filter: brightness(0) drop-shadow(0 0 8px var(--social-color));
 }
+
+/* ================= Scrollbar Styling ================= */
+
+.socials-content::-webkit-scrollbar {
+width: 8px;
+}
+
+.socials-content::-webkit-scrollbar-track {
+background: rgba(0, 0, 0, 0.3);
+border-radius: 4px;
+}
+
+.socials-content::-webkit-scrollbar-thumb {
+background: rgba(255, 80, 80, 0.3);
+border-radius: 4px;
+}
+
+.socials-content::-webkit-scrollbar-thumb:hover {
+background: rgba(255, 80, 80, 0.5);
+}
+
+/* Smooth scrolling */
+.socials-content {
+scroll-behavior: smooth;
+}

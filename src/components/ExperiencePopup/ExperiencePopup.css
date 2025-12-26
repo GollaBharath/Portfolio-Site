@@ -341,3 +341,28 @@
 		transition: none !important;
 	}
 }
+
+/* ================= Scrollbar Styling ================= */
+
+.experience-content::-webkit-scrollbar {
+width: 8px;
+}
+
+.experience-content::-webkit-scrollbar-track {
+background: rgba(0, 0, 0, 0.3);
+border-radius: 4px;
+}
+
+.experience-content::-webkit-scrollbar-thumb {
+background: rgba(255, 80, 80, 0.3);
+border-radius: 4px;
+}
+
+.experience-content::-webkit-scrollbar-thumb:hover {
+background: rgba(255, 80, 80, 0.5);
+}
+
+/* Smooth scrolling */
+.experience-content {
+scroll-behavior: smooth;
+}

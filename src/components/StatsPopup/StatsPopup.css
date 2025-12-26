@@ -89,6 +89,7 @@
     padding: 2rem 1.5rem;
     max-height: calc(90vh - 80px);
     overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 /* ================= Sections ================= */

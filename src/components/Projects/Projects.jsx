@@ -1290,6 +1290,45 @@ export default function ProjectsModal({
 											{activeItem.description}
 										</p>
 
+										{/* Structured Project Content */}
+										{activeItem.problem && (
+											<div
+												className={`project-details ${
+													isMoving ? "inactive" : "active"
+												}`}>
+												{activeItem.problem && (
+													<div className="detail-section">
+														<span className="detail-label">PROBLEM:</span>
+														<span className="detail-text">{activeItem.problem}</span>
+													</div>
+												)}
+												{activeItem.solution && (
+													<div className="detail-section">
+														<span className="detail-label">SOLUTION:</span>
+														<span className="detail-text">{activeItem.solution}</span>
+													</div>
+												)}
+												{activeItem.techStack && activeItem.techStack.length > 0 && (
+													<div className="detail-section">
+														<span className="detail-label">TECH STACK:</span>
+														<span className="detail-text">{activeItem.techStack.join(", ")}</span>
+													</div>
+												)}
+												{activeItem.contribution && (
+													<div className="detail-section">
+														<span className="detail-label">CONTRIBUTION:</span>
+														<span className="detail-text">{activeItem.contribution}</span>
+													</div>
+												)}
+												{activeItem.outcome && (
+													<div className="detail-section">
+														<span className="detail-label">OUTCOME:</span>
+														<span className="detail-text">{activeItem.outcome}</span>
+													</div>
+												)}
+											</div>
+										)}
+
 										<button
 											onClick={handleButtonClick}
 											onKeyDown={(e) => {

@@ -273,7 +273,7 @@ function CommandCarousel({ isOpen, onClose }) {
 					<div className="carousel-header">
 						<div className="terminal-controls">
 							<span className="terminal-prompt">&gt;</span>
-							<span className="terminal-title">Command Reference</span>
+							<span className="terminal-title">help --usage</span>
 						</div>
 
 						<div className="carousel-header-right">
@@ -314,9 +314,8 @@ function CommandCarousel({ isOpen, onClose }) {
 							ref={trackRef}
 							className={`carousel-track ${isDragging ? "dragging" : ""}`}
 							style={{
-								transform: `translateX(calc(-${
-									currentSlide * 100
-								}% + ${dragOffset}px))`,
+								transform: `translateX(calc(-${currentSlide * 100
+									}% + ${dragOffset}px))`,
 								transition: isDragging
 									? "none"
 									: "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
