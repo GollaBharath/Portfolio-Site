@@ -26,6 +26,7 @@ export default defineConfig({
 						"lucide-react",
 						"clsx",
 						"tailwind-merge",
+						"gl-matrix",
 					],
 				},
 			},

@@ -5,6 +5,7 @@ import Home from "./components/Home/Home";
 import CardModal from "./components/CardModal/CardModal";
 import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
 import SocialsPopup from "./components/SocialsPopup/SocialsPopup";
+import ProjectsModal from "./components/Projects/Projects";
 import BootSequence from "./components/BootSequence/BootSequence";
 import SplashScreen from "./components/SplashScreen/SplashScreen";
 import SystemBackground from "./components/SystemBackground/SystemBackground";
@@ -25,6 +26,8 @@ function AppShell() {
 	const [helpPopupOpen, setHelpPopupOpen] = useState(false);
 	const [socialsPopupTrigger, setSocialsPopupTrigger] = useState(0);
 	const [socialsPopupOpen, setSocialsPopupOpen] = useState(false);
+	const [projectsPopupTrigger, setProjectsPopupTrigger] = useState(0);
+	const [projectsPopupOpen, setProjectsPopupOpen] = useState(false);
 
 	const {
 		systemState,
@@ -84,6 +87,11 @@ function AppShell() {
 		setSocialsPopupTrigger((prev) => prev + 1);
 	};
 
+	// Handler for opening projects popup
+	const handleOpenProjects = () => {
+		setProjectsPopupTrigger((prev) => prev + 1);
+	};
+
 	// Handler for SystemCore click - scrolls to about section
 	const handleAboutClick = () => {
 		const aboutElement = document.getElementById("about");
@@ -131,12 +139,16 @@ function AppShell() {
 									socialsPopupTrigger={socialsPopupTrigger}
 									socialsPopupOpen={socialsPopupOpen}
 									onSocialsPopupChange={setSocialsPopupOpen}
+									projectsPopupTrigger={projectsPopupTrigger}
+									projectsPopupOpen={projectsPopupOpen}
+									onProjectsPopupChange={setProjectsPopupOpen}
 								/>
 							</section>
 						</div>
 						<Terminal
 							onHelpClick={handleOpenHelp}
 							onSocialsClick={handleOpenSocials}
+							onProjectsClick={handleOpenProjects}
 						/>
 						<CardModal
 							isOpen={modalOpen}
@@ -150,6 +162,45 @@ function AppShell() {
 						<SocialsPopup
 							isOpen={socialsPopupOpen}
 							onClose={() => setSocialsPopupOpen(false)}
+						/>
+						<ProjectsModal
+							isOpen={projectsPopupOpen}
+							onClose={() => setProjectsPopupOpen(false)}
+							items={[
+								{
+									image: "https://picsum.photos/900/900?grayscale&random=1",
+									link: "https://github.com/GollaBharath/Portfolio-Site",
+									title: "Portfolio Site",
+									description:
+										"My personal portfolio website built with React and WebGL",
+								},
+								{
+									image: "https://picsum.photos/900/900?grayscale&random=2",
+									link: "https://github.com/GollaBharath/terminal-cli",
+									title: "Terminal CLI",
+									description:
+										"Command-line interface simulator with autocomplete",
+								},
+								{
+									image: "https://picsum.photos/900/900?grayscale&random=3",
+									link: "https://github.com/GollaBharath/webgl-projects",
+									title: "WebGL Projects",
+									description: "Interactive 3D graphics and animations",
+								},
+								{
+									image: "https://picsum.photos/900/900?grayscale&random=4",
+									link: "https://github.com/GollaBharath/mobile-apps",
+									title: "Mobile Apps",
+									description: "React Native applications for iOS and Android",
+								},
+								{
+									image: "https://picsum.photos/900/900?grayscale&random=5",
+									link: "https://github.com/GollaBharath/api-services",
+									title: "API Services",
+									description: "RESTful APIs and microservices architecture",
+								},
+							]}
+							scale={1.5}
 						/>
 					</div>
 				)}
