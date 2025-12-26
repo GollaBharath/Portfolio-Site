@@ -157,7 +157,7 @@ function Home({
 	];
 
 	// Check if two rectangles overlap
-	const rectsOverlap = (rect1, rect2, padding = 20) => {
+	const rectsOverlap = (rect1, rect2, padding = 35) => {
 		return (
 			rect1.left - padding < rect2.right + padding &&
 			rect1.right + padding > rect2.left - padding &&

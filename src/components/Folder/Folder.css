@@ -75,8 +75,8 @@
 
 .folder__back {
 	position: relative;
-	width: 100px;
-	height: 80px;
+	width: 95px;
+	height: 76px;
 	background: var(--folder-back-color);
 	border-radius: 0px 10px 10px 10px;
 }
@@ -141,8 +141,8 @@
 .folder-icon {
 	position: relative;
 	z-index: 3;
-	width: 40px;
-	height: 40px;
+	width: 36px;
+	height: 36px;
 	object-fit: contain;
 	filter: brightness(0) invert(1);
 	pointer-events: none;
@@ -166,7 +166,7 @@
 .folder-label {
 	color: rgba(255, 255, 255, 0.55);
 	font-weight: 600;
-	font-size: 14px;
+	font-size: 13px;
 	text-align: center;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 	white-space: nowrap;
@@ -175,27 +175,6 @@
 
 /* Responsive: Smaller folders on mobile/tablet */
 @media (max-width: 768px) {
-	.folder__back {
-		width: 75px;
-		height: 60px;
-	}
-
-	.folder__back::after {
-		width: 22px;
-		height: 8px;
-	}
-
-	.folder-icon {
-		width: 28px;
-		height: 28px;
-	}
-
-	.folder-label {
-		font-size: 12px;
-	}
-}
-
-@media (max-width: 480px) {
 	.folder__back {
 		width: 60px;
 		height: 48px;
@@ -213,5 +192,48 @@
 
 	.folder-label {
 		font-size: 10px;
+	}
+}
+
+@media (max-width: 480px) {
+	.folder__back {
+		width: 50px;
+		height: 40px;
+	}
+
+	.folder__back::after {
+		width: 15px;
+		height: 5px;
+	}
+
+	.folder-icon {
+		width: 18px;
+		height: 18px;
+	}
+
+	.folder-label {
+		font-size: 9px;
+	}
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+	.folder__back {
+		width: 45px;
+		height: 36px;
+	}
+
+	.folder__back::after {
+		width: 14px;
+		height: 4px;
+	}
+
+	.folder-icon {
+		width: 16px;
+		height: 16px;
+	}
+
+	.folder-label {
+		font-size: 8px;
 	}
 }
