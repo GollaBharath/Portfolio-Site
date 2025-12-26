@@ -248,68 +248,74 @@ function Home({
 			newDraggedRect.top += clampOffset.y;
 			newDraggedRect.bottom += clampOffset.y;
 
-			// Check for collisions and push other elements (only once per frame)
-			folders.forEach((folder) => {
-				if (folder.id === draggedId) return;
+			// Check for collisions and push other elements (desktop only)
+			// Skip collision detection on mobile for better UX
+			const isMobile = window.innerWidth <= 768 || "ontouchstart" in window;
+			if (!isMobile) {
+				folders.forEach((folder) => {
+					if (folder.id === draggedId) return;
 
-				const otherElement = elementsRef.current[folder.id];
-				if (!otherElement) return;
+					const otherElement = elementsRef.current[folder.id];
+					if (!otherElement) return;
 
-				const otherRect = otherElement.getBoundingClientRect();
-				const prevOtherPos = prev[folder.id] || { x: 0, y: 0 };
+					const otherRect = otherElement.getBoundingClientRect();
+					const prevOtherPos = prev[folder.id] || { x: 0, y: 0 };
 
-				// Use previous frame's position for collision detection to avoid accumulation
-				const otherAdjustedRect = {
-					left: otherRect.left,
-					right: otherRect.right,
-					top: otherRect.top,
-					bottom: otherRect.bottom,
-					width: otherRect.width,
-					height: otherRect.height,
-				};
-
-				// Check if dragged element overlaps with this element
-				if (rectsOverlap(newDraggedRect, otherAdjustedRect)) {
-					// Calculate push direction (away from dragged element center)
-					const draggedCenterX = newDraggedRect.left + newDraggedRect.width / 2;
-					const draggedCenterY = newDraggedRect.top + newDraggedRect.height / 2;
-					const otherCenterX =
-						otherAdjustedRect.left + otherAdjustedRect.width / 2;
-					const otherCenterY =
-						otherAdjustedRect.top + otherAdjustedRect.height / 2;
-
-					const dx = otherCenterX - draggedCenterX;
-					const dy = otherCenterY - draggedCenterY;
-					const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-
-					// Push the other element away with a smaller force
-					const pushDistance = 15;
-					const pushX = (dx / distance) * pushDistance;
-					const pushY = (dy / distance) * pushDistance;
-
-					let newOtherX = prevOtherPos.x + pushX;
-					let newOtherY = prevOtherPos.y + pushY;
-
-					// Calculate what the new rect would be
-					const newOtherRect = {
-						left: otherRect.left + pushX,
-						right: otherRect.right + pushX,
-						top: otherRect.top + pushY,
-						bottom: otherRect.bottom + pushY,
+					// Use previous frame's position for collision detection to avoid accumulation
+					const otherAdjustedRect = {
+						left: otherRect.left,
+						right: otherRect.right,
+						top: otherRect.top,
+						bottom: otherRect.bottom,
+						width: otherRect.width,
+						height: otherRect.height,
 					};
 
-					// Always clamp to container to prevent going off-screen
-					const otherClampOffset = clampToContainer(
-						newOtherRect,
-						containerRect
-					);
+					// Check if dragged element overlaps with this element
+					if (rectsOverlap(newDraggedRect, otherAdjustedRect)) {
+						// Calculate push direction (away from dragged element center)
+						const draggedCenterX =
+							newDraggedRect.left + newDraggedRect.width / 2;
+						const draggedCenterY =
+							newDraggedRect.top + newDraggedRect.height / 2;
+						const otherCenterX =
+							otherAdjustedRect.left + otherAdjustedRect.width / 2;
+						const otherCenterY =
+							otherAdjustedRect.top + otherAdjustedRect.height / 2;
 
-					newOtherX += otherClampOffset.x;
-					newOtherY += otherClampOffset.y;
+						const dx = otherCenterX - draggedCenterX;
+						const dy = otherCenterY - draggedCenterY;
+						const distance = Math.sqrt(dx * dx + dy * dy) || 1;
 
-					newPositions[folder.id] = { x: newOtherX, y: newOtherY };
-				}
-			});
+						// Push the other element away with a smaller force
+						const pushDistance = 15;
+						const pushX = (dx / distance) * pushDistance;
+						const pushY = (dy / distance) * pushDistance;
+
+						let newOtherX = prevOtherPos.x + pushX;
+						let newOtherY = prevOtherPos.y + pushY;
+
+						// Calculate what the new rect would be
+						const newOtherRect = {
+							left: otherRect.left + pushX,
+							right: otherRect.right + pushX,
+							top: otherRect.top + pushY,
+							bottom: otherRect.bottom + pushY,
+						};
+
+						// Always clamp to container to prevent going off-screen
+						const otherClampOffset = clampToContainer(
+							newOtherRect,
+							containerRect
+						);
+
+						newOtherX += otherClampOffset.x;
+						newOtherY += otherClampOffset.y;
+
+						newPositions[folder.id] = { x: newOtherX, y: newOtherY };
+					}
+				});
+			} // Close the desktop-only collision detection
 
 			return newPositions;
 		});
