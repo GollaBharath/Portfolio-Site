@@ -1,0 +1,305 @@
+/* ================= Overlay & Popup ================= */
+
+.profile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10100;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.profile-popup {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 80, 80, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 100px rgba(151, 5, 5, 0.4);
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    z-index: 10101;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ================= Header ================= */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: rgba(15, 15, 15, 0.95);
+    border-bottom: 2px solid rgba(255, 80, 80, 0.4);
+}
+
+.terminal-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.terminal-prompt {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: rgba(255, 80, 80, 0.95);
+}
+
+.terminal-title {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.profile-close {
+    background: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255, 80, 80, 0.7);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+}
+
+.profile-close:hover {
+    background: rgba(255, 80, 80, 0.1);
+    color: rgba(255, 80, 80, 1);
+}
+
+.profile-close:focus-visible {
+    outline: 2px solid rgba(255, 80, 80, 0.9);
+    outline-offset: 2px;
+}
+
+/* ================= Content ================= */
+
+.profile-content {
+    padding: 2rem 1.5rem;
+    max-height: calc(90vh - 80px);
+    overflow-y: auto;
+}
+
+/* ================= Profile Sections ================= */
+
+.profile-section {
+    margin-bottom: 2rem;
+}
+
+.profile-section:last-of-type {
+    margin-bottom: 0;
+}
+
+.profile-name {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.section-header {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95rem;
+    color: rgba(255, 80, 80, 0.85);
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+}
+
+/* ================= Lists ================= */
+
+.profile-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-list-item {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    line-height: 1.6;
+}
+
+.list-bullet {
+    color: rgba(255, 80, 80, 0.7);
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.list-text {
+    flex: 1;
+}
+
+/* ================= Metadata ================= */
+
+.profile-metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.metadata-line {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.875rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.metadata-key {
+    color: rgba(255, 80, 80, 0.7);
+    min-width: 100px;
+    font-weight: bold;
+}
+
+.metadata-separator {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.metadata-value {
+    color: rgba(255, 255, 255, 0.9);
+    flex: 1;
+}
+
+/* ================= Footer ================= */
+
+.profile-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 80, 80, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.status-line {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.813rem;
+    display: flex;
+    gap: 0.5rem;
+    color: rgba(142, 136, 136, 0.8);
+}
+
+.status-key {
+    color: rgba(255, 80, 80, 0.6);
+    font-weight: bold;
+}
+
+.status-separator {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.status-value {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.status-value.status-active {
+    color: rgba(80, 255, 80, 0.9);
+    font-weight: bold;
+}
+
+/* ================= Animations ================= */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= Scrollbar Styling ================= */
+
+.profile-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.profile-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.profile-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 80, 80, 0.3);
+    border-radius: 4px;
+}
+
+.profile-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 80, 80, 0.5);
+}
+
+/* ================= Responsive ================= */
+
+@media (max-width: 768px) {
+    .profile-popup {
+        max-width: 95%;
+        max-height: 85vh;
+    }
+
+    .profile-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .profile-name {
+        font-size: 1.3rem;
+    }
+
+    .section-header {
+        font-size: 0.875rem;
+    }
+
+    .profile-list-item {
+        font-size: 0.813rem;
+    }
+
+    .metadata-line {
+        font-size: 0.813rem;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .metadata-key {
+        min-width: auto;
+    }
+}
+
+/* ================= Reduced Motion ================= */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

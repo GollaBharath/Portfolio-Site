@@ -26,6 +26,9 @@ function Home({
 	projectsPopupTrigger,
 	projectsPopupOpen,
 	onProjectsPopupChange,
+	experiencePopupTrigger,
+	experiencePopupOpen,
+	onExperiencePopupChange,
 }) {
 	const [hoveredId, setHoveredId] = useState(null);
 	const [draggedId, setDraggedId] = useState(null);
@@ -33,6 +36,7 @@ function Home({
 	const [helpFolderOpen, setHelpFolderOpen] = useState(false);
 	const [socialsFolderOpen, setSocialsFolderOpen] = useState(false);
 	const [projectsFolderOpen, setProjectsFolderOpen] = useState(false);
+	const [experienceFolderOpen, setExperienceFolderOpen] = useState(false);
 	const isUpdatingFromParent = useRef(false);
 	const dragStart = useRef({ x: 0, y: 0 });
 	const dragInitialPos = useRef({ x: 0, y: 0 });
@@ -145,6 +149,42 @@ function Home({
 		}
 	}, [projectsFolderOpen, onProjectsPopupChange]);
 
+	// Watch for experience popup trigger from Terminal
+	useEffect(() => {
+		if (experiencePopupTrigger > 0 && onExperiencePopupChange) {
+			isUpdatingFromParent.current = true;
+			onExperiencePopupChange(true);
+			setExperienceFolderOpen(true);
+			isUpdatingFromParent.current = false;
+		}
+	}, [experiencePopupTrigger, onExperiencePopupChange]);
+
+	// Watch experiencePopupOpen state and sync folder state
+	useEffect(() => {
+		if (experiencePopupOpen !== undefined) {
+			isUpdatingFromParent.current = true;
+			if (!experiencePopupOpen) {
+				// Close folder immediately when popup closes
+				setExperienceFolderOpen(false);
+				isUpdatingFromParent.current = false;
+			} else {
+				setExperienceFolderOpen(true);
+				isUpdatingFromParent.current = false;
+			}
+		}
+	}, [experiencePopupOpen]);
+
+	// Watch for experience folder being manually closed and close popup too
+	useEffect(() => {
+		if (
+			!experienceFolderOpen &&
+			onExperiencePopupChange &&
+			!isUpdatingFromParent.current
+		) {
+			onExperiencePopupChange(false);
+		}
+	}, [experienceFolderOpen, onExperiencePopupChange]);
+
 	// Define floating folders - customize these based on your content
 	// Note: Profile image is now handled by SystemCore component
 	const folders = [
@@ -188,7 +228,14 @@ function Home({
 			label: "Experience",
 			logoSrc: timeSandIcon,
 			color: "#991414",
-			onPopup: null, // Future: Add popup component
+			isOpen: experienceFolderOpen,
+			onOpenChange: setExperienceFolderOpen,
+			onPopup: () => {
+				if (onExperiencePopupChange) {
+					onExperiencePopupChange(true);
+					setExperienceFolderOpen(true);
+				}
+			},
 		},
 		{
 			id: "socials",
@@ -378,7 +425,7 @@ function Home({
 		const currentPos = positions[draggedId] || { x: 0, y: 0 };
 		const dragDistance = Math.sqrt(
 			Math.pow(currentPos.x - dragInitialPos.current.x, 2) +
-				Math.pow(currentPos.y - dragInitialPos.current.y, 2)
+			Math.pow(currentPos.y - dragInitialPos.current.y, 2)
 		);
 
 		if (dragDistance < 5) {
@@ -423,9 +470,8 @@ function Home({
 							<div
 								key={folder.id}
 								ref={(el) => (elementsRef.current[folder.id] = el)}
-								className={`floating-element folder-element ${
-									hoveredId === folder.id ? "hovered" : ""
-								} ${isDragging ? "dragging" : ""}`}
+								className={`floating-element folder-element ${hoveredId === folder.id ? "hovered" : ""
+									} ${isDragging ? "dragging" : ""}`}
 								style={{
 									animationDelay: `${index * 0.5}s`,
 									animationDuration: `${8 + index}s`,

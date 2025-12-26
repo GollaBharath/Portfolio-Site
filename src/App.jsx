@@ -6,6 +6,8 @@ import CardModal from "./components/CardModal/CardModal";
 import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
 import SocialsPopup from "./components/SocialsPopup/SocialsPopup";
 import ProjectsModal from "./components/Projects/Projects";
+import ExperiencePopup from "./components/ExperiencePopup/ExperiencePopup";
+import ProfilePopup from "./components/ProfilePopup/ProfilePopup";
 import BootSequence from "./components/BootSequence/BootSequence";
 import SplashScreen from "./components/SplashScreen/SplashScreen";
 import SystemBackground from "./components/SystemBackground/SystemBackground";
@@ -28,6 +30,10 @@ function AppShell() {
 	const [socialsPopupOpen, setSocialsPopupOpen] = useState(false);
 	const [projectsPopupTrigger, setProjectsPopupTrigger] = useState(0);
 	const [projectsPopupOpen, setProjectsPopupOpen] = useState(false);
+	const [experiencePopupTrigger, setExperiencePopupTrigger] = useState(0);
+	const [experiencePopupOpen, setExperiencePopupOpen] = useState(false);
+	const [profilePopupTrigger, setProfilePopupTrigger] = useState(0);
+	const [profilePopupOpen, setProfilePopupOpen] = useState(false);
 
 	const {
 		systemState,
@@ -92,6 +98,16 @@ function AppShell() {
 		setProjectsPopupTrigger((prev) => prev + 1);
 	};
 
+	// Handler for opening experience popup
+	const handleOpenExperience = () => {
+		setExperiencePopupTrigger((prev) => prev + 1);
+	};
+
+	// Handler for opening profile popup
+	const handleOpenProfile = () => {
+		setProfilePopupOpen(true);
+	};
+
 	// Handler for SystemCore click - scrolls to about section
 	const handleAboutClick = () => {
 		const aboutElement = document.getElementById("about");
@@ -128,7 +144,7 @@ function AppShell() {
 						data-system-state={systemState}
 						data-reduced-motion={prefersReducedMotion ? "true" : "false"}>
 						<SystemBackground />
-						<SystemCore onAboutClick={handleAboutClick} />
+						<SystemCore onProfileClick={handleOpenProfile} />
 						<div className="app-content">
 							<section id="home">
 								<Home
@@ -142,6 +158,9 @@ function AppShell() {
 									projectsPopupTrigger={projectsPopupTrigger}
 									projectsPopupOpen={projectsPopupOpen}
 									onProjectsPopupChange={setProjectsPopupOpen}
+									experiencePopupTrigger={experiencePopupTrigger}
+									experiencePopupOpen={experiencePopupOpen}
+									onExperiencePopupChange={setExperiencePopupOpen}
 								/>
 							</section>
 						</div>
@@ -162,6 +181,14 @@ function AppShell() {
 						<SocialsPopup
 							isOpen={socialsPopupOpen}
 							onClose={() => setSocialsPopupOpen(false)}
+						/>
+						<ExperiencePopup
+							isOpen={experiencePopupOpen}
+							onClose={() => setExperiencePopupOpen(false)}
+						/>
+						<ProfilePopup
+							isOpen={profilePopupOpen}
+							onClose={() => setProfilePopupOpen(false)}
 						/>
 						<ProjectsModal
 							isOpen={projectsPopupOpen}

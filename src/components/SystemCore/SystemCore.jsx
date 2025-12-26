@@ -13,6 +13,7 @@ import "./SystemCore.css";
  * - Render the profile image at viewport center
  * - Handle hover, focus, and click interactions
  * - Emit openAboutPanel event when activated
+ * - Open profile identity popup when clicked
  * - Remain fully accessible via keyboard navigation
  *
  * Positioning:
@@ -25,7 +26,7 @@ import "./SystemCore.css";
  * - Respects prefers-reduced-motion
  */
 
-function SystemCore({ onAboutClick }) {
+function SystemCore({ onProfileClick }) {
 	const { openAboutPanel, subscribe, EVENTS } = useSystemEvents();
 	const imageWrapperRef = useRef(null);
 	const [clickPulse, setClickPulse] = useState(false);
@@ -56,11 +57,11 @@ function SystemCore({ onAboutClick }) {
 			openAboutPanel();
 
 			// Call optional callback prop if provided
-			if (onAboutClick) {
-				onAboutClick();
+			if (onProfileClick) {
+				onProfileClick();
 			}
 		},
-		[openAboutPanel, onAboutClick]
+		[openAboutPanel, onProfileClick]
 	);
 
 	/**
@@ -127,7 +128,7 @@ function SystemCore({ onAboutClick }) {
 				onKeyDown={handleKeyDown}
 				tabIndex={0}
 				role="button"
-				aria-label="Open about panel">
+				aria-label="Open profile panel">
 				<img
 					src={profileImage}
 					alt="Profile"
