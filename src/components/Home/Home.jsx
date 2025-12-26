@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "./Home.css";
 import Folder from "../Folder/Folder";
+import ProjectsModal from "../Projects/Projects";
 import globeIcon from "../../assets/SVGs/globe-svgrepo-com.svg";
 import projectIcon from "../../assets/SVGs/project-14px-fill-arrow-svgrepo-com.svg";
 import chartIcon from "../../assets/SVGs/chart-line-svgrepo-com.svg";
@@ -22,12 +23,16 @@ function Home({
 	socialsPopupTrigger,
 	socialsPopupOpen,
 	onSocialsPopupChange,
+	projectsPopupTrigger,
+	projectsPopupOpen,
+	onProjectsPopupChange,
 }) {
 	const [hoveredId, setHoveredId] = useState(null);
 	const [draggedId, setDraggedId] = useState(null);
 	const [positions, setPositions] = useState({});
 	const [helpFolderOpen, setHelpFolderOpen] = useState(false);
 	const [socialsFolderOpen, setSocialsFolderOpen] = useState(false);
+	const [projectsFolderOpen, setProjectsFolderOpen] = useState(false);
 	const isUpdatingFromParent = useRef(false);
 	const dragStart = useRef({ x: 0, y: 0 });
 	const dragInitialPos = useRef({ x: 0, y: 0 });
@@ -53,6 +58,16 @@ function Home({
 			isUpdatingFromParent.current = false;
 		}
 	}, [socialsPopupTrigger, onSocialsPopupChange]);
+
+	// Watch for projects popup trigger from Terminal
+	useEffect(() => {
+		if (projectsPopupTrigger > 0 && onProjectsPopupChange) {
+			isUpdatingFromParent.current = true;
+			onProjectsPopupChange(true);
+			setProjectsFolderOpen(true);
+			isUpdatingFromParent.current = false;
+		}
+	}, [projectsPopupTrigger, onProjectsPopupChange]);
 
 	// Watch helpPopupOpen state and sync folder state
 	useEffect(() => {
@@ -84,6 +99,21 @@ function Home({
 		}
 	}, [socialsPopupOpen]);
 
+	// Watch projectsPopupOpen state and sync folder state
+	useEffect(() => {
+		if (projectsPopupOpen !== undefined) {
+			isUpdatingFromParent.current = true;
+			if (!projectsPopupOpen) {
+				// Close folder immediately when popup closes
+				setProjectsFolderOpen(false);
+				isUpdatingFromParent.current = false;
+			} else {
+				setProjectsFolderOpen(true);
+				isUpdatingFromParent.current = false;
+			}
+		}
+	}, [projectsPopupOpen]);
+
 	// Watch for folder being manually closed and close popup too
 	useEffect(() => {
 		if (!helpFolderOpen && onHelpPopupChange && !isUpdatingFromParent.current) {
@@ -101,6 +131,17 @@ function Home({
 			onSocialsPopupChange(false);
 		}
 	}, [socialsFolderOpen, onSocialsPopupChange]);
+
+	// Watch for projects folder being manually closed and close popup too
+	useEffect(() => {
+		if (
+			!projectsFolderOpen &&
+			onProjectsPopupChange &&
+			!isUpdatingFromParent.current
+		) {
+			onProjectsPopupChange(false);
+		}
+	}, [projectsFolderOpen, onProjectsPopupChange]);
 
 	// Define floating folders - customize these based on your content
 	// Note: Profile image is now handled by SystemCore component
@@ -124,7 +165,14 @@ function Home({
 			label: "Projects",
 			logoSrc: projectIcon,
 			color: "#991414",
-			onPopup: null, // Future: Add popup component
+			isOpen: projectsFolderOpen,
+			onOpenChange: setProjectsFolderOpen,
+			onPopup: () => {
+				if (onProjectsPopupChange) {
+					onProjectsPopupChange(true);
+					setProjectsFolderOpen(true);
+				}
+			},
 		},
 		{
 			id: "stats",

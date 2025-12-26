@@ -9,7 +9,7 @@ import {
 } from "../../context/SystemStateContext";
 import "./Terminal.css";
 
-function Terminal({ onHelpClick, onSocialsClick }) {
+function Terminal({ onHelpClick, onSocialsClick, onProjectsClick }) {
 	const [input, setInput] = useState("");
 	const [isShaking, setIsShaking] = useState(false);
 	const [suggestion, setSuggestion] = useState("");
@@ -54,7 +54,11 @@ function Terminal({ onHelpClick, onSocialsClick }) {
 			if (element)
 				element.scrollIntoView({ behavior: "smooth", block: "start" });
 		},
-		projects: () => alert("Projects section coming soon!"),
+		projects: () => {
+			if (onProjectsClick) {
+				onProjectsClick();
+			}
+		},
 		contact: () => alert("Contact section coming soon!"),
 		reddit: () =>
 			window.open("https://www.reddit.com/user/Dead-Indian/", "_blank"),
