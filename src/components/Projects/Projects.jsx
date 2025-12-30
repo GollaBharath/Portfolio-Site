@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { mat4, quat, vec2, vec3 } from "gl-matrix";
+import githubIcon from "../../assets/SVGs/github.svg";
+import liveIcon from "../../assets/SVGs/globe-svgrepo-com.svg";
 import "./Projects.css";
 
 const discVertShaderSource = `#version 300 es
@@ -1125,7 +1127,11 @@ export default function ProjectsModal({
 	const [isMoving, setIsMoving] = useState(false);
 	const [error, setError] = useState(null);
 
-	// Handle escape key to close modal and arrow key navigation
+	const [showMeta, setShowMeta] = useState(false);
+	const holdTimerRef = useRef(null);
+
+	/* ---------------- keyboard ---------------- */
+
 	useEffect(() => {
 		const handleKeyDown = (e) => {
 			if (e.key === "Escape" && isOpen) {
@@ -1137,17 +1143,37 @@ export default function ProjectsModal({
 					e.key === "ArrowLeft" ||
 					e.key === "ArrowRight")
 			) {
-				e.preventDefault(); // Prevent page scrolling
-				// Access the sketch instance to call navigation
+				e.preventDefault();
 				const canvas = canvasRef.current;
 				if (canvas && canvas._sketch) {
 					canvas._sketch.control.navigateWithKeyboard(e.key);
 				}
+			} else if (isOpen && (e.key === "m" || e.key === "M")) {
+				e.preventDefault();
+				setShowMeta((v) => !v);
 			}
 		};
+
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, [isOpen, onClose]);
+
+	/* ---------------- long press ---------------- */
+
+	const startHold = () => {
+		holdTimerRef.current = setTimeout(() => {
+			setShowMeta((v) => !v); // TOGGLE, not force true
+		}, 420);
+	};
+
+	const endHold = () => {
+		if (holdTimerRef.current) {
+			clearTimeout(holdTimerRef.current);
+			holdTimerRef.current = null;
+		}
+	};
+
+	/* ---------------- webgl init ---------------- */
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -1160,11 +1186,8 @@ export default function ProjectsModal({
 
 		if (canvas && isOpen) {
 			try {
-				// Check WebGL support
 				const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
-				if (!gl) {
-					throw new Error("WebGL not supported in this browser");
-				}
+				if (!gl) throw new Error("WebGL not supported");
 
 				sketch = new InfiniteGridMenu(
 					canvas,
@@ -1174,20 +1197,16 @@ export default function ProjectsModal({
 					(sk) => sk.run(),
 					scale
 				);
-				// Store sketch instance for keyboard navigation access
+
 				canvas._sketch = sketch;
 				setError(null);
 			} catch (err) {
-				console.error("Projects modal error:", err);
-				setError(err.message || "Failed to initialize 3D projects viewer");
+				console.error(err);
+				setError(err.message || "Failed to initialize viewer");
 			}
 		}
 
-		const handleResize = () => {
-			if (sketch) {
-				sketch.resize();
-			}
-		};
+		const handleResize = () => sketch && sketch.resize();
 
 		if (isOpen) {
 			window.addEventListener("resize", handleResize);
@@ -1196,160 +1215,171 @@ export default function ProjectsModal({
 
 		return () => {
 			window.removeEventListener("resize", handleResize);
-			if (sketch) {
-				// Clean up WebGL context if needed
-			}
 		};
 	}, [items, scale, isOpen]);
 
 	const handleButtonClick = () => {
 		if (!activeItem?.link) return;
-		if (activeItem.link.startsWith("http")) {
-			window.open(activeItem.link, "_blank");
-		} else {
-			console.log("Internal route:", activeItem.link);
-		}
+		window.open(activeItem.link, "_blank");
 	};
 
 	if (!isOpen) return null;
 
-	console.log(
-		"ProjectsModal rendering with isOpen:",
-		isOpen,
-		"items:",
-		items.length
-	);
-
 	return (
-		<>
-			<div
-				className={`projects-modal-overlay ${isOpen ? "active" : ""}`}
-				onClick={onClose}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="projects-title">
-				<div className="projects-modal" onClick={(e) => e.stopPropagation()}>
-					<button
-						className="projects-close-btn"
-						onClick={onClose}
-						aria-label="Close projects modal">
-						<svg
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button>
+		<div
+			className={`projects-modal-overlay ${isOpen ? "active" : ""}`}
+			onClick={onClose}
+			role="dialog"
+			aria-modal="true">
+			<div className="projects-modal" onClick={(e) => e.stopPropagation()}>
+				<button
+					className="projects-close-btn"
+					onClick={onClose}
+					aria-label="Close projects modal">
+					×
+				</button>
 
-					<div style={{ position: "relative", width: "100%", height: "100%" }}>
-						{error ? (
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "column",
-									alignItems: "center",
-									justifyContent: "center",
-									height: "100%",
-									color: "#ff6b6b",
-									textAlign: "center",
-									padding: "2rem",
-								}}>
-								<h3 style={{ marginBottom: "1rem" }}>3D Viewer Unavailable</h3>
-								<p>{error}</p>
-								<p
-									style={{
-										fontSize: "0.9rem",
-										opacity: 0.7,
-										marginTop: "1rem",
+				<div style={{ position: "relative", width: "100%", height: "100%" }}>
+					{showMeta && window.innerWidth < 768 && (
+						<div className="meta-backdrop" onClick={() => setShowMeta(false)} />
+					)}
+
+					{error ? (
+						<div className="projects-error">
+							<h3>3D Viewer Unavailable</h3>
+							<p>{error}</p>
+						</div>
+					) : (
+						<>
+							{activeItem && !showMeta && (
+								<div
+									className="center-title"
+									onClick={() => setShowMeta(true)}
+									role="button"
+									tabIndex={0}
+									onKeyDown={(e) => {
+										if (e.key === "Enter" || e.key === " ") {
+											setShowMeta(true);
+										}
 									}}>
-									Please try a modern browser with WebGL support
-								</p>
-							</div>
-						) : (
-							<>
-								<canvas id="infinite-grid-menu-canvas" ref={canvasRef} />
+									<h2>{activeItem.title}</h2>
+									{activeItem.subtitle && <p>{activeItem.subtitle}</p>}
+								</div>
+							)}
 
-								{activeItem && (
-									<>
-										<h2
-											id="projects-title"
-											className={`face-title ${
-												isMoving ? "inactive" : "active"
-											}`}>
-											{activeItem.title}
-										</h2>
+							<canvas id="infinite-grid-menu-canvas" ref={canvasRef} />
+							{showMeta && <div className="readability-tint" />}
 
-										<p
-											className={`face-description ${
-												isMoving ? "inactive" : "active"
-											}`}>
-											{activeItem.description}
-										</p>
-
-										{/* Structured Project Content */}
-										{activeItem.problem && (
-											<div
-												className={`project-details ${
-													isMoving ? "inactive" : "active"
-												}`}>
-												{activeItem.problem && (
-													<div className="detail-section">
-														<span className="detail-label">PROBLEM:</span>
-														<span className="detail-text">{activeItem.problem}</span>
-													</div>
-												)}
-												{activeItem.solution && (
-													<div className="detail-section">
-														<span className="detail-label">SOLUTION:</span>
-														<span className="detail-text">{activeItem.solution}</span>
-													</div>
-												)}
-												{activeItem.techStack && activeItem.techStack.length > 0 && (
-													<div className="detail-section">
-														<span className="detail-label">TECH STACK:</span>
-														<span className="detail-text">{activeItem.techStack.join(", ")}</span>
-													</div>
-												)}
-												{activeItem.contribution && (
-													<div className="detail-section">
-														<span className="detail-label">CONTRIBUTION:</span>
-														<span className="detail-text">{activeItem.contribution}</span>
-													</div>
-												)}
-												{activeItem.outcome && (
-													<div className="detail-section">
-														<span className="detail-label">OUTCOME:</span>
-														<span className="detail-text">{activeItem.outcome}</span>
-													</div>
-												)}
-											</div>
-										)}
-
-										<button
-											onClick={handleButtonClick}
-											onKeyDown={(e) => {
-												if (e.key === "Enter" || e.key === " ") {
-													e.preventDefault();
-													handleButtonClick();
+							{/* Context Rail */}
+							{activeItem && (
+								<aside
+									className={`project-context ${
+										isMoving ? "inactive" : "active"
+									}${showMeta ? "expanded" : ""}`}
+									onPointerDown={startHold}
+									onPointerUp={endHold}
+									onPointerLeave={endHold}
+									onTouchStart={startHold}
+									onClick={(e) => {
+										e.stopPropagation();
+									}}
+									onTouchEnd={endHold}
+									aria-live="polite">
+									{showMeta && (
+										<header
+											className="context-header clickable"
+											onClick={() => {
+												if (window.innerWidth >= 768) {
+													setShowMeta(false);
 												}
 											}}
-											className={`action-button ${
-												isMoving ? "inactive" : "active"
-											}`}
-											aria-label={`Open ${activeItem.title} project`}>
-											<p className="action-button-icon">&#x2197;</p>
+											role="button"
+											tabIndex={0}
+											onKeyDown={(e) => {
+												if (
+													window.innerWidth >= 768 &&
+													(e.key === "Enter" || e.key === " ")
+												) {
+													e.preventDefault();
+													setShowMeta(false);
+												}
+											}}>
+											<h2 className="context-title">{activeItem.title}</h2>
+											{activeItem.subtitle && (
+												<p className="context-subtitle">
+													{activeItem.subtitle}
+												</p>
+											)}
+										</header>
+									)}
+
+									{showMeta && activeItem.meta && (
+										<ul className="context-meta">
+											{activeItem.meta.problem && (
+												<li>
+													<span>Problem</span>
+													<p>{activeItem.meta.problem}</p>
+												</li>
+											)}
+											{activeItem.meta.solution && (
+												<li>
+													<span>Solution</span>
+													<p>{activeItem.meta.solution}</p>
+												</li>
+											)}
+											{activeItem.meta.stack && (
+												<li>
+													<span>Stack</span>
+													<p>{activeItem.meta.stack.join(", ")}</p>
+												</li>
+											)}
+											{activeItem.meta.outcome && (
+												<li>
+													<span>Outcome</span>
+													<p>{activeItem.meta.outcome}</p>
+												</li>
+											)}
+										</ul>
+									)}
+								</aside>
+							)}
+
+							{activeItem && activeItem.links && (
+								<div
+									className={`project-actions ${
+										isMoving ? "inactive" : "active"
+									} ${showMeta ? "disabled" : ""}`}>
+									{/* Live Preview */}
+									{activeItem.links.live && (
+										<button
+											className="project-action-btn"
+											onClick={() =>
+												window.open(activeItem.links.live, "_blank")
+											}
+											aria-label="Open live preview">
+											<img src={liveIcon} alt="" />
+											<span className="action-label">Live Preview</span>
 										</button>
-									</>
-								)}
-							</>
-						)}
-					</div>
+									)}
+
+									{/* GitHub */}
+									{activeItem.links.github && (
+										<button
+											className="project-action-btn"
+											onClick={() =>
+												window.open(activeItem.links.github, "_blank")
+											}
+											aria-label="View source on GitHub">
+											<img src={githubIcon} alt="" />
+											<span className="action-label">GitHub</span>
+										</button>
+									)}
+								</div>
+							)}
+						</>
+					)}
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }

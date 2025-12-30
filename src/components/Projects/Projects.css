@@ -238,7 +238,7 @@
 	font-weight: 600;
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
-	font-family: 'Courier New', monospace;
+	font-family: "Courier New", monospace;
 }
 
 .detail-text {
@@ -272,4 +272,393 @@
 	.detail-section {
 		margin-bottom: 0.5rem;
 	}
+}
+
+/* ===============================
+   Context Rail (Clean Metadata UI)
+================================ */
+
+.project-context {
+	position: absolute;
+	top: 2rem;
+	left: 2rem;
+	max-width: 320px;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	color: rgba(255, 255, 255, 0.85);
+	pointer-events: auto;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.project-context.inactive {
+	opacity: 0;
+	transform: translateY(8px);
+	pointer-events: none;
+}
+
+.context-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.context-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin: 0;
+}
+
+.context-subtitle {
+	font-size: 0.85rem;
+	opacity: 0.6;
+
+	margin: 0;
+}
+
+.context-meta {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.context-meta li span {
+	font-size: 0.7rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 80, 80, 0.85);
+	font-family: "Courier New", monospace;
+}
+
+.context-meta li p {
+	font-size: 0.8rem;
+	margin: 0.15rem 0 0;
+	line-height: 1.45;
+	opacity: 0.75;
+}
+
+/* Mobile: bottom sheet */
+@media (max-width: 768px) {
+	.project-context {
+		top: auto;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		max-width: none;
+		padding: 1rem 1.25rem;
+		background: linear-gradient(
+			to top,
+			rgba(0, 0, 0, 0.9),
+			rgba(0, 0, 0, 0.4),
+			transparent
+		);
+	}
+}
+/* ===============================
+   Mobile Layout Corrections
+================================ */
+
+@media (max-width: 768px) {
+	/* Lift the action button above bottom sheet */
+	.action-button {
+		bottom: 6.5rem; /* critical */
+	}
+
+	/* Give the context room */
+	.project-context {
+		padding-bottom: 2.5rem;
+	}
+
+	/* Prevent visual clipping */
+	.context-title {
+		font-size: 1.1rem;
+	}
+
+	.context-subtitle {
+		font-size: 0.8rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.action-button {
+		bottom: 7.5rem;
+	}
+
+	.project-context {
+		padding-bottom: 3rem;
+	}
+}
+/* ===============================
+   Context Hint
+================================ */
+
+.context-hint {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.7rem;
+	opacity: 0.6;
+	user-select: none;
+}
+
+.hint-key {
+	font-family: "Courier New", monospace;
+	font-size: 0.65rem;
+	padding: 0.15rem 0.35rem;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 4px;
+	line-height: 1;
+}
+
+.hint-text {
+	white-space: nowrap;
+}
+
+/* ===============================
+   Readability Overlay (All Devices)
+================================ */
+
+.project-context.expanded {
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0.65),
+		rgba(0, 0, 0, 0.35),
+		transparent
+	);
+	padding: 1rem 1.25rem;
+	border-radius: 8px;
+}
+
+/* Desktop: subtle */
+@media (min-width: 769px) {
+	.project-context.expanded {
+		max-width: 360px;
+	}
+}
+
+/* Mobile: stronger bottom sheet */
+@media (max-width: 768px) {
+	.project-context {
+		border-radius: 0;
+	}
+
+	.project-context.expanded {
+		background: linear-gradient(
+			to top,
+			rgba(0, 0, 0, 0.9),
+			rgba(0, 0, 0, 0.45),
+			transparent
+		);
+	}
+}
+
+.meta-backdrop {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: transparent;
+}
+
+/* make sure context is above backdrop */
+.project-context {
+	z-index: 2;
+}
+/* ===============================
+   Centered Title (Collapsed State)
+================================ */
+
+.center-title {
+	position: absolute;
+	top: 2.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	text-align: center;
+	cursor: pointer;
+	user-select: none;
+	transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.center-title h2 {
+	margin: 0;
+	font-size: 1.6rem;
+	font-weight: 600;
+	color: rgb(229, 57, 53);
+}
+
+.center-title p {
+	margin: 0.25rem 0 0;
+	font-size: 0.9rem;
+	color: rgb(255, 255, 255);
+	opacity: 0.6;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+	.center-title h2 {
+		font-size: 1.3rem;
+	}
+}
+
+/* ===============================
+   Readability Tint (Expanded State)
+================================ */
+
+.readability-tint {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		circle at center,
+		rgba(0, 0, 0, 0.35),
+		rgba(0, 0, 0, 0.75)
+	);
+	pointer-events: none;
+	z-index: 1;
+	animation: tintFadeIn 0.25s ease forwards;
+}
+
+@keyframes tintFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Ensure context rail is above tint */
+.project-context {
+	z-index: 2;
+}
+.context-header.clickable {
+	cursor: pointer;
+}
+
+.context-header.clickable:hover .context-title {
+	opacity: 0.85;
+}
+
+.context-header.clickable:focus-visible {
+	outline: 2px solid rgba(255, 80, 80, 0.6);
+	outline-offset: 4px;
+}
+/* ===============================
+   Project Action Buttons (Unified)
+================================ */
+
+.project-actions {
+	position: absolute;
+	bottom: 3rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 0.75rem;
+	z-index: 5;
+	transition: opacity 0.3s ease;
+}
+
+.project-actions.inactive {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Base button — matches X button */
+.project-action-btn {
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0.4rem 0.55rem;
+	background: rgba(165, 56, 56, 0.56);
+	border: 1px solid rgba(219, 36, 36, 0.72);
+	border-radius: 6px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem;
+
+	cursor: pointer;
+	position: relative;
+	transition: all 0.25s ease;
+}
+
+/* Icon */
+.project-action-btn img {
+	width: 20px;
+	height: 20px;
+	filter: brightness(0); /* pure black like X */
+	pointer-events: none;
+}
+
+/* Label INSIDE the red background */
+.project-action-btn .action-label {
+	font-size: 0.65rem;
+	font-family: "Courier New", monospace;
+	letter-spacing: 0.04em;
+	color: rgba(0, 0, 0, 0.85);
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+/* Hover — desktop */
+.project-action-btn:hover {
+	background: rgba(223, 22, 22, 0.66);
+	border-color: rgba(255, 80, 80, 0.5);
+	transform: scale(1.3);
+}
+
+/* ---------------- Desktop only hover emphasis ---------------- */
+@media (min-width: 769px) {
+	.project-action-btn .action-label {
+		opacity: 0.85;
+	}
+
+	.project-action-btn:hover .action-label {
+		opacity: 1;
+	}
+}
+
+/* ---------------- Mobile ---------------- */
+@media (max-width: 768px) {
+	.project-actions {
+		bottom: 2.25rem;
+		gap: 0.5rem;
+	}
+
+	.project-action-btn {
+		padding: 0.45rem 0.6rem;
+		transform: none;
+	}
+
+	/* Force text black on mobile */
+	.project-action-btn .action-label {
+		color: #000;
+		font-size: 0.6rem;
+	}
+}
+/* ===============================
+   Disabled State (Meta Open)
+================================ */
+
+.project-actions.disabled {
+	opacity: 0.35;
+	filter: grayscale(1);
+	pointer-events: none;
+}
+
+.project-actions.disabled .project-action-btn {
+	transform: none !important;
+	background: rgba(165, 56, 56, 0.35);
+	border-color: rgba(219, 36, 36, 0.35);
+	cursor: not-allowed;
+}
+
+.project-actions.disabled img {
+	filter: brightness(0.2);
+}
+
+.project-actions.disabled .action-label {
+	color: rgba(0, 0, 0, 0.4);
 }

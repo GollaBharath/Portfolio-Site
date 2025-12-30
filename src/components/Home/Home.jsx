@@ -69,9 +69,7 @@ function Home({
 
 	// Watch for projects popup trigger from Terminal
 	useEffect(() => {
-		console.log("Projects popup trigger:", projectsPopupTrigger);
 		if (projectsPopupTrigger > 0 && onProjectsPopupChange) {
-			console.log("Opening projects popup");
 			isUpdatingFromParent.current = true;
 			onProjectsPopupChange(true);
 			setProjectsFolderOpen(true);
@@ -230,7 +228,7 @@ function Home({
 	const folders = [
 		{
 			id: "help",
-			label: "help --usage",
+			label: "Help",
 			logoSrc: helpIcon,
 			color: "#991414",
 			isOpen: helpFolderOpen,
@@ -244,7 +242,7 @@ function Home({
 		},
 		{
 			id: "projects",
-			label: "projects --list",
+			label: "Projects",
 			logoSrc: projectIcon,
 			color: "#991414",
 			isOpen: projectsFolderOpen,
@@ -258,7 +256,7 @@ function Home({
 		},
 		{
 			id: "stats",
-			label: "stats --summary",
+			label: "Stats",
 			logoSrc: chartIcon,
 			color: "#991414",
 			isOpen: statsFolderOpen,
@@ -272,7 +270,7 @@ function Home({
 		},
 		{
 			id: "experience",
-			label: "experience --log",
+			label: "Experience",
 			logoSrc: timeSandIcon,
 			color: "#991414",
 			isOpen: experienceFolderOpen,
@@ -286,7 +284,7 @@ function Home({
 		},
 		{
 			id: "socials",
-			label: "connect",
+			label: "Socials",
 			logoSrc: globeIcon,
 			color: "#991414",
 			isOpen: socialsFolderOpen,
@@ -472,7 +470,7 @@ function Home({
 		const currentPos = positions[draggedId] || { x: 0, y: 0 };
 		const dragDistance = Math.sqrt(
 			Math.pow(currentPos.x - dragInitialPos.current.x, 2) +
-			Math.pow(currentPos.y - dragInitialPos.current.y, 2)
+				Math.pow(currentPos.y - dragInitialPos.current.y, 2)
 		);
 
 		if (dragDistance < 5) {
@@ -517,8 +515,9 @@ function Home({
 							<div
 								key={folder.id}
 								ref={(el) => (elementsRef.current[folder.id] = el)}
-								className={`floating-element folder-element ${hoveredId === folder.id ? "hovered" : ""
-									} ${isDragging ? "dragging" : ""}`}
+								className={`floating-element folder-element ${
+									hoveredId === folder.id ? "hovered" : ""
+								} ${isDragging ? "dragging" : ""}`}
 								style={{
 									animationDelay: `${index * 0.5}s`,
 									animationDuration: `${8 + index}s`,

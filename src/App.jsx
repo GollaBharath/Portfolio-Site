@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Terminal from "./components/Terminal/Terminal";
 import Home from "./components/Home/Home";
-import CardModal from "./components/CardModal/CardModal";
 import CommandCarousel from "./components/CommandCarousel/CommandCarousel";
 import SocialsPopup from "./components/SocialsPopup/SocialsPopup";
 import ProjectsModal from "./components/Projects/Projects";
@@ -21,6 +20,12 @@ import {
 	useSystemState,
 } from "./context/SystemStateContext";
 import { ReactLenis } from "lenis/react";
+
+// projects
+import GamifyImg from "../src/assets/projects/Gamify.png";
+import ADBImg from "../src/assets/projects/ADB.png";
+import TTTImg from "../src/assets/projects/TicTacToe.png";
+import CalcImg from "../src/assets/projects/Calc.png";
 
 function AppShell() {
 	const [modalOpen, setModalOpen] = useState(false);
@@ -180,11 +185,11 @@ function AppShell() {
 							onSocialsClick={handleOpenSocials}
 							onProjectsClick={handleOpenProjects}
 						/>
-						<CardModal
+						{/* <CardModal
 							isOpen={modalOpen}
 							cardId={activeCard}
 							onClose={closeModal}
-						/>
+						/> */}
 						<CommandCarousel
 							isOpen={helpPopupOpen}
 							onClose={() => setHelpPopupOpen(false)}
@@ -210,61 +215,79 @@ function AppShell() {
 							onClose={() => setProjectsPopupOpen(false)}
 							items={[
 								{
-									image: "https://picsum.photos/900/900?grayscale&random=1",
-									link: "https://github.com/GollaBharath/Portfolio-Site",
-									title: "Portfolio Site",
-									description:
-										"Terminal-first portfolio with WebGL graphics and keyboard-centric navigation",
-									problem: "Traditional portfolios lack personality and fail to showcase technical depth",
-									solution: "Built an interactive, system-inspired portfolio with CLI navigation and 3D project visualization",
-									techStack: ["React", "WebGL", "Three.js", "Vite", "CSS3"],
-									contribution: "Full-stack development, UI/UX design, WebGL implementation, performance optimization",
-									outcome: "Live production site with unique developer-focused UX",
+									image: ADBImg,
+									links: {
+										github:
+											"https://github.com/harshendram/Advanced-Discord-Bot",
+										live: "https://harshendram.github.io/Advanced-Discord-Bot/",
+									},
+
+									title: "FOSS Discord Bot",
+									subtitle: "Open Source Project | Top Contributor",
+									meta: {
+										problem:
+											"All the available discord bots were private and pay to use for large servers.",
+										solution:
+											"A open source bot which can be hosted with a few clicks and has all the features of paid bots.",
+										stack: ["Nodejs", "Mongodb", "DiscordJS"],
+										outcome: "Open Source Alternative for Paid Features.",
+									},
 								},
 								{
-									image: "https://picsum.photos/900/900?grayscale&random=2",
-									link: "https://github.com/GollaBharath/terminal-cli",
-									title: "Terminal CLI Simulator",
-									description:
-										"Command-line interface simulator with autocomplete and command history",
-									problem: "Need for an accessible, web-based terminal experience for portfolio navigation",
-									solution: "Developed custom CLI with autocomplete, keyboard shortcuts, and smooth animations",
-									techStack: ["JavaScript", "React", "CSS Animations"],
-									contribution: "Core CLI logic, autocomplete engine, keyboard navigation system",
-									outcome: "Integrated into portfolio with full keyboard accessibility",
+									image: CalcImg,
+									links: {
+										github: "https://github.com/GollaBharath/Calculator-Odin-",
+										live: "https://gollabharath.me/Calculator-Odin-/",
+									},
+
+									title: "Calculator",
+									subtitle: 'Part of "The Odin Project".',
+									meta: {
+										problem:
+											"The Odin Project had this challenge of making a Calculator from scratch.",
+										solution: "I built a Calculator.",
+										stack: ["HTML", "CSS", "JavaScript"],
+										outcome:
+											"I was able to build a Calculator without using any AI.",
+									},
 								},
 								{
-									image: "https://picsum.photos/900/900?grayscale&random=3",
-									link: "https://github.com/GollaBharath/webgl-projects",
-									title: "WebGL Graphics Engine",
-									description: "Interactive 3D graphics and animations using WebGL 2.0",
-									problem: "Complex 3D project visualization needed for portfolio",
-									solution: "Built custom WebGL renderer with arcball controls and texture atlasing",
-									techStack: ["WebGL 2.0", "GLSL", "gl-matrix", "JavaScript"],
-									contribution: "Shader programming, geometry generation, camera controls, performance tuning",
-									outcome: "Smooth 60fps 3D sphere navigation with project thumbnails",
+									image: GamifyImg,
+									links: {
+										github: "https://github.com/GollaBharath/Gamify",
+										live: "https://github.com/GollaBharath/Gamify",
+									},
+
+									title: "Gamify",
+									subtitle: "Open Source Project | Maintainer.",
+									meta: {
+										problem:
+											"Communities often lose engagement after a few days. People get bored and move on to other things.",
+										solution:
+											"A platform where organizers can host events, give fun tasks, maintain a digital economy of points, and keep the community engaged for a long time.",
+										stack: ["DiscordJS", "MERN Stack"],
+										outcome:
+											"We are still building the platform - it is not public yet.",
+									},
 								},
+
 								{
-									image: "https://picsum.photos/900/900?grayscale&random=4",
-									link: "https://github.com/GollaBharath/mobile-apps",
-									title: "Mobile Applications",
-									description: "Cross-platform mobile apps for iOS and Android",
-									problem: "Needed mobile presence for projects and services",
-									solution: "Developed React Native applications with native performance",
-									techStack: ["React Native", "TypeScript", "Redux", "Firebase"],
-									contribution: "Architecture design, state management, API integration, deployment",
-									outcome: "Published apps with 1000+ downloads and 4.5+ ratings",
-								},
-								{
-									image: "https://picsum.photos/900/900?grayscale&random=5",
-									link: "https://github.com/GollaBharath/api-services",
-									title: "API Services & Microservices",
-									description: "RESTful APIs and microservices architecture",
-									problem: "Scalable backend infrastructure needed for multiple projects",
-									solution: "Designed and implemented microservices with Docker and CI/CD",
-									techStack: ["Node.js", "Express", "Docker", "PostgreSQL", "Redis"],
-									contribution: "API design, database schema, containerization, deployment automation",
-									outcome: "Production-ready services handling 10k+ requests/day",
+									image: TTTImg,
+									links: {
+										github: "https://github.com/GollaBharath/Tic-Tac-Toe",
+										live: "https://gollabharath.me/Tic-Tac-Toe/",
+									},
+
+									title: "TicTacToe",
+									subtitle: 'Part of "The Odin Project".',
+									meta: {
+										problem:
+											"The Odin Project had this challenge of making a tic tac toe game from scratch.",
+										solution: "I built a Tic Tac Toe game.",
+										stack: ["HTML", "CSS", "JavaScript"],
+										outcome:
+											"I was able to build a Tic Tac Toe game without using any AI.",
+									},
 								},
 							]}
 							scale={1.5}
