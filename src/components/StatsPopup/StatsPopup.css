@@ -1,483 +1,1486 @@
 /* ================= Overlay & Popup ================= */
 
 .stats-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10100;
-    padding: 1rem;
-    animation: fadeIn 0.3s ease-out;
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(12px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10100;
+	padding: 1rem;
+	animation: fadeIn 0.3s ease-out;
 }
 
 .stats-popup {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 80, 80, 0.5);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 100px rgba(151, 5, 5, 0.4);
-    max-width: 900px;
-    width: 100%;
-    max-height: 90vh;
-    overflow: hidden;
-    position: relative;
-    z-index: 10101;
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	background: rgba(0, 0, 0, 0.85);
+	backdrop-filter: blur(20px);
+	border: 2px solid rgba(255, 80, 80, 0.5);
+	border-radius: 12px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 100px rgba(151, 5, 5, 0.4);
+	max-width: 900px;
+	width: 100%;
+	max-height: 90vh;
+	overflow: hidden;
+	position: relative;
+	z-index: 10101;
+	animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ================= Header ================= */
 
 .stats-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: rgba(15, 15, 15, 0.95);
-    border-bottom: 2px solid rgba(255, 80, 80, 0.4);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.5rem;
+	background: rgba(15, 15, 15, 0.95);
+	border-bottom: 2px solid rgba(255, 80, 80, 0.4);
 }
 
 .terminal-controls {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
 }
 
 .terminal-prompt {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: rgba(255, 80, 80, 0.95);
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.3rem;
+	font-weight: bold;
+	color: rgba(255, 80, 80, 0.95);
 }
 
 .terminal-title {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.95);
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, 0.95);
+}
+
+.header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.stats-refresh {
+	background: transparent;
+	border: none;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: rgba(255, 80, 80, 0.7);
+	border-radius: 6px;
+	transition: all 0.2s ease;
+	font-size: 1.2rem;
+}
+
+.stats-refresh:hover:not(:disabled) {
+	background: rgba(255, 80, 80, 0.1);
+	color: rgba(255, 80, 80, 1);
+}
+
+.stats-refresh:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .stats-close {
-    background: transparent;
-    border: none;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: rgba(255, 80, 80, 0.7);
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    font-size: 1.2rem;
+	background: transparent;
+	border: none;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: rgba(255, 80, 80, 0.7);
+	border-radius: 6px;
+	transition: all 0.2s ease;
+	font-size: 1.2rem;
 }
 
 .stats-close:hover {
-    background: rgba(255, 80, 80, 0.1);
-    color: rgba(255, 80, 80, 1);
+	background: rgba(255, 80, 80, 0.1);
+	color: rgba(255, 80, 80, 1);
 }
 
 .stats-close:focus-visible {
-    outline: 2px solid rgba(255, 80, 80, 0.9);
-    outline-offset: 2px;
+	outline: 2px solid rgba(255, 80, 80, 0.9);
+	outline-offset: 2px;
 }
 
 /* ================= Content ================= */
 
 .stats-content {
-    padding: 2rem 1.5rem;
-    max-height: calc(90vh - 80px);
-    overflow-y: auto;
-    scroll-behavior: smooth;
+	padding: 2rem 1.5rem;
+	max-height: calc(90vh - 80px);
+	overflow-y: auto;
+	scroll-behavior: smooth;
+}
+
+/* ================= Loading & Error States ================= */
+
+.stats-loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	padding: 3rem;
+	font-family: "Courier New", Courier, monospace;
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-spinner {
+	width: 40px;
+	height: 40px;
+	border: 3px solid rgba(255, 80, 80, 0.2);
+	border-top-color: rgba(255, 80, 80, 0.9);
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+.stats-error {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	padding: 3rem;
+	font-family: "Courier New", Courier, monospace;
+	color: rgba(255, 80, 80, 0.9);
+}
+
+.error-icon {
+	font-size: 2rem;
+}
+
+.retry-btn {
+	background: rgba(255, 80, 80, 0.1);
+	border: 1px solid rgba(255, 80, 80, 0.5);
+	color: rgba(255, 80, 80, 0.9);
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-family: "Courier New", Courier, monospace;
+	transition: all 0.2s ease;
+}
+
+.retry-btn:hover {
+	background: rgba(255, 80, 80, 0.2);
 }
 
 /* ================= Sections ================= */
 
 .stats-section {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(255, 80, 80, 0.2);
+	margin-bottom: 2.5rem;
+	padding-bottom: 2rem;
+	border-bottom: 1px solid rgba(255, 80, 80, 0.2);
 }
 
 .stats-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+	border-bottom: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
 }
 
 .section-header {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1.1rem;
-    color: rgba(255, 80, 80, 0.9);
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.1rem;
+	color: rgba(255, 80, 80, 0.9);
+	font-weight: bold;
+	letter-spacing: 1px;
+	margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	user-select: none;
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+	margin-left: -0.75rem;
+	margin-right: -0.75rem;
+}
+
+.section-header:hover {
+	color: rgba(255, 80, 80, 1);
+	background: rgba(255, 80, 80, 0.05);
+	text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
 }
 
 .section-marker {
-    color: rgba(255, 80, 80, 1);
-    font-size: 1.2rem;
+	color: rgba(255, 80, 80, 1);
+	font-size: 1.2rem;
 }
 
-/* ================= Overview Section ================= */
-
-.metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+.collapse-indicator {
+	margin-left: auto;
+	font-size: 0.9rem;
+	color: rgba(255, 80, 80, 0.7);
+	transition: transform 0.2s ease;
 }
 
-.metric-block {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 80, 80, 0.2);
-    border-radius: 8px;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.live-indicator {
+	margin-left: auto;
+	font-size: 0.85rem;
+	font-weight: bold;
+	padding: 0.25rem 0.75rem;
+	border-radius: 4px;
+	letter-spacing: 0.5px;
 }
 
-.metric-label {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.813rem;
-    color: rgba(255, 80, 80, 0.7);
-    font-weight: bold;
-    letter-spacing: 0.5px;
+.live-indicator.status-online {
+	color: rgba(80, 255, 80, 0.9);
 }
 
-.metric-value {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 2rem;
-    color: rgba(255, 255, 255, 0.95);
-    font-weight: bold;
-    line-height: 1;
+.live-indicator.status-idle {
+	color: rgba(255, 200, 80, 0.9);
 }
 
-.metric-unit {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: normal;
-    margin-left: 0.5rem;
+.live-indicator.status-dnd {
+	color: rgba(255, 80, 80, 0.9);
 }
 
-.metric-status {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.75rem;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    width: fit-content;
+.live-indicator.status-offline {
+	color: rgba(150, 150, 150, 0.9);
 }
 
-.metric-status.status-active {
-    background: rgba(80, 255, 80, 0.1);
-    color: rgba(80, 255, 80, 0.9);
-    border: 1px solid rgba(80, 255, 80, 0.3);
+/* ================= Discord Section ================= */
+
+.discord-card {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 1.25rem;
 }
 
-.metric-status.status-consistent {
-    background: rgba(100, 149, 237, 0.1);
-    color: rgba(100, 149, 237, 0.9);
-    border: 1px solid rgba(100, 149, 237, 0.3);
+.discord-user {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1rem;
 }
 
-.metric-status.status-high-utilization {
-    background: rgba(255, 165, 0, 0.1);
-    color: rgba(255, 165, 0, 0.9);
-    border: 1px solid rgba(255, 165, 0, 0.3);
+.discord-avatar {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 80, 80, 0.4);
 }
 
-.primary-domains {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 80, 80, 0.2);
-    border-radius: 8px;
-    padding: 1.25rem;
+.discord-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
 }
 
-.domains-label {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.813rem;
-    color: rgba(255, 80, 80, 0.7);
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.75rem;
+.discord-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.25rem;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.95);
 }
 
-.domains-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+.discord-username {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.5);
 }
 
-.domain-item {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 80, 80, 0.1);
-    border: 1px solid rgba(255, 80, 80, 0.3);
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
+.discord-platform {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
+	margin-top: 0.25rem;
+}
+
+.platform-label {
+	color: rgba(255, 80, 80, 0.7);
+	font-weight: bold;
+}
+
+.platform-value {
+	color: rgba(255, 255, 255, 0.8);
+	margin-left: 0.5rem;
+}
+
+.discord-status-message {
+	background: rgba(255, 80, 80, 0.05);
+	border: 1px solid rgba(255, 80, 80, 0.15);
+	border-radius: 6px;
+	padding: 0.75rem 1rem;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	margin-bottom: 1rem;
+}
+
+.status-label {
+	color: rgba(255, 80, 80, 0.7);
+	font-weight: bold;
+}
+
+.status-text {
+	color: rgba(255, 255, 255, 0.85);
+	margin-left: 0.5rem;
+	font-style: italic;
+}
+
+.discord-activities {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.activity-item {
+	background: rgba(100, 149, 237, 0.1);
+	border: 1px solid rgba(100, 149, 237, 0.3);
+	border-radius: 6px;
+	padding: 0.75rem 1rem;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+}
+
+.activity-name {
+	color: rgba(100, 149, 237, 0.9);
+	font-weight: bold;
+	display: block;
+	margin-bottom: 0.25rem;
+}
+
+.activity-details,
+.activity-state {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.85rem;
+	display: block;
+}
+
+/* ================= Spotify Section ================= */
+
+.spotify-card {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 1.25rem;
+	display: flex;
+	gap: 1.25rem;
+	align-items: center;
+	position: relative;
+}
+
+.spotify-album-art {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.spotify-album-art img {
+	width: 100px;
+	height: 100px;
+	border-radius: 6px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.playing-animation {
+	position: absolute;
+	bottom: 6px;
+	right: 6px;
+	display: flex;
+	align-items: flex-end;
+	gap: 2px;
+	height: 16px;
+	background: rgba(0, 0, 0, 0.7);
+	padding: 3px 5px;
+	border-radius: 3px;
+}
+
+.playing-animation span {
+	width: 3px;
+	background: rgba(80, 255, 80, 0.9);
+	border-radius: 1px;
+	animation: soundBar 0.5s ease-in-out infinite alternate;
+}
+
+.playing-animation span:nth-child(1) {
+	height: 60%;
+	animation-delay: 0s;
+}
+
+.playing-animation span:nth-child(2) {
+	height: 100%;
+	animation-delay: 0.2s;
+}
+
+.playing-animation span:nth-child(3) {
+	height: 40%;
+	animation-delay: 0.4s;
+}
+
+@keyframes soundBar {
+	0% {
+		height: 30%;
+	}
+	100% {
+		height: 100%;
+	}
+}
+
+.spotify-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.spotify-track {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.1rem;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.95);
+	margin-bottom: 0.25rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.spotify-artist {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(80, 255, 80, 0.8);
+	margin-bottom: 0.25rem;
+}
+
+.spotify-album {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.5);
+	margin-bottom: 0.75rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.spotify-progress {
+	margin-top: 0.5rem;
+}
+
+.progress-bar {
+	width: 100%;
+	height: 4px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.progress-fill {
+	width: var(--progress, 0%);
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.8),
+		rgba(80, 255, 80, 0.8)
+	);
+	border-radius: 2px;
+	transition: width 0.5s ease;
+}
+
+.progress-time {
+	display: flex;
+	justify-content: space-between;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.5);
+	margin-top: 0.25rem;
+}
+
+.spotify-link {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 80, 80, 0.1);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 6px;
+	color: rgba(255, 80, 80, 0.8);
+	text-decoration: none;
+	font-size: 1rem;
+	transition: all 0.2s ease;
+}
+
+.spotify-link:hover {
+	background: rgba(255, 80, 80, 0.2);
+	color: rgba(255, 80, 80, 1);
+}
+
+.spotify-idle {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.idle-icon {
+	font-size: 2rem;
+	opacity: 0.5;
+}
+
+.idle-text {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+/* ================= LeetCode Section ================= */
+
+.leetcode-container {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 1.25rem;
+}
+
+.leetcode-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.5rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid rgba(255, 80, 80, 0.15);
+}
+
+.leetcode-user {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.leetcode-avatar {
+	width: 50px;
+	height: 50px;
+	border-radius: 8px;
+	border: 2px solid rgba(255, 80, 80, 0.4);
+}
+
+.leetcode-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.leetcode-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.1rem;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.95);
+}
+
+.leetcode-ranking {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
+	color: rgba(255, 165, 0, 0.8);
+}
+
+.leetcode-total {
+	text-align: center;
+}
+
+.total-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 2.5rem;
+	font-weight: bold;
+	color: rgba(255, 80, 80, 0.95);
+	line-height: 1;
+}
+
+.total-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.5);
+	letter-spacing: 1px;
+}
+
+.leetcode-problems {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.problem-category {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.problem-category .category-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+}
+
+.problem-category .category-name {
+	font-weight: bold;
+	letter-spacing: 0.5px;
+}
+
+.problem-category.easy .category-name {
+	color: rgba(80, 255, 80, 0.9);
+}
+
+.problem-category.medium .category-name {
+	color: rgba(255, 200, 80, 0.9);
+}
+
+.problem-category.hard .category-name {
+	color: rgba(255, 80, 80, 0.9);
+}
+
+.category-count {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.category-bar {
+	width: 100%;
+	height: 6px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.problem-category.easy .bar-fill {
+	background: rgba(80, 255, 80, 0.7);
+}
+
+.problem-category.medium .bar-fill {
+	background: rgba(255, 200, 80, 0.7);
+}
+
+.problem-category.hard .bar-fill {
+	background: rgba(255, 80, 80, 0.7);
+}
+
+.bar-fill {
+	height: 100%;
+	border-radius: 3px;
+	transition: width 0.5s ease;
+}
+
+.leetcode-stats-row {
+	display: flex;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.stat-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.stat-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 80, 80, 0.7);
+	font-weight: bold;
+	letter-spacing: 0.5px;
+}
+
+.stat-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, 0.9);
+	font-weight: bold;
+}
+
+.stats-unavailable {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 2rem;
+	text-align: center;
+	font-family: "Courier New", Courier, monospace;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+/* ================= GitHub Section ================= */
+
+.github-container {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 1.25rem;
+}
+
+.github-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1.5rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid rgba(255, 80, 80, 0.15);
+	position: relative;
+}
+
+.github-user {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.github-avatar {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 80, 80, 0.4);
+}
+
+.github-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.github-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.15rem;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.95);
+}
+
+.github-username {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.github-link {
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 80, 80, 0.1);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 6px;
+	color: rgba(255, 80, 80, 0.8);
+	text-decoration: none;
+	font-size: 1rem;
+	transition: all 0.2s ease;
+}
+
+.github-link:hover {
+	background: rgba(255, 80, 80, 0.2);
+	color: rgba(255, 80, 80, 1);
+}
+
+.github-metrics {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.github-metrics .metric-item {
+	text-align: center;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.15);
+	border-radius: 6px;
+	padding: 0.75rem;
+}
+
+.github-metrics .metric-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: rgba(255, 80, 80, 0.9);
+	line-height: 1;
+}
+
+.github-metrics .metric-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.5);
+	letter-spacing: 0.5px;
+	margin-top: 0.5rem;
+}
+
+.github-languages {
+	margin-bottom: 1.5rem;
+}
+
+.languages-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.7);
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	margin-bottom: 1rem;
+}
+
+.languages-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.language-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.language-item > div:first-child {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.language-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.language-percent {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.language-bar {
+	width: 100%;
+	height: 6px;
+	background: rgba(255, 80, 80, 0.1);
+	border-radius: 3px;
+	overflow: hidden;
+	position: relative;
+}
+
+.language-bar .bar-fill {
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.8),
+		rgba(100, 149, 237, 0.7)
+	);
+	border-radius: 3px;
+	transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+}
+
+.github-activity {
+	padding-top: 1rem;
+	border-top: 1px solid rgba(255, 80, 80, 0.15);
+}
+
+.activity-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.7);
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	margin-bottom: 1rem;
+}
+
+.activity-stats {
+	display: flex;
+	gap: 2rem;
+	flex-wrap: wrap;
+}
+
+.activity-stats .activity-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.activity-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.25rem;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.activity-label-sm {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.5);
+	letter-spacing: 0.5px;
+}
+
+/* Contribution Graph */
+.contribution-graph {
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(255, 80, 80, 0.15);
+}
+
+.contribution-graph .graph-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.7);
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	margin-bottom: 1rem;
+}
+
+.graph-bars {
+	display: flex;
+	align-items: flex-end;
+	gap: 3px;
+	height: 80px;
+	padding: 0.5rem;
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
+}
+
+.graph-bar {
+	flex: 1;
+	min-height: 4px;
+	background: linear-gradient(
+		to top,
+		rgba(255, 80, 80, 0.8),
+		rgba(255, 120, 120, 0.4)
+	);
+	border-radius: 2px 2px 0 0;
+	transition: all 0.3s ease;
+	animation: barGrowth 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+	cursor: pointer;
+}
+
+.graph-bar:hover {
+	background: linear-gradient(
+		to top,
+		rgba(255, 80, 80, 1),
+		rgba(255, 120, 120, 0.6)
+	);
+	transform: scaleY(1.1);
+}
+
+@keyframes barGrowth {
+	from {
+		transform: scaleY(0);
+		opacity: 0;
+	}
+	to {
+		transform: scaleY(1);
+		opacity: 1;
+	}
 }
 
 /* ================= Toolchain Section ================= */
 
 .toolchain-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1.5rem;
 }
 
 .toolchain-category {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 80, 80, 0.2);
-    border-radius: 8px;
-    padding: 1.25rem;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 1.25rem;
 }
 
-.category-name {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.875rem;
-    color: rgba(255, 80, 80, 0.8);
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 80, 80, 0.2);
+.toolchain-category .category-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.875rem;
+	color: rgba(255, 80, 80, 0.8);
+	font-weight: bold;
+	letter-spacing: 1px;
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid rgba(255, 80, 80, 0.2);
 }
 
 .tools-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
 }
 
 .tool-item {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.875rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.875rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
 }
 
 .tool-name {
-    color: rgba(255, 255, 255, 0.85);
-    flex: 1;
+	color: rgba(255, 255, 255, 0.85);
+	flex: 1;
 }
 
 .tool-level {
-    font-size: 0.75rem;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    white-space: nowrap;
+	font-size: 0.75rem;
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	white-space: nowrap;
 }
 
 .tool-level.level-primary {
-    background: rgba(80, 255, 80, 0.1);
-    color: rgba(80, 255, 80, 0.9);
-    border: 1px solid rgba(80, 255, 80, 0.3);
+	background: rgba(80, 255, 80, 0.1);
+	color: rgba(80, 255, 80, 0.9);
+	border: 1px solid rgba(80, 255, 80, 0.3);
 }
 
 .tool-level.level-secondary {
-    background: rgba(100, 149, 237, 0.1);
-    color: rgba(100, 149, 237, 0.9);
-    border: 1px solid rgba(100, 149, 237, 0.3);
+	background: rgba(100, 149, 237, 0.1);
+	color: rgba(100, 149, 237, 0.9);
+	border: 1px solid rgba(100, 149, 237, 0.3);
 }
 
 .tool-level.level-exploring {
-    background: rgba(255, 165, 0, 0.1);
-    color: rgba(255, 165, 0, 0.9);
-    border: 1px solid rgba(255, 165, 0, 0.3);
+	background: rgba(255, 165, 0, 0.1);
+	color: rgba(255, 165, 0, 0.9);
+	border: 1px solid rgba(255, 165, 0, 0.3);
 }
 
-/* ================= Live / Presence Section ================= */
+/* ================= Footer ================= */
 
-.embeds-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+.stats-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 1.5rem;
+	margin-top: 1.5rem;
+	border-top: 1px solid rgba(255, 80, 80, 0.2);
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
 }
 
-.embed-block {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 80, 80, 0.2);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.embed-header {
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.embed-header:hover {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.embed-info {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.embed-label {
-    color: rgba(255, 80, 80, 0.7);
-    font-weight: bold;
-}
-
-.embed-value {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.embed-separator {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.embed-toggle {
-    background: transparent;
-    border: none;
-    color: rgba(255, 80, 80, 0.7);
-    font-size: 0.875rem;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    transition: color 0.2s ease;
-}
-
-.embed-toggle:hover {
-    color: rgba(255, 80, 80, 1);
-}
-
-.embed-disabled {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-    font-weight: bold;
-}
-
-.embed-content {
-    padding: 0 1.25rem 1.25rem;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.embed-content iframe {
-    border-radius: 8px;
-    opacity: 0.9;
-}
-
-.embeds-note {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.813rem;
-    color: rgba(255, 255, 255, 0.5);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.footer-note {
+	color: rgba(255, 255, 255, 0.5);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .note-marker {
-    color: rgba(255, 80, 80, 0.6);
-    font-weight: bold;
+	color: rgba(255, 80, 80, 0.6);
+	font-weight: bold;
+}
+
+.last-updated {
+	color: rgba(255, 255, 255, 0.4);
 }
 
 /* ================= Animations ================= */
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+	from {
+		opacity: 0;
+	}
 
-    to {
-        opacity: 1;
-    }
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 /* ================= Scrollbar Styling ================= */
 
 .stats-content::-webkit-scrollbar {
-    width: 8px;
+	width: 8px;
 }
 
 .stats-content::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 4px;
 }
 
 .stats-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 80, 80, 0.3);
-    border-radius: 4px;
+	background: rgba(255, 80, 80, 0.3);
+	border-radius: 4px;
 }
 
 .stats-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 80, 80, 0.5);
+	background: rgba(255, 80, 80, 0.5);
 }
 
 /* ================= Responsive ================= */
 
 @media (max-width: 768px) {
-    .stats-popup {
-        max-width: 95%;
-        max-height: 85vh;
-    }
+	.stats-popup {
+		max-width: 95%;
+		max-height: 85vh;
+	}
 
-    .stats-content {
-        padding: 1.5rem 1rem;
-    }
+	.stats-content {
+		padding: 1.5rem 1rem;
+	}
 
-    .metrics-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+	.toolchain-grid {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
 
-    .toolchain-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+	.spotify-card {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 
-    .metric-value {
-        font-size: 1.75rem;
-    }
+	.spotify-album-art img {
+		width: 80px;
+		height: 80px;
+	}
 
-    .embed-info {
-        font-size: 0.813rem;
-    }
+	.spotify-info {
+		width: 100%;
+	}
 
-    .tool-item {
-        font-size: 0.813rem;
-    }
+	.spotify-link {
+		top: auto;
+		bottom: 1rem;
+		right: 1rem;
+	}
+
+	.leetcode-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.leetcode-total {
+		align-self: flex-start;
+	}
+
+	.discord-user {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.tool-item {
+		font-size: 0.813rem;
+	}
+
+	.stats-footer {
+		flex-direction: column;
+		gap: 0.5rem;
+		align-items: flex-start;
+	}
 }
 
 /* ================= Reduced Motion ================= */
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
+	* {
+		animation: none !important;
+		transition: none !important;
+	}
+
+	.playing-animation span {
+		animation: none !important;
+	}
+}
+/* ================= WakaTime Section ================= */
+
+.wakatime-container {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 8px;
+	padding: 1.5rem;
+}
+
+.wakatime-overview {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.overview-card {
+	background: rgba(255, 80, 80, 0.05);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 6px;
+	padding: 1rem;
+	text-align: center;
+	transition: all 0.3s ease;
+}
+
+.overview-card:hover {
+	background: rgba(255, 80, 80, 0.08);
+	border-color: rgba(255, 80, 80, 0.5);
+	transform: translateY(-2px);
+}
+
+.overview-card .card-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 80, 80, 0.7);
+	letter-spacing: 1px;
+	margin-bottom: 0.5rem;
+	font-weight: bold;
+}
+
+.overview-card .card-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.5rem;
+	color: rgba(255, 255, 255, 0.95);
+	font-weight: bold;
+}
+
+.wakatime-languages {
+	margin-bottom: 1.5rem;
+}
+
+.wakatime-languages .languages-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.7);
+	letter-spacing: 1px;
+	margin-bottom: 1rem;
+	font-weight: bold;
+}
+
+.wakatime-languages .languages-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.wakatime-languages .language-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.wakatime-languages .language-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.wakatime-languages .language-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.wakatime-languages .language-time {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.8);
+}
+
+.wakatime-languages .language-bar {
+	height: 6px;
+	background: rgba(255, 80, 80, 0.1);
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.wakatime-languages .bar-fill {
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.8),
+		rgba(255, 120, 120, 0.6)
+	);
+	border-radius: 3px;
+	transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wakatime-editors {
+	border-top: 1px solid rgba(255, 80, 80, 0.15);
+	padding-top: 1.5rem;
+}
+
+.wakatime-editors .editors-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.7);
+	letter-spacing: 1px;
+	margin-bottom: 0.75rem;
+	font-weight: bold;
+}
+
+.wakatime-editors .editors-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.wakatime-editors .editor-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	background: rgba(255, 80, 80, 0.05);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 4px;
+	padding: 0.5rem 0.75rem;
+	transition: all 0.2s ease;
+}
+
+.wakatime-editors .editor-item:hover {
+	background: rgba(255, 80, 80, 0.1);
+	border-color: rgba(255, 80, 80, 0.4);
+}
+
+.wakatime-editors .editor-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.wakatime-editors .editor-time {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
+	color: rgba(255, 80, 80, 0.7);
+}
+
+/* ================= Enhanced Transitions ================= */
+
+.stats-section {
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.discord-card,
+.spotify-container,
+.leetcode-card,
+.github-container,
+.wakatime-container,
+.toolchain-grid {
+	animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transform-origin: top;
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* ================= Improved Spacing & Visual Hierarchy ================= */
+
+.stats-section {
+	margin-bottom: 2rem;
+	padding-bottom: 2rem;
+}
+
+.section-header {
+	margin-bottom: 1.25rem;
+	padding: 0.5rem 0;
+}
+
+.discord-card,
+.spotify-container,
+.leetcode-card,
+.github-container,
+.wakatime-container {
+	padding: 1.5rem;
+}
+
+/* Enhanced language bars with smoother animations */
+.language-bar {
+	position: relative;
+	overflow: hidden;
+}
+
+.language-bar .bar-fill {
+	position: relative;
+	transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.language-bar .bar-fill::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.2),
+		transparent
+	);
+	animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+/* Improved metric cards */
+.github-metrics,
+.leetcode-stats {
+	gap: 1.25rem;
+}
+
+.metric-item,
+.stat-item {
+	transition: all 0.3s ease;
+}
+
+.metric-item:hover,
+.stat-item:hover {
+	transform: translateY(-2px);
+}
+
+/* Better scrollbar styling */
+.stats-content::-webkit-scrollbar {
+	width: 8px;
+}
+
+.stats-content::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 4px;
+}
+
+.stats-content::-webkit-scrollbar-thumb {
+	background: rgba(255, 80, 80, 0.4);
+	border-radius: 4px;
+	transition: background 0.2s ease;
+}
+
+.stats-content::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 80, 80, 0.6);
 }
