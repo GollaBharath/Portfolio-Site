@@ -48,6 +48,29 @@
 	color: #4a9f4a;
 }
 
+.boot-line .status-failed {
+	color: #ff4444;
+}
+
+.boot-line .status-info {
+	color: #5599ff;
+	animation: info-blink 1s ease-in-out infinite alternate;
+}
+
+@keyframes info-blink {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0.35;
+	}
+}
+
+/* Service name text (grayed out) */
+.boot-line .service-text {
+	color: #606060;
+}
+
 /* User info block - slightly brighter */
 .boot-line.user-info {
 	color: #c8c8c8;

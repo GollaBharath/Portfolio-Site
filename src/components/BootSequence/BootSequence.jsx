@@ -1,17 +1,23 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import "./BootSequence.css";
 
 // Boot log content - structured for line-by-line reveal
-const BOOT_LINES = [
-	{ text: "[ OK ] Initializing interface", type: "log" },
-	{ text: "[ OK ] Loading modules: ui, systems, automation", type: "log" },
-	{ text: "[ OK ] Mounting workspace", type: "log" },
-	{ text: "", type: "spacer" }, // Pause before user block
-	{ text: "USER: bharath", type: "user" },
-	{ text: "ROLE: Computer Science Engineer", type: "user" },
-	{ text: "MODE: system builder", type: "user" },
-	{ text: "", type: "spacer" },
-	{ text: "> Press any key to continue", type: "prompt" },
+const BASE_BOOT_LINES = [
+	{
+		text: "[  OK  ] Started - Impress.Visitor - initialized BIOS",
+		type: "log",
+		status: "ok",
+	},
+	{
+		text: "[  OK  ] Finished - Loading.Assets - Display Server (Xorg) active.",
+		type: "log",
+		status: "ok",
+	},
+	{
+		text: "[FAILED] Error - Read.Everything - Don't ignore any text.",
+		type: "log",
+		status: "failed",
+	},
 ];
 
 // Timing configuration (in ms)
@@ -23,13 +29,68 @@ const TIMING = {
 	pauseBeforePrompt: 300, // Extra pause before final prompt
 };
 
+// Parse a status line into segments for coloring and smooth typing
+function parseStatusLine(text, status) {
+	const statusMatch = text.match(/^(\[\s*(?:OK|FAILED|info)\s*\])(.*)$/);
+	if (!statusMatch) return null;
+
+	const statusBracket = statusMatch[1];
+	const restText = statusMatch[2];
+	const dashMatch = restText.match(/^(.+?)-(.+?)-(.+)$/);
+
+	if (!dashMatch) {
+		return [
+			{ text: statusBracket, className: `status-${status}` },
+			{ text: restText, className: undefined },
+		];
+	}
+
+	const [, beforeDash, serviceName, afterDash] = dashMatch;
+
+	return [
+		{ text: statusBracket, className: `status-${status}` },
+		{ text: `${beforeDash}-`, className: "service-text" },
+		{ text: `${serviceName}-`, className: undefined },
+		{ text: afterDash, className: "service-text" },
+	];
+}
+
+// Render any portion of the parsed segments up to visibleChars
+function renderSegmentSlice(segments, visibleChars) {
+	let remaining = visibleChars;
+	const parts = [];
+
+	for (let i = 0; i < segments.length && remaining > 0; i += 1) {
+		const { text, className } = segments[i];
+		const slice = text.slice(0, remaining);
+		if (slice.length === 0) continue;
+		parts.push(
+			className ? (
+				<span key={i} className={className}>
+					{slice}
+				</span>
+			) : (
+				slice
+			)
+		);
+		remaining -= slice.length;
+	}
+
+	return parts;
+}
+
 /**
  * TypewriterLine - Renders text character by character
  * Calls onComplete when all characters are revealed
  */
-function TypewriterLine({ text, type, isActive, onComplete }) {
+function TypewriterLine({ text, type, status, isActive, onComplete }) {
 	const [charCount, setCharCount] = useState(0);
 	const intervalRef = useRef(null);
+	const parsedSegments =
+		(type === "log" || type === "prompt") && status
+			? parseStatusLine(text, status)
+			: null;
+	const totalLength = text.length;
 
 	useEffect(() => {
 		if (!isActive) {
@@ -37,13 +98,11 @@ function TypewriterLine({ text, type, isActive, onComplete }) {
 			return;
 		}
 
-		// Start typing
 		intervalRef.current = setInterval(() => {
 			setCharCount((prev) => {
 				const next = prev + 1;
-				if (next >= text.length) {
+				if (next >= totalLength) {
 					clearInterval(intervalRef.current);
-					// Notify parent that line is complete
 					setTimeout(() => onComplete?.(), TIMING.lineGap);
 				}
 				return next;
@@ -51,27 +110,39 @@ function TypewriterLine({ text, type, isActive, onComplete }) {
 		}, TIMING.charSpeed);
 
 		return () => clearInterval(intervalRef.current);
-	}, [isActive, text, onComplete]);
+	}, [isActive, onComplete, totalLength]);
 
 	if (!isActive && charCount === 0) return null;
 
-	const visibleText = text.slice(0, charCount);
+	if (parsedSegments) {
+		return <>{renderSegmentSlice(parsedSegments, charCount)}</>;
+	}
 
-	// For log lines, style the [ OK ] prefix differently
-	if (type === "log") {
-		const okPrefix = "[ OK ]";
-		if (charCount <= okPrefix.length) {
-			return <span className="status-ok">{visibleText}</span>;
-		}
+	return <>{text.slice(0, charCount)}</>;
+}
+
+// Render full status lines once typing is complete
+function renderStatusLine(text, status) {
+	const statusMatch = text.match(/^(\[\s*(?:OK|FAILED|info)\s*\])(.*)$/);
+	if (!statusMatch) return text;
+	const [, bracket, restText] = statusMatch;
+
+	// For prompt on desktop, bold Enter
+	if (status === "info" && restText.includes("Enter")) {
+		const [before, after] = restText.split("Enter");
 		return (
 			<>
-				<span className="status-ok">{okPrefix}</span>
-				{visibleText.slice(okPrefix.length)}
+				<span className={`status-${status}`}>{bracket}</span>
+				{before}
+				<strong>Enter</strong>
+				{after}
 			</>
 		);
 	}
 
-	return <>{visibleText}</>;
+	const segments = parseStatusLine(text, status);
+	if (!segments) return text;
+	return <>{renderSegmentSlice(segments, Number.POSITIVE_INFINITY)}</>;
 }
 
 /**
@@ -82,6 +153,29 @@ function TypewriterLine({ text, type, isActive, onComplete }) {
 export default function BootSequence({ onComplete }) {
 	const [isExiting, setIsExiting] = useState(false);
 	const [currentLine, setCurrentLine] = useState(-1); // -1 = not started
+	const [isMobile, setIsMobile] = useState(false);
+
+	// Detect coarse pointers to switch copy for mobile/tablet
+	useEffect(() => {
+		if (typeof window === "undefined") return undefined;
+		const mq = window.matchMedia("(pointer: coarse)");
+		setIsMobile(mq.matches);
+		const handler = (e) => setIsMobile(e.matches);
+		mq.addEventListener("change", handler);
+		return () => mq.removeEventListener("change", handler);
+	}, []);
+
+	const promptText = isMobile
+		? "[  info  ] Click anywhere to continue."
+		: "[  info  ] press Enter to continue.";
+
+	const bootLines = useMemo(
+		() => [
+			...BASE_BOOT_LINES,
+			{ text: promptText, type: "prompt", status: "info" },
+		],
+		[promptText]
+	);
 
 	// Complete the boot sequence with fade out
 	const complete = useCallback(() => {
@@ -95,23 +189,26 @@ export default function BootSequence({ onComplete }) {
 	}, [isExiting, onComplete]);
 
 	// Handle line completion - advance to next line with appropriate delays
-	const handleLineComplete = useCallback((lineIndex) => {
-		// Calculate delay before next line
-		let delay = 0;
+	const handleLineComplete = useCallback(
+		(lineIndex) => {
+			// Calculate delay before next line
+			let delay = 0;
 
-		// Add extra pause after log block (before user info)
-		if (lineIndex === 2) {
-			delay = TIMING.pauseAfterLogs;
-		}
-		// Add pause before final prompt
-		else if (lineIndex === BOOT_LINES.length - 2) {
-			delay = TIMING.pauseBeforePrompt;
-		}
+			// Add extra pause after log block (before prompt)
+			if (lineIndex === 2) {
+				delay = TIMING.pauseAfterLogs;
+			}
+			// Add pause before final prompt
+			else if (lineIndex === bootLines.length - 2) {
+				delay = TIMING.pauseBeforePrompt;
+			}
 
-		setTimeout(() => {
-			setCurrentLine((prev) => prev + 1);
-		}, delay);
-	}, []);
+			setTimeout(() => {
+				setCurrentLine((prev) => prev + 1);
+			}, delay);
+		},
+		[bootLines.length]
+	);
 
 	// Start the sequence
 	useEffect(() => {
@@ -124,13 +221,13 @@ export default function BootSequence({ onComplete }) {
 		return () => clearTimeout(timeoutId);
 	}, [isExiting, currentLine]);
 
-	// Skip handlers - any key or click completes the sequence
+	// Skip handlers - only Enter (desktop) or click/tap completes the sequence
 	useEffect(() => {
 		if (isExiting) return;
 
 		const handleSkip = (e) => {
-			// Prevent default for space/enter to avoid page scroll
-			if (e.type === "keydown" && (e.key === " " || e.key === "Enter")) {
+			if (e.type === "keydown") {
+				if (e.key !== "Enter") return;
 				e.preventDefault();
 			}
 			complete();
@@ -153,20 +250,7 @@ export default function BootSequence({ onComplete }) {
 			aria-modal="true"
 			aria-label="System boot sequence">
 			<div className="boot-log">
-				{BOOT_LINES.map((line, index) => {
-					if (line.type === "spacer") {
-						// Show spacer only after previous lines are done
-						const isVisible = index <= currentLine;
-						return (
-							<div
-								key={index}
-								className="boot-spacer"
-								data-visible={isVisible}
-								aria-hidden="true"
-							/>
-						);
-					}
-
+				{bootLines.map((line, index) => {
 					const isLineActive = index === currentLine;
 					const isLineComplete = index < currentLine;
 					const lineClass =
@@ -183,12 +267,9 @@ export default function BootSequence({ onComplete }) {
 							data-visible={isLineActive || isLineComplete}
 							aria-hidden={!isLineActive && !isLineComplete}>
 							{isLineComplete ? (
-								// Already typed - show full text
-								line.type === "log" ? (
-									<>
-										<span className="status-ok">[ OK ]</span>
-										{line.text.replace("[ OK ]", "")}
-									</>
+								(line.type === "log" || line.type === "prompt") &&
+								line.status ? (
+									renderStatusLine(line.text, line.status)
 								) : (
 									line.text
 								)
@@ -197,6 +278,7 @@ export default function BootSequence({ onComplete }) {
 								<TypewriterLine
 									text={line.text}
 									type={line.type}
+									status={line.status}
 									isActive={isLineActive}
 									onComplete={() => handleLineComplete(index)}
 								/>
