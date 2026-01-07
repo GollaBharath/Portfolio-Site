@@ -54,6 +54,9 @@
 
 .boot-line .status-info {
 	color: #5599ff;
+}
+
+.boot-line.prompt-line[data-visible="true"] {
 	animation: info-blink 1s ease-in-out infinite alternate;
 }
 
