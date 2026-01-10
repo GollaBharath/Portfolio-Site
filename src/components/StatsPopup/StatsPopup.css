@@ -1,3 +1,301 @@
+.github-heatmap-year {
+	margin-top: 1rem;
+}
+
+.heatmap-wrapper-year {
+	overflow-x: auto;
+	overflow-y: hidden;
+	border: 1px solid rgba(255, 80, 80, 0.15);
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.3);
+	padding: 8px;
+	/* Start scrolled to the right (showing recent data first) */
+	direction: rtl;
+}
+
+/* Custom scrollbar for heatmap */
+.heatmap-wrapper-year::-webkit-scrollbar {
+	height: 8px;
+}
+
+.heatmap-wrapper-year::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 4px;
+}
+
+.heatmap-wrapper-year::-webkit-scrollbar-thumb {
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.4),
+		rgba(255, 80, 80, 0.6)
+	);
+	border-radius: 4px;
+	border: 1px solid rgba(255, 80, 80, 0.3);
+}
+
+.heatmap-wrapper-year::-webkit-scrollbar-thumb:hover {
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.6),
+		rgba(255, 80, 80, 0.8)
+	);
+	box-shadow: 0 0 8px rgba(255, 80, 80, 0.4);
+}
+
+.heatmap-wrapper-year::-webkit-scrollbar-thumb:active {
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.7),
+		rgba(255, 80, 80, 0.9)
+	);
+}
+
+/* Firefox scrollbar */
+.heatmap-wrapper-year {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 80, 80, 0.5) rgba(0, 0, 0, 0.3);
+}
+
+.heatmap-grid-year {
+	display: grid;
+	grid-template-columns: repeat(53, 12px);
+	grid-template-rows: repeat(7, 12px);
+	gap: 3px;
+	/* Reset direction for the grid content */
+	direction: ltr;
+	width: fit-content;
+}
+
+.heatmap-cell-year {
+	width: 12px;
+	height: 12px;
+	border-radius: 2px;
+	box-shadow: inset 0 0 0 1px rgba(255, 80, 80, 0.1);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+	cursor: pointer;
+}
+
+.heatmap-cell-year:hover {
+	transform: scale(1.4);
+	box-shadow: 0 0 8px rgba(255, 80, 80, 0.6),
+		inset 0 0 0 1px rgba(255, 80, 80, 0.4);
+	z-index: 10;
+}
+
+/* Top repos */
+.github-top-repos {
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(255, 80, 80, 0.15);
+}
+
+.repos-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.repos-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 80, 80, 0.85);
+	font-weight: bold;
+	letter-spacing: 0.8px;
+	text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
+}
+
+.repo-filters {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.filter-btn {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 80, 80, 0.08) 0%,
+		rgba(255, 80, 80, 0.12) 100%
+	);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	color: rgba(255, 180, 180, 0.9);
+	padding: 0.35rem 0.8rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	transition: all 0.25s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.filter-btn::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 80, 80, 0.2),
+		transparent
+	);
+	transition: left 0.5s ease;
+}
+
+.filter-btn:hover::before {
+	left: 100%;
+}
+
+.filter-btn:hover {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 80, 80, 0.15) 0%,
+		rgba(255, 80, 80, 0.22) 100%
+	);
+	border-color: rgba(255, 80, 80, 0.45);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(255, 80, 80, 0.15);
+}
+
+.filter-btn.active {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 80, 80, 0.25) 0%,
+		rgba(255, 80, 80, 0.35) 100%
+	);
+	border-color: rgba(255, 80, 80, 0.7);
+	color: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 0 15px rgba(255, 80, 80, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	transform: translateY(-1px);
+}
+
+.repo-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 1rem;
+}
+
+.repo-card {
+	display: block;
+	text-decoration: none;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.03) 0%,
+		rgba(255, 80, 80, 0.03) 100%
+	);
+	border: 1px solid rgba(255, 80, 80, 0.25);
+	border-radius: 10px;
+	padding: 1.1rem;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.repo-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.6),
+		rgba(255, 150, 80, 0.6)
+	);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.repo-card:hover::before {
+	opacity: 1;
+}
+
+.repo-card:hover {
+	transform: translateY(-4px) scale(1.02);
+	border-color: rgba(255, 80, 80, 0.5);
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.05) 0%,
+		rgba(255, 80, 80, 0.08) 100%
+	);
+	box-shadow: 0 8px 24px rgba(255, 80, 80, 0.2),
+		0 0 0 1px rgba(255, 80, 80, 0.3);
+}
+
+.repo-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.05rem;
+	color: rgba(255, 255, 255, 0.95);
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+	text-shadow: 0 0 8px rgba(255, 80, 80, 0.2);
+	letter-spacing: 0.3px;
+	line-height: 1.3;
+}
+
+.repo-desc {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.65);
+	margin-bottom: 0.8rem;
+	line-height: 1.5;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	min-height: 2.4rem;
+}
+
+.repo-meta {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	align-items: center;
+	padding-top: 0.5rem;
+	border-top: 1px solid rgba(255, 80, 80, 0.15);
+}
+
+.meta-item {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.7);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.2rem 0.5rem;
+	background: rgba(255, 80, 80, 0.08);
+	border-radius: 4px;
+	transition: all 0.2s ease;
+}
+
+.meta-item:hover {
+	background: rgba(255, 80, 80, 0.15);
+	transform: scale(1.05);
+}
+
+.meta-item.lang {
+	color: rgba(100, 200, 255, 0.95);
+	background: rgba(100, 149, 237, 0.15);
+	font-weight: 600;
+}
+
+.meta-item.lang:hover {
+	background: rgba(100, 149, 237, 0.25);
+}
+
+.meta-item.time {
+	color: rgba(255, 180, 120, 0.85);
+}
 /* ================= Overlay & Popup ================= */
 
 .stats-overlay {
@@ -188,15 +486,47 @@
 /* ================= Sections ================= */
 
 .stats-section {
-	margin-bottom: 2.5rem;
-	padding-bottom: 2rem;
-	border-bottom: 1px solid rgba(255, 80, 80, 0.2);
+	margin-bottom: 1.25rem;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 10px;
+	padding: 0.75rem 1rem; /* tighter by default */
+	box-shadow: 0 0 20px rgba(255, 80, 80, 0.05), 0 15px 40px rgba(0, 0, 0, 0.4);
+	transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease,
+		padding 0.2s ease;
+}
+
+/* Add tighter spacing when collapsed and a bit more when expanded */
+.stats-section.collapsed {
+	padding-top: 0.6rem;
+	padding-bottom: 0.6rem;
+	display: flex;
+	align-items: center; /* center header vertically */
+	min-height: 44px; /* stable tap target & vertical rhythm */
+}
+
+.stats-section.expanded {
+	padding-top: 0.9rem;
+	padding-bottom: 0.9rem;
+}
+
+/* Make header fill width and center neatly when collapsed */
+.stats-section.collapsed .section-header {
+	margin: 0;
+	width: 100%;
+	padding: 0.4rem 0.5rem;
+	display: flex;
+	align-items: center;
+}
+
+.stats-section:hover {
+	border-color: rgba(255, 80, 80, 0.4);
+	background: rgba(255, 255, 255, 0.03);
+	transform: translateY(-2px);
 }
 
 .stats-section:last-child {
-	border-bottom: none;
 	margin-bottom: 0;
-	padding-bottom: 0;
 }
 
 .section-header {
@@ -205,35 +535,57 @@
 	color: rgba(255, 80, 80, 0.9);
 	font-weight: bold;
 	letter-spacing: 1px;
-	margin-bottom: 1.5rem;
+	margin-bottom: 0.5rem; /* smaller by default */
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.65rem;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: color 0.3s ease, background 0.3s ease;
 	user-select: none;
-	padding: 0.5rem 0.75rem;
-	border-radius: 6px;
-	margin-left: -0.75rem;
-	margin-right: -0.75rem;
+	padding: 0.35rem 0.5rem;
+	border-radius: 8px;
+}
+
+.stats-section.expanded .section-header {
+	margin-bottom: 0.75rem; /* give space only when content exists */
 }
 
 .section-header:hover {
 	color: rgba(255, 80, 80, 1);
-	background: rgba(255, 80, 80, 0.05);
+	background: rgba(255, 80, 80, 0.06);
 	text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
 }
 
-.section-marker {
+.section-toggle {
 	color: rgba(255, 80, 80, 1);
-	font-size: 1.2rem;
+	line-height: 0;
+	flex-shrink: 0;
+	width: 1rem; /* give a touch more width for alignment */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	top: 1px; /* nudge to match text baseline */
 }
 
-.collapse-indicator {
-	margin-left: auto;
-	font-size: 0.9rem;
-	color: rgba(255, 80, 80, 0.7);
+.toggle-icon {
+	width: 12px;
+	height: 12px;
+	display: inline-block;
 	transition: transform 0.2s ease;
+	filter: drop-shadow(0 0 2px rgba(255, 80, 80, 0.3));
+}
+
+.stats-section.collapsed .toggle-icon {
+	transform: rotate(0deg);
+}
+
+.stats-section.expanded .toggle-icon {
+	transform: rotate(90deg);
+}
+
+.section-title {
+	flex: 1;
 }
 
 .live-indicator {
@@ -838,156 +1190,102 @@
 	margin-bottom: 1rem;
 }
 
-.languages-list {
-	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
-}
-
-.language-item {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
-}
-
-.language-item > div:first-child {
-	display: flex;
-	justify-content: space-between;
+/* Pie chart layout */
+.pie-row {
+	display: grid;
+	grid-template-columns: 140px 1fr;
+	gap: 1rem;
 	align-items: center;
 }
 
-.language-name {
+.pie-chart {
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5),
+		inset 0 0 0 2px rgba(255, 80, 80, 0.25);
+	position: relative;
+}
+
+.pie-hole {
+	position: absolute;
+	inset: 22%;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.85);
+	box-shadow: inset 0 0 10px rgba(255, 80, 80, 0.15);
+}
+
+.pie-legend {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 0.5rem 1rem;
+}
+
+.legend-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.legend-swatch {
+	width: 10px;
+	height: 10px;
+	border-radius: 2px;
+	box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.legend-name {
 	font-family: "Courier New", Courier, monospace;
 	font-size: 0.85rem;
 	color: rgba(255, 255, 255, 0.85);
 }
 
-.language-percent {
+.legend-percent {
+	margin-left: auto;
 	font-family: "Courier New", Courier, monospace;
 	font-size: 0.8rem;
 	color: rgba(255, 255, 255, 0.6);
 }
 
-.language-bar {
-	width: 100%;
-	height: 6px;
-	background: rgba(255, 80, 80, 0.1);
-	border-radius: 3px;
-	overflow: hidden;
-	position: relative;
-}
-
-.language-bar .bar-fill {
-	height: 100%;
-	background: linear-gradient(
-		90deg,
-		rgba(255, 80, 80, 0.8),
-		rgba(100, 149, 237, 0.7)
-	);
-	border-radius: 3px;
-	transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-	position: relative;
-}
-
-.github-activity {
+/* Heatmap */
+.github-heatmap {
 	padding-top: 1rem;
 	border-top: 1px solid rgba(255, 80, 80, 0.15);
 }
 
-.activity-label {
+.heatmap-label {
 	font-family: "Courier New", Courier, monospace;
-	font-size: 0.85rem;
-	color: rgba(255, 80, 80, 0.7);
+	font-size: 0.9rem;
+	color: rgba(255, 80, 80, 0.85);
 	font-weight: bold;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.8px;
 	margin-bottom: 1rem;
+	text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
 }
 
-.activity-stats {
-	display: flex;
-	gap: 2rem;
-	flex-wrap: wrap;
-}
-
-.activity-stats .activity-item {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
-}
-
-.activity-value {
-	font-family: "Courier New", Courier, monospace;
-	font-size: 1.25rem;
-	font-weight: bold;
-	color: rgba(255, 255, 255, 0.9);
-}
-
-.activity-label-sm {
-	font-family: "Courier New", Courier, monospace;
-	font-size: 0.7rem;
-	color: rgba(255, 255, 255, 0.5);
-	letter-spacing: 0.5px;
-}
-
-/* Contribution Graph */
-.contribution-graph {
-	margin-top: 1.5rem;
-	padding-top: 1.5rem;
-	border-top: 1px solid rgba(255, 80, 80, 0.15);
-}
-
-.contribution-graph .graph-label {
-	font-family: "Courier New", Courier, monospace;
-	font-size: 0.85rem;
-	color: rgba(255, 80, 80, 0.7);
-	font-weight: bold;
-	letter-spacing: 0.5px;
-	margin-bottom: 1rem;
-}
-
-.graph-bars {
-	display: flex;
-	align-items: flex-end;
-	gap: 3px;
-	height: 80px;
-	padding: 0.5rem;
+.heatmap-grid {
+	display: grid;
+	grid-template-columns: repeat(15, 12px);
+	gap: 6px;
 	background: rgba(0, 0, 0, 0.2);
-	border-radius: 4px;
+	padding: 10px;
+	border-radius: 6px;
 }
 
-.graph-bar {
-	flex: 1;
-	min-height: 4px;
-	background: linear-gradient(
-		to top,
-		rgba(255, 80, 80, 0.8),
-		rgba(255, 120, 120, 0.4)
-	);
-	border-radius: 2px 2px 0 0;
-	transition: all 0.3s ease;
-	animation: barGrowth 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-	cursor: pointer;
+.heatmap-cell {
+	width: 12px;
+	height: 12px;
+	border-radius: 2px;
+	box-shadow: inset 0 0 0 1px rgba(255, 80, 80, 0.15);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.graph-bar:hover {
-	background: linear-gradient(
-		to top,
-		rgba(255, 80, 80, 1),
-		rgba(255, 120, 120, 0.6)
-	);
-	transform: scaleY(1.1);
+.heatmap-cell:hover {
+	transform: scale(1.2);
+	box-shadow: 0 0 8px rgba(255, 80, 80, 0.5);
 }
 
-@keyframes barGrowth {
-	from {
-		transform: scaleY(0);
-		opacity: 0;
-	}
-	to {
-		transform: scaleY(1);
-		opacity: 1;
-	}
-}
+/* Removed old contribution graph styles */
 
 /* ================= Toolchain Section ================= */
 

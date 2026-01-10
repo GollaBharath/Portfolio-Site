@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import "./StatsPopup.css";
+import arrowRight from "../../assets/SVGs/toggle-arrow.svg";
 
 const STATS_API_URL = "https://stats.gollabharath.me/stats";
 
@@ -52,16 +53,25 @@ function StatsPopup({ isOpen, onClose }) {
 	const [error, setError] = useState(null);
 	const [lastFetched, setLastFetched] = useState(null);
 	const [collapsedSections, setCollapsedSections] = useState(new Set());
+	const [repoSort, setRepoSort] = useState("recent");
+	const [contributions, setContributions] = useState(null);
 
 	// Fetch live stats from API
 	const fetchStats = useCallback(async () => {
 		try {
 			setLoading(true);
 			setError(null);
-			const response = await fetch(STATS_API_URL);
-			if (!response.ok) throw new Error("Failed to fetch stats");
-			const data = await response.json();
-			setLiveStats(data.data);
+			const [statsRes, contribRes] = await Promise.all([
+				fetch(STATS_API_URL),
+				fetch("https://stats.gollabharath.me/stats/github/contributions/daily"),
+			]);
+			if (!statsRes.ok) throw new Error("Failed to fetch stats");
+			const statsData = await statsRes.json();
+			setLiveStats(statsData.data);
+			if (contribRes.ok) {
+				const contribData = await contribRes.json();
+				setContributions(contribData.data);
+			}
 			setLastFetched(new Date());
 		} catch (err) {
 			setError(err.message);
@@ -238,11 +248,22 @@ function StatsPopup({ isOpen, onClose }) {
 					{liveStats && (
 						<>
 							{/* Section 1: Discord Presence */}
-							<div className="stats-section">
+							<div
+								className={`stats-section ${
+									collapsedSections.has("discord") ? "collapsed" : "expanded"
+								}`}>
 								<div
 									className="section-header"
 									onClick={() => toggleSection("discord")}>
-									<span className="section-marker">&gt;</span> DISCORD PRESENCE
+									<span className="section-toggle">
+										<img
+											src={arrowRight}
+											className="toggle-icon"
+											alt=""
+											aria-hidden="true"
+										/>
+									</span>
+									<span className="section-title">DISCORD PRESENCE</span>
 									<span
 										className={`live-indicator ${getStatusClass(
 											liveStats.discord?.discord_status
@@ -250,9 +271,6 @@ function StatsPopup({ isOpen, onClose }) {
 										●{" "}
 										{liveStats.discord?.discord_status?.toUpperCase() ||
 											"OFFLINE"}
-									</span>
-									<span className="collapse-indicator">
-										{collapsedSections.has("discord") ? "▼" : "▲"}
 									</span>
 								</div>
 
@@ -333,19 +351,27 @@ function StatsPopup({ isOpen, onClose }) {
 							</div>
 
 							{/* Section 2: Spotify - Now Playing */}
-							<div className="stats-section">
+							<div
+								className={`stats-section ${
+									collapsedSections.has("spotify") ? "collapsed" : "expanded"
+								}`}>
 								<div
 									className="section-header"
 									onClick={() => toggleSection("spotify")}>
-									<span className="section-marker">&gt;</span> SPOTIFY
+									<span className="section-toggle">
+										<img
+											src={arrowRight}
+											className="toggle-icon"
+											alt=""
+											aria-hidden="true"
+										/>
+									</span>
+									<span className="section-title">SPOTIFY</span>
 									{liveStats.spotify?.is_playing && (
 										<span className="live-indicator status-online">
 											● NOW PLAYING
 										</span>
 									)}
-									<span className="collapse-indicator">
-										{collapsedSections.has("spotify") ? "▼" : "▲"}
-									</span>
 								</div>
 
 								{!collapsedSections.has("spotify") && (
@@ -427,14 +453,22 @@ function StatsPopup({ isOpen, onClose }) {
 							</div>
 
 							{/* Section 3: LeetCode Stats */}
-							<div className="stats-section">
+							<div
+								className={`stats-section ${
+									collapsedSections.has("leetcode") ? "collapsed" : "expanded"
+								}`}>
 								<div
 									className="section-header"
 									onClick={() => toggleSection("leetcode")}>
-									<span className="section-marker">&gt;</span> LEETCODE METRICS
-									<span className="collapse-indicator">
-										{collapsedSections.has("leetcode") ? "▼" : "▲"}
+									<span className="section-toggle">
+										<img
+											src={arrowRight}
+											className="toggle-icon"
+											alt=""
+											aria-hidden="true"
+										/>
 									</span>
+									<span className="section-title">LEETCODE METRICS</span>
 								</div>
 
 								{!collapsedSections.has("leetcode") && (
@@ -561,14 +595,22 @@ function StatsPopup({ isOpen, onClose }) {
 							</div>
 
 							{/* Section 4: GitHub Stats */}
-							<div className="stats-section">
+							<div
+								className={`stats-section ${
+									collapsedSections.has("github") ? "collapsed" : "expanded"
+								}`}>
 								<div
 									className="section-header"
 									onClick={() => toggleSection("github")}>
-									<span className="section-marker">&gt;</span> GITHUB ACTIVITY
-									<span className="collapse-indicator">
-										{collapsedSections.has("github") ? "▼" : "▲"}
+									<span className="section-toggle">
+										<img
+											src={arrowRight}
+											className="toggle-icon"
+											alt=""
+											aria-hidden="true"
+										/>
 									</span>
+									<span className="section-title">GITHUB ACTIVITY</span>
 								</div>
 
 								{!collapsedSections.has("github") && (
@@ -635,92 +677,231 @@ function StatsPopup({ isOpen, onClose }) {
 
 												<div className="github-languages">
 													<div className="languages-label">TOP LANGUAGES:</div>
-													<div className="languages-list">
-														{liveStats.github.language_distribution
-															?.slice(0, 5)
-															.map((lang, idx) => (
-																<div key={idx} className="language-item">
-																	<span className="language-name">
-																		{lang.name}
-																	</span>
-																	<span className="language-percent">
-																		{lang.percent}%
-																	</span>
-																	<div className="language-bar">
+													{(() => {
+														const langs = (
+															liveStats.github.language_distribution || []
+														).slice(0, 6);
+														const colors = [
+															"#ff5252",
+															"#ff9f43",
+															"#ffd166",
+															"#06d6a0",
+															"#1e90ff",
+															"#c77dff",
+														];
+														let cumulative = 0;
+														const segments = langs.map((l, i) => {
+															const pct = parseFloat(l.percent);
+															const start = cumulative;
+															const end = cumulative + pct;
+															cumulative = end;
+															return `${
+																colors[i % colors.length]
+															} ${start}% ${end}%`;
+														});
+														const gradient = `conic-gradient(${segments.join(
+															", "
+														)})`;
+
+														return (
+															<div className="pie-row">
+																<div
+																	className="pie-chart"
+																	style={{ background: gradient }}>
+																	<div className="pie-hole"></div>
+																</div>
+																<div className="pie-legend">
+																	{langs.map((l, i) => (
+																		<div key={i} className="legend-item">
+																			<span
+																				className="legend-swatch"
+																				style={{
+																					background: colors[i % colors.length],
+																				}}></span>
+																			<span className="legend-name">
+																				{l.name}
+																			</span>
+																			<span className="legend-percent">
+																				{l.percent}%
+																			</span>
+																		</div>
+																	))}
+																</div>
+															</div>
+														);
+													})()}
+												</div>
+
+												{/* Heatmap for 365 days - Contributions */}
+												{contributions?.daily && (
+													<div className="github-heatmap github-heatmap-year">
+														<div className="heatmap-label">
+															CONTRIBUTIONS HEATMAP ({contributions.range_days}{" "}
+															DAYS):
+														</div>
+														{(() => {
+															const map = new Map(
+																contributions.daily.map((d) => [
+																	d.date,
+																	d.contributions,
+																])
+															);
+															const end = new Date();
+															const start = new Date(end);
+															start.setDate(end.getDate() - 364);
+															const startSunday = new Date(start);
+															while (startSunday.getDay() !== 0) {
+																startSunday.setDate(startSunday.getDate() - 1);
+															}
+															let maxContrib = 1;
+															for (let i = 0; i < 365; i++) {
+																const d = new Date(start);
+																d.setDate(start.getDate() + i);
+																const key = d.toISOString().slice(0, 10);
+																const v = map.get(key) || 0;
+																if (v > maxContrib) maxContrib = v;
+															}
+															const cells = [];
+															for (let w = 0; w < 53; w++) {
+																for (let r = 0; r < 7; r++) {
+																	const cellDate = new Date(startSunday);
+																	cellDate.setDate(
+																		startSunday.getDate() + w * 7 + r
+																	);
+																	const key = cellDate
+																		.toISOString()
+																		.slice(0, 10);
+																	const val = map.get(key) || 0;
+																	const intensity = Math.min(
+																		1,
+																		val / maxContrib
+																	);
+																	const alpha = 0.15 + intensity * 0.75;
+																	const bg = `rgba(255, 80, 80, ${alpha.toFixed(
+																		3
+																	)})`;
+																	const [year, month, day] = key.split("-");
+																	const formattedDate = `${day}-${month}-${year}`;
+																	cells.push(
 																		<div
-																			className="bar-fill"
+																			key={`${w}-${r}`}
+																			className="heatmap-cell-year"
 																			style={{
-																				width: `${lang.percent}%`,
-																			}}></div>
+																				gridColumn: w + 1,
+																				gridRow: r + 1,
+																				background: bg,
+																			}}
+																			title={`${formattedDate}: ${val} contributions`}
+																		/>
+																	);
+																}
+															}
+															return (
+																<div className="heatmap-wrapper-year">
+																	<div className="heatmap-grid-year">
+																		{cells}
 																	</div>
 																</div>
-															))}
+															);
+														})()}
 													</div>
-												</div>
+												)}
 
-												<div className="github-activity">
-													<div className="activity-label">LAST 30 DAYS:</div>
-													<div className="activity-stats">
-														<div className="activity-item">
-															<span className="activity-value">
-																{liveStats.github.activity_last_30_days
-																	?.push_events || 0}
-															</span>
-															<span className="activity-label-sm">PUSHES</span>
+												{/* Top repositories with sorting */}
+												{liveStats.github.top_repositories && (
+													<div className="github-top-repos">
+														<div className="repos-header">
+															<div className="repos-label">
+																TOP REPOSITORIES
+															</div>
+															<div className="repo-filters">
+																{[
+																	{ key: "recent", label: "Recent" },
+																	{ key: "stars", label: "Popularity" },
+																	{ key: "forks", label: "Forks" },
+																	{ key: "name", label: "Name" },
+																].map((opt) => (
+																	<button
+																		key={opt.key}
+																		className={`filter-btn ${
+																			repoSort === opt.key ? "active" : ""
+																		}`}
+																		onClick={() => setRepoSort(opt.key)}>
+																		{opt.label}
+																	</button>
+																))}
+															</div>
 														</div>
-														<div className="activity-item">
-															<span className="activity-value">
-																{liveStats.github.activity_last_30_days
-																	?.total_events || 0}
-															</span>
-															<span className="activity-label-sm">EVENTS</span>
-														</div>
-														<div className="activity-item">
-															<span className="activity-value">
-																{liveStats.github.contribution_signals
-																	?.active_days_in_period || 0}
-															</span>
-															<span className="activity-label-sm">
-																ACTIVE DAYS
-															</span>
-														</div>
-													</div>
-												</div>
-
-												{/* Visual contribution graph */}
-												{liveStats.github.contribution_signals
-													?.active_days_in_period > 0 && (
-													<div className="contribution-graph">
-														<div className="graph-label">
-															CONTRIBUTION ACTIVITY:
-														</div>
-														<div className="graph-bars">
-															{Array.from({ length: 30 }, (_, i) => {
-																const pushes =
-																	liveStats.github.activity_last_30_days
-																		?.push_events || 0;
-																const totalDays = 30;
-																const avgPerDay = pushes / totalDays;
-																// Generate semi-random heights based on actual data
-																const variance = (Math.sin(i * 0.5) + 1) / 2;
-																const height = Math.min(
-																	100,
-																	avgPerDay * variance * 100 +
-																		Math.random() * 20
-																);
-																return (
-																	<div
-																		key={i}
-																		className="graph-bar"
-																		style={{
-																			height: `${height}%`,
-																			animationDelay: `${i * 0.02}s`,
-																		}}
-																		title={`Day ${i + 1}`}
-																	/>
-																);
-															})}
-														</div>
+														{(() => {
+															const repos = [
+																...(liveStats.github.top_repositories || []),
+															];
+															switch (repoSort) {
+																case "stars":
+																	repos.sort(
+																		(a, b) => (b.stars || 0) - (a.stars || 0)
+																	);
+																	break;
+																case "forks":
+																	repos.sort(
+																		(a, b) => (b.forks || 0) - (a.forks || 0)
+																	);
+																	break;
+																case "name":
+																	repos.sort((a, b) =>
+																		(a.name || "").localeCompare(b.name || "")
+																	);
+																	break;
+																default:
+																	repos.sort(
+																		(a, b) =>
+																			new Date(
+																				b.pushed_at || b.updated_at || 0
+																			) -
+																			new Date(a.pushed_at || a.updated_at || 0)
+																	);
+															}
+															const top = repos.slice(0, 8);
+															return (
+																<div className="repo-grid">
+																	{top.map((r, i) => (
+																		<a
+																			key={i}
+																			className="repo-card"
+																			href={r.url}
+																			target="_blank"
+																			rel="noopener noreferrer">
+																			<div className="repo-name">{r.name}</div>
+																			{r.description && (
+																				<div className="repo-desc">
+																					{r.description}
+																				</div>
+																			)}
+																			<div className="repo-meta">
+																				<span className="meta-item">
+																					★ {r.stars || 0}
+																				</span>
+																				<span className="meta-item">
+																					⑂ {r.forks || 0}
+																				</span>
+																				{r.language && (
+																					<span className="meta-item lang">
+																						{r.language}
+																					</span>
+																				)}
+																				{(r.pushed_at || r.updated_at) && (
+																					<span className="meta-item time">
+																						{new Date(
+																							r.pushed_at || r.updated_at
+																						).toLocaleDateString()}
+																					</span>
+																				)}
+																			</div>
+																		</a>
+																	))}
+																</div>
+															);
+														})()}
 													</div>
 												)}
 											</div>
@@ -734,14 +915,23 @@ function StatsPopup({ isOpen, onClose }) {
 							</div>
 
 							{/* Section 5: WakaTime Stats */}
-							<div className="stats-section">
+							<div
+								className={`stats-section ${
+									collapsedSections.has("wakatime") ? "collapsed" : "expanded"
+								}`}>
 								<div
 									className="section-header"
 									onClick={() => toggleSection("wakatime")}>
-									<span className="section-marker">&gt;</span> WAKATIME CODING
-									ACTIVITY
-									<span className="collapse-indicator">
-										{collapsedSections.has("wakatime") ? "▼" : "▲"}
+									<span className="section-toggle">
+										<img
+											src={arrowRight}
+											className="toggle-icon"
+											alt=""
+											aria-hidden="true"
+										/>
+									</span>
+									<span className="section-title">
+										WAKATIME CODING ACTIVITY
 									</span>
 								</div>
 
@@ -836,14 +1026,23 @@ function StatsPopup({ isOpen, onClose }) {
 							</div>
 
 							{/* Section 6: Toolchain (Static) */}
-							<div className="stats-section">
+							<div
+								className={`stats-section ${
+									collapsedSections.has("toolchain") ? "collapsed" : "expanded"
+								}`}>
 								<div
 									className="section-header"
 									onClick={() => toggleSection("toolchain")}>
-									<span className="section-marker">&gt;</span> TOOLCHAIN /
-									CAPABILITIES
-									<span className="collapse-indicator">
-										{collapsedSections.has("toolchain") ? "▼" : "▲"}
+									<span className="section-toggle">
+										<img
+											src={arrowRight}
+											className="toggle-icon"
+											alt=""
+											aria-hidden="true"
+										/>
+									</span>
+									<span className="section-title">
+										TOOLCHAIN / CAPABILITIES
 									</span>
 								</div>
 
