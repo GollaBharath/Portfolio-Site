@@ -16,10 +16,7 @@
 	z-index: 0;
 	overflow: hidden;
 	pointer-events: none;
-	background: radial-gradient(ellipse at center,
-			#060000 0%,
-			#030000 45%,
-			#000000 100%);
+	background: #000;
 }
 
 /* Ambient gradient overlay - creates depth */
@@ -27,17 +24,20 @@
 	position: absolute;
 	inset: 0;
 	background:
-		/* Subtle vignette */
-		radial-gradient(ellipse at center,
+		/* Subtle vignette */ radial-gradient(
+			ellipse at center,
 			transparent 0%,
-			transparent 50%,
-			rgba(0, 0, 0, 0.4) 100%),
-		/* Deep red ambient glow from center */
-		radial-gradient(ellipse 60% 60% at 50% 50%,
-			rgba(80, 0, 0, 0.1) 0%,
-			rgba(40, 0, 0, 0.06) 40%,
-			transparent 70%);
-	opacity: 0.85;
+			transparent 55%,
+			rgba(0, 0, 0, 0.65) 100%
+		),
+		/* Soft neutral glow toward center to lift portrait */
+			radial-gradient(
+				ellipse 55% 55% at 50% 50%,
+				rgba(255, 255, 255, 0.06) 0%,
+				rgba(255, 255, 255, 0.03) 40%,
+				transparent 70%
+			);
+	opacity: 0.9;
 }
 
 /* Slow-moving gradient flow */
@@ -46,16 +46,18 @@
 	inset: -50%;
 	width: 200%;
 	height: 200%;
-	background: conic-gradient(from 0deg at 50% 50%,
-			transparent 0deg,
-			rgba(80, 10, 10, 0.02) 60deg,
-			transparent 120deg,
-			rgba(60, 5, 5, 0.015) 180deg,
-			transparent 240deg,
-			rgba(80, 10, 10, 0.02) 300deg,
-			transparent 360deg);
+	background: conic-gradient(
+		from 0deg at 50% 50%,
+		transparent 0deg,
+		rgba(255, 255, 255, 0.03) 60deg,
+		transparent 120deg,
+		rgba(255, 255, 255, 0.025) 180deg,
+		transparent 240deg,
+		rgba(255, 255, 255, 0.03) 300deg,
+		transparent 360deg
+	);
 	animation: system-flow 140s linear infinite;
-	opacity: 0.22;
+	opacity: 0.18;
 }
 
 @keyframes system-flow {
@@ -74,13 +76,16 @@
 	left: 0;
 	width: 100%;
 	height: 2px;
-	background: linear-gradient(90deg,
-			transparent 0%,
-			rgba(255, 80, 80, 0.18) 20%,
-			rgba(255, 80, 80, 0.55) 50%,
-			rgba(255, 80, 80, 0.18) 80%,
-			transparent 100%);
-	box-shadow: 0 0 16px rgba(255, 80, 80, 0.25), 0 0 28px rgba(255, 80, 80, 0.15);
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.14) 20%,
+		rgba(255, 255, 255, 0.5) 50%,
+		rgba(255, 255, 255, 0.14) 80%,
+		transparent 100%
+	);
+	box-shadow: 0 0 16px rgba(255, 255, 255, 0.2),
+		0 0 28px rgba(255, 255, 255, 0.12);
 	opacity: 0;
 	pointer-events: none;
 	transform: translateY(-100vh);
@@ -111,27 +116,27 @@
 	height: 200px;
 	transform: translate(-50%, -50%);
 	border-radius: 50%;
-	border: 1px solid rgba(255, 80, 80, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	opacity: 0;
 	pointer-events: none;
 }
 
 .system-background__pulse--active {
-	animation: radial-pulse 0.8s ease-out forwards;
+	animation: radial-pulse 1.8s ease-out forwards;
 }
 
 @keyframes radial-pulse {
 	0% {
-		opacity: 0.8;
-		width: 100px;
-		height: 100px;
+		opacity: 0.35;
+		width: 90px;
+		height: 90px;
 		border-width: 2px;
 	}
 
 	100% {
 		opacity: 0;
-		width: 400px;
-		height: 400px;
+		width: 240px;
+		height: 240px;
 		border-width: 1px;
 	}
 }
@@ -146,7 +151,7 @@
 	transform: translate(-50%, -50%);
 	border-radius: 50%;
 	border: 2px solid transparent;
-	border-top-color: rgba(255, 80, 80, 0.45);
+	border-top-color: rgba(255, 255, 255, 0.38);
 	opacity: 0;
 	pointer-events: none;
 }
@@ -171,11 +176,13 @@
 .system-background__grid {
 	position: absolute;
 	inset: 0;
-	background-image: linear-gradient(rgba(255, 80, 80, 0.02) 1px,
-			transparent 1px),
-		linear-gradient(90deg, rgba(255, 80, 80, 0.02) 1px, transparent 1px);
+	background-image: linear-gradient(
+			rgba(255, 255, 255, 0.025) 1px,
+			transparent 1px
+		),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
 	background-size: 50px 50px;
-	opacity: 0.12;
+	opacity: 0.08;
 }
 
 /* Reduced motion: disable all animations */

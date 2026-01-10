@@ -14,7 +14,7 @@ import "./SystemBackground.css";
  * - Never interfering with interactive elements (pointer-events: none)
  *
  * Visual Language:
- * - Dark base with deep red undertones
+ * - Pure black base with neutral highlights
  * - Very slow ambient rotation (120s cycle) - barely noticeable
  * - Reactive effects are short (<800ms) and always return to idle
  *
