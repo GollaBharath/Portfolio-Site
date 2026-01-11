@@ -55,15 +55,17 @@ function StatsPopup({ isOpen, onClose }) {
 	const [collapsedSections, setCollapsedSections] = useState(new Set());
 	const [repoSort, setRepoSort] = useState("recent");
 	const [contributions, setContributions] = useState(null);
+	const [leetcodeSubmissions, setLeetcodeSubmissions] = useState(null);
 
 	// Fetch live stats from API
 	const fetchStats = useCallback(async () => {
 		try {
 			setLoading(true);
 			setError(null);
-			const [statsRes, contribRes] = await Promise.all([
+			const [statsRes, contribRes, leetcodeRes] = await Promise.all([
 				fetch(STATS_API_URL),
 				fetch("https://stats.gollabharath.me/stats/github/contributions/daily"),
+				fetch("https://stats.gollabharath.me/stats/leetcode/submissions/daily"),
 			]);
 			if (!statsRes.ok) throw new Error("Failed to fetch stats");
 			const statsData = await statsRes.json();
@@ -71,6 +73,10 @@ function StatsPopup({ isOpen, onClose }) {
 			if (contribRes.ok) {
 				const contribData = await contribRes.json();
 				setContributions(contribData.data);
+			}
+			if (leetcodeRes.ok) {
+				const leetcodeData = await leetcodeRes.json();
+				setLeetcodeSubmissions(leetcodeData.data);
 			}
 			setLastFetched(new Date());
 		} catch (err) {
@@ -584,6 +590,95 @@ function StatsPopup({ isOpen, onClose }) {
 														</span>
 													</div>
 												</div>
+
+												{/* Heatmap for 365 days - LeetCode Submissions */}
+												{leetcodeSubmissions?.daily && (
+													<div className="leetcode-heatmap leetcode-heatmap-year">
+														<div className="heatmap-label">
+															SUBMISSIONS HEATMAP (
+															{leetcodeSubmissions.range_days} DAYS):
+														</div>
+														{(() => {
+															const map = new Map(
+																leetcodeSubmissions.daily.map((d) => [
+																	d.date,
+																	d.submissions,
+																])
+															);
+															const end = new Date();
+															const start = new Date(end);
+															start.setDate(end.getDate() - 364);
+															const startSunday = new Date(start);
+															while (startSunday.getDay() !== 0) {
+																startSunday.setDate(startSunday.getDate() - 1);
+															}
+															let maxSubmissions = 1;
+															for (let i = 0; i < 365; i++) {
+																const d = new Date(start);
+																d.setDate(start.getDate() + i);
+																const key = d.toISOString().slice(0, 10);
+																const v = map.get(key) || 0;
+																if (v > maxSubmissions) maxSubmissions = v;
+															}
+															const cells = [];
+															for (let w = 0; w < 53; w++) {
+																for (let r = 0; r < 7; r++) {
+																	const cellDate = new Date(startSunday);
+																	cellDate.setDate(
+																		startSunday.getDate() + w * 7 + r
+																	);
+																	const key = cellDate
+																		.toISOString()
+																		.slice(0, 10);
+																	const val = map.get(key) || 0;
+																	const intensity = Math.min(
+																		1,
+																		val / maxSubmissions
+																	);
+																	const [year, month, day] = key.split("-");
+																	const formattedDate = `${day}-${month}-${year}`;
+
+																	let cellStyle;
+																	if (val === 0) {
+																		cellStyle = {
+																			gridColumn: w + 1,
+																			gridRow: r + 1,
+																			background: "transparent",
+																			border:
+																				"1px solid rgba(255, 80, 80, 0.15)",
+																		};
+																	} else {
+																		const alpha = 0.15 + intensity * 0.75;
+																		const bg = `rgba(255, 80, 80, ${alpha.toFixed(
+																			3
+																		)})`;
+																		cellStyle = {
+																			gridColumn: w + 1,
+																			gridRow: r + 1,
+																			background: bg,
+																		};
+																	}
+
+																	cells.push(
+																		<div
+																			key={`${w}-${r}`}
+																			className="heatmap-cell-year"
+																			style={cellStyle}
+																			title={`${formattedDate}: ${val} submissions`}
+																		/>
+																	);
+																}
+															}
+															return (
+																<div className="heatmap-wrapper-year">
+																	<div className="heatmap-grid-year">
+																		{cells}
+																	</div>
+																</div>
+															);
+														})()}
+													</div>
+												)}
 											</div>
 										) : (
 											<div className="stats-unavailable">
@@ -776,21 +871,35 @@ function StatsPopup({ isOpen, onClose }) {
 																		1,
 																		val / maxContrib
 																	);
-																	const alpha = 0.15 + intensity * 0.75;
-																	const bg = `rgba(255, 80, 80, ${alpha.toFixed(
-																		3
-																	)})`;
 																	const [year, month, day] = key.split("-");
 																	const formattedDate = `${day}-${month}-${year}`;
+
+																	let cellStyle;
+																	if (val === 0) {
+																		cellStyle = {
+																			gridColumn: w + 1,
+																			gridRow: r + 1,
+																			background: "transparent",
+																			border:
+																				"1px solid rgba(255, 80, 80, 0.15)",
+																		};
+																	} else {
+																		const alpha = 0.15 + intensity * 0.75;
+																		const bg = `rgba(255, 80, 80, ${alpha.toFixed(
+																			3
+																		)})`;
+																		cellStyle = {
+																			gridColumn: w + 1,
+																			gridRow: r + 1,
+																			background: bg,
+																		};
+																	}
+
 																	cells.push(
 																		<div
 																			key={`${w}-${r}`}
 																			className="heatmap-cell-year"
-																			style={{
-																				gridColumn: w + 1,
-																				gridRow: r + 1,
-																				background: bg,
-																			}}
+																			style={cellStyle}
 																			title={`${formattedDate}: ${val} contributions`}
 																		/>
 																	);
