@@ -53,7 +53,7 @@ function StatsPopup({ isOpen, onClose }) {
 	const [error, setError] = useState(null);
 	const [lastFetched, setLastFetched] = useState(null);
 	const [collapsedSections, setCollapsedSections] = useState(new Set());
-	const [repoSort, setRepoSort] = useState("recent");
+	const [repoSort, setRepoSort] = useState("stars");
 	const [contributions, setContributions] = useState(null);
 	const [leetcodeSubmissions, setLeetcodeSubmissions] = useState(null);
 
@@ -605,28 +605,42 @@ function StatsPopup({ isOpen, onClose }) {
 																	d.submissions,
 																])
 															);
-															const end = new Date();
-															const start = new Date(end);
-															start.setDate(end.getDate() - 364);
-															const startSunday = new Date(start);
-															while (startSunday.getDay() !== 0) {
-																startSunday.setDate(startSunday.getDate() - 1);
-															}
+															const today = new Date();
+															today.setHours(0, 0, 0, 0);
+															const start = new Date(today);
+															start.setDate(today.getDate() - 364);
+
+															// Find max for intensity calculation
 															let maxSubmissions = 1;
-															for (let i = 0; i < 365; i++) {
+															for (let i = 0; i <= 364; i++) {
 																const d = new Date(start);
 																d.setDate(start.getDate() + i);
 																const key = d.toISOString().slice(0, 10);
 																const v = map.get(key) || 0;
 																if (v > maxSubmissions) maxSubmissions = v;
 															}
+
+															// Calculate weeks needed
+															const startDay = start.getDay();
+															const endDay = today.getDay();
+															const totalDays = 365;
+															const weeksNeeded = Math.ceil(
+																(startDay + totalDays) / 7
+															);
+
 															const cells = [];
-															for (let w = 0; w < 53; w++) {
+															let dayIndex = 0;
+
+															for (let w = 0; w < weeksNeeded; w++) {
 																for (let r = 0; r < 7; r++) {
-																	const cellDate = new Date(startSunday);
-																	cellDate.setDate(
-																		startSunday.getDate() + w * 7 + r
-																	);
+																	// Skip cells before start date in first week
+																	if (w === 0 && r < startDay) continue;
+
+																	// Skip cells after today
+																	if (dayIndex > totalDays) continue;
+
+																	const cellDate = new Date(start);
+																	cellDate.setDate(start.getDate() + dayIndex);
 																	const key = cellDate
 																		.toISOString()
 																		.slice(0, 10);
@@ -667,6 +681,7 @@ function StatsPopup({ isOpen, onClose }) {
 																			title={`${formattedDate}: ${val} submissions`}
 																		/>
 																	);
+																	dayIndex++;
 																}
 															}
 															return (
@@ -841,28 +856,42 @@ function StatsPopup({ isOpen, onClose }) {
 																	d.contributions,
 																])
 															);
-															const end = new Date();
-															const start = new Date(end);
-															start.setDate(end.getDate() - 364);
-															const startSunday = new Date(start);
-															while (startSunday.getDay() !== 0) {
-																startSunday.setDate(startSunday.getDate() - 1);
-															}
+															const today = new Date();
+															today.setHours(0, 0, 0, 0);
+															const start = new Date(today);
+															start.setDate(today.getDate() - 364);
+
+															// Find max for intensity calculation
 															let maxContrib = 1;
-															for (let i = 0; i < 365; i++) {
+															for (let i = 0; i <= 364; i++) {
 																const d = new Date(start);
 																d.setDate(start.getDate() + i);
 																const key = d.toISOString().slice(0, 10);
 																const v = map.get(key) || 0;
 																if (v > maxContrib) maxContrib = v;
 															}
+
+															// Calculate weeks needed
+															const startDay = start.getDay();
+															const endDay = today.getDay();
+															const totalDays = 365;
+															const weeksNeeded = Math.ceil(
+																(startDay + totalDays) / 7
+															);
+
 															const cells = [];
-															for (let w = 0; w < 53; w++) {
+															let dayIndex = 0;
+
+															for (let w = 0; w < weeksNeeded; w++) {
 																for (let r = 0; r < 7; r++) {
-																	const cellDate = new Date(startSunday);
-																	cellDate.setDate(
-																		startSunday.getDate() + w * 7 + r
-																	);
+																	// Skip cells before start date in first week
+																	if (w === 0 && r < startDay) continue;
+
+																	// Skip cells after today
+																	if (dayIndex > totalDays) continue;
+
+																	const cellDate = new Date(start);
+																	cellDate.setDate(start.getDate() + dayIndex);
 																	const key = cellDate
 																		.toISOString()
 																		.slice(0, 10);
@@ -903,6 +932,7 @@ function StatsPopup({ isOpen, onClose }) {
 																			title={`${formattedDate}: ${val} contributions`}
 																		/>
 																	);
+																	dayIndex++;
 																}
 															}
 															return (
@@ -925,8 +955,8 @@ function StatsPopup({ isOpen, onClose }) {
 															</div>
 															<div className="repo-filters">
 																{[
-																	{ key: "recent", label: "Recent" },
 																	{ key: "stars", label: "Popularity" },
+																	{ key: "recent", label: "Recent" },
 																	{ key: "forks", label: "Forks" },
 																	{ key: "name", label: "Name" },
 																].map((opt) => (
