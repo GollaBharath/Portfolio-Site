@@ -56,17 +56,26 @@ function StatsPopup({ isOpen, onClose }) {
 	const [repoSort, setRepoSort] = useState("stars");
 	const [contributions, setContributions] = useState(null);
 	const [leetcodeSubmissions, setLeetcodeSubmissions] = useState(null);
+	const [githubDetailed, setGithubDetailed] = useState(null);
+	const [wakatimeDetailed, setWakatimeDetailed] = useState(null);
 
 	// Fetch live stats from API
 	const fetchStats = useCallback(async () => {
 		try {
 			setLoading(true);
 			setError(null);
-			const [statsRes, contribRes, leetcodeRes] = await Promise.all([
-				fetch(STATS_API_URL),
-				fetch("https://stats.gollabharath.me/stats/github/contributions/daily"),
-				fetch("https://stats.gollabharath.me/stats/leetcode/submissions/daily"),
-			]);
+			const [statsRes, contribRes, leetcodeRes, githubRes, wakatimeRes] =
+				await Promise.all([
+					fetch(STATS_API_URL),
+					fetch(
+						"https://stats.gollabharath.me/stats/github/contributions/daily"
+					),
+					fetch(
+						"https://stats.gollabharath.me/stats/leetcode/submissions/daily"
+					),
+					fetch("https://stats.gollabharath.me/stats/github"),
+					fetch("https://stats.gollabharath.me/stats/wakatime"),
+				]);
 			if (!statsRes.ok) throw new Error("Failed to fetch stats");
 			const statsData = await statsRes.json();
 			setLiveStats(statsData.data);
@@ -77,6 +86,14 @@ function StatsPopup({ isOpen, onClose }) {
 			if (leetcodeRes.ok) {
 				const leetcodeData = await leetcodeRes.json();
 				setLeetcodeSubmissions(leetcodeData.data);
+			}
+			if (githubRes.ok) {
+				const githubData = await githubRes.json();
+				setGithubDetailed(githubData.data);
+			}
+			if (wakatimeRes.ok) {
+				const wakatimeData = await wakatimeRes.json();
+				setWakatimeDetailed(wakatimeData.data);
 			}
 			setLastFetched(new Date());
 		} catch (err) {
@@ -720,7 +737,9 @@ function StatsPopup({ isOpen, onClose }) {
 											aria-hidden="true"
 										/>
 									</span>
-									<span className="section-title">GITHUB ACTIVITY</span>
+									<span className="section-title">
+										GITHUB ACTIVITY & CODING STATS
+									</span>
 								</div>
 
 								{!collapsedSections.has("github") && (
@@ -756,6 +775,93 @@ function StatsPopup({ isOpen, onClose }) {
 													</a>
 												</div>
 
+												{/* Time Distribution - Early Bird Section */}
+												{githubDetailed?.commits_last_365_days
+													?.time_distribution && (
+													<div className="time-distribution">
+														<div className="time-header">
+															{(() => {
+																const dist =
+																	githubDetailed.commits_last_365_days
+																		.time_distribution.distribution;
+																const maxPeriod = Object.entries(dist).reduce(
+																	(max, [key, value]) =>
+																		value.count > (dist[max]?.count || 0)
+																			? key
+																			: max,
+																	"morning"
+																);
+																const emoji = {
+																	morning: "🌅",
+																	daytime: "☀️",
+																	evening: "🌆",
+																	night: "🌙",
+																};
+																const labels = {
+																	morning: "Early Bird",
+																	daytime: "Day Coder",
+																	evening: "Evening Warrior",
+																	night: "Night Owl",
+																};
+																return (
+																	<>
+																		<span className="time-emoji">
+																			{emoji[maxPeriod]}
+																		</span>
+																		<span className="time-label">
+																			I'm {labels[maxPeriod]}
+																		</span>
+																	</>
+																);
+															})()}
+														</div>
+														<div className="time-bars">
+															{Object.entries(
+																githubDetailed.commits_last_365_days
+																	.time_distribution.distribution
+															).map(([period, data]) => {
+																const emoji = {
+																	morning: "🌅",
+																	daytime: "☀️",
+																	evening: "🌆",
+																	night: "🌙",
+																};
+																const labels = {
+																	morning: "Morning",
+																	daytime: "Daytime",
+																	evening: "Evening",
+																	night: "Night",
+																};
+																return (
+																	<div key={period} className="time-bar-item">
+																		<div className="time-bar-header">
+																			<span className="time-period">
+																				{emoji[period]} {labels[period]}
+																			</span>
+																			<span className="time-commits">
+																				{data.count} commits
+																			</span>
+																			<span className="time-percent">
+																				{data.percent}%
+																			</span>
+																		</div>
+																		<div className="time-bar-track">
+																			<div
+																				className="time-bar-fill"
+																				style={{
+																					width: `${data.percent}%`,
+																				}}></div>
+																		</div>
+																		<div className="time-hours">
+																			{data.hours}
+																		</div>
+																	</div>
+																);
+															})}
+														</div>
+													</div>
+												)}
+
 												<div className="github-metrics">
 													<div className="metric-item">
 														<div className="metric-value">
@@ -784,6 +890,145 @@ function StatsPopup({ isOpen, onClose }) {
 														<div className="metric-label">DAY STREAK</div>
 													</div>
 												</div>
+
+												{/* All-Time Stats + WakaTime Integration */}
+												{(githubDetailed?.all_time_lines_of_code ||
+													wakatimeDetailed?.all_time_stats) && (
+													<div className="all-time-stats">
+														<div className="all-time-header">
+															ALL-TIME STATISTICS
+														</div>
+														<div className="all-time-grid">
+															{githubDetailed?.all_time_lines_of_code && (
+																<>
+																	<div className="all-time-card">
+																		<div className="all-time-value">
+																			{(
+																				githubDetailed.all_time_lines_of_code
+																					.total_lines_added / 1000
+																			).toFixed(1)}
+																			K
+																		</div>
+																		<div className="all-time-label">
+																			Lines Added
+																		</div>
+																	</div>
+																	<div className="all-time-card">
+																		<div className="all-time-value">
+																			{(
+																				githubDetailed.all_time_lines_of_code
+																					.net_lines / 1000
+																			).toFixed(1)}
+																			K
+																		</div>
+																		<div className="all-time-label">
+																			Net Lines
+																		</div>
+																	</div>
+																	<div className="all-time-card">
+																		<div className="all-time-value">
+																			{githubDetailed.commits_last_365_days
+																				?.total_commits || 0}
+																		</div>
+																		<div className="all-time-label">
+																			Total Commits
+																		</div>
+																	</div>
+																</>
+															)}
+															{wakatimeDetailed?.all_time_stats && (
+																<div className="all-time-card highlight">
+																	<div className="all-time-value">
+																		{wakatimeDetailed.all_time_stats.text}
+																	</div>
+																	<div className="all-time-label">
+																		Coding Time
+																	</div>
+																</div>
+															)}
+														</div>
+													</div>
+												)}
+
+												{/* WakaTime Activity Overview */}
+												{wakatimeDetailed?.stats_last_30_days && (
+													<div className="wakatime-activity">
+														<div className="activity-header">
+															RECENT CODING ACTIVITY (30 DAYS)
+														</div>
+														<div className="activity-cards">
+															<div className="activity-card">
+																<div className="activity-value">
+																	{wakatimeDetailed.stats_last_30_days
+																		.human_readable_total || "0 hrs"}
+																</div>
+																<div className="activity-label">Total Time</div>
+															</div>
+															<div className="activity-card">
+																<div className="activity-value">
+																	{wakatimeDetailed.stats_last_30_days
+																		.human_readable_daily_average || "0 hrs"}
+																</div>
+																<div className="activity-label">
+																	Daily Average
+																</div>
+															</div>
+															{wakatimeDetailed.stats_last_30_days.best_day && (
+																<div className="activity-card">
+																	<div className="activity-value">
+																		{
+																			wakatimeDetailed.stats_last_30_days
+																				.best_day.text
+																		}
+																	</div>
+																	<div className="activity-label">
+																		Best Day (
+																		{new Date(
+																			wakatimeDetailed.stats_last_30_days.best_day.date
+																		).toLocaleDateString("en-US", {
+																			month: "short",
+																			day: "numeric",
+																		})}
+																		)
+																	</div>
+																</div>
+															)}
+														</div>
+
+														{/* Top Languages from WakaTime */}
+														{wakatimeDetailed.stats_last_30_days.languages
+															?.length > 0 && (
+															<div className="waka-languages">
+																<div className="waka-lang-label">
+																	LANGUAGES (LAST 30 DAYS):
+																</div>
+																<div className="waka-lang-list">
+																	{wakatimeDetailed.stats_last_30_days.languages
+																		.slice(0, 5)
+																		.map((lang, idx) => (
+																			<div key={idx} className="waka-lang-item">
+																				<div className="waka-lang-header">
+																					<span className="waka-lang-name">
+																						{lang.name}
+																					</span>
+																					<span className="waka-lang-time">
+																						{lang.text}
+																					</span>
+																				</div>
+																				<div className="waka-lang-bar">
+																					<div
+																						className="waka-lang-fill"
+																						style={{
+																							width: `${lang.percent}%`,
+																						}}></div>
+																				</div>
+																			</div>
+																		))}
+																</div>
+															</div>
+														)}
+													</div>
+												)}
 
 												<div className="github-languages">
 													<div className="languages-label">TOP LANGUAGES:</div>
@@ -1047,117 +1292,6 @@ function StatsPopup({ isOpen, onClose }) {
 										) : (
 											<div className="stats-unavailable">
 												<span>GitHub data unavailable</span>
-											</div>
-										)}
-									</>
-								)}
-							</div>
-
-							{/* Section 5: WakaTime Stats */}
-							<div
-								className={`stats-section ${
-									collapsedSections.has("wakatime") ? "collapsed" : "expanded"
-								}`}>
-								<div
-									className="section-header"
-									onClick={() => toggleSection("wakatime")}>
-									<span className="section-toggle">
-										<img
-											src={arrowRight}
-											className="toggle-icon"
-											alt=""
-											aria-hidden="true"
-										/>
-									</span>
-									<span className="section-title">
-										WAKATIME CODING ACTIVITY
-									</span>
-								</div>
-
-								{!collapsedSections.has("wakatime") && (
-									<>
-										{liveStats.wakatime ? (
-											<div className="wakatime-container">
-												<div className="wakatime-overview">
-													<div className="overview-card">
-														<div className="card-label">TODAY</div>
-														<div className="card-value">
-															{liveStats.wakatime.today_hours || 0}h{" "}
-															{liveStats.wakatime.today_minutes || 0}m
-														</div>
-													</div>
-													<div className="overview-card">
-														<div className="card-label">THIS WEEK</div>
-														<div className="card-value">
-															{liveStats.wakatime.week_hours || 0}h{" "}
-															{liveStats.wakatime.week_minutes || 0}m
-														</div>
-													</div>
-													<div className="overview-card">
-														<div className="card-label">THIS MONTH</div>
-														<div className="card-value">
-															{liveStats.wakatime.month_hours || 0}h{" "}
-															{liveStats.wakatime.month_minutes || 0}m
-														</div>
-													</div>
-												</div>
-
-												{liveStats.wakatime.languages &&
-													liveStats.wakatime.languages.length > 0 && (
-														<div className="wakatime-languages">
-															<div className="languages-label">
-																LANGUAGES (7 DAYS):
-															</div>
-															<div className="languages-list">
-																{liveStats.wakatime.languages.map(
-																	(lang, idx) => (
-																		<div key={idx} className="language-item">
-																			<div className="language-header">
-																				<span className="language-name">
-																					{lang.name}
-																				</span>
-																				<span className="language-time">
-																					{lang.text}
-																				</span>
-																			</div>
-																			<div className="language-bar">
-																				<div
-																					className="bar-fill"
-																					style={{
-																						width: `${lang.percent}%`,
-																					}}></div>
-																			</div>
-																		</div>
-																	)
-																)}
-															</div>
-														</div>
-													)}
-
-												{liveStats.wakatime.editors &&
-													liveStats.wakatime.editors.length > 0 && (
-														<div className="wakatime-editors">
-															<div className="editors-label">EDITORS:</div>
-															<div className="editors-list">
-																{liveStats.wakatime.editors.map(
-																	(editor, idx) => (
-																		<div key={idx} className="editor-item">
-																			<span className="editor-name">
-																				{editor.name}
-																			</span>
-																			<span className="editor-time">
-																				{editor.text}
-																			</span>
-																		</div>
-																	)
-																)}
-															</div>
-														</div>
-													)}
-											</div>
-										) : (
-											<div className="stats-unavailable">
-												<span>WakaTime data unavailable</span>
 											</div>
 										)}
 									</>

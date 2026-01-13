@@ -1508,7 +1508,353 @@
 		animation: none !important;
 	}
 }
-/* ================= WakaTime Section ================= */
+
+/* ================= Time Distribution (Early Bird) Section ================= */
+
+.time-distribution {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 80, 80, 0.05) 0%,
+		rgba(255, 80, 80, 0.02) 100%
+	);
+	border: 1px solid rgba(255, 80, 80, 0.25);
+	border-radius: 10px;
+	padding: 1.5rem;
+	margin-bottom: 1.5rem;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.time-header {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 1.5rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid rgba(255, 80, 80, 0.15);
+}
+
+.time-emoji {
+	font-size: 2rem;
+	animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+	0%,
+	100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-5px);
+	}
+}
+
+.time-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.2rem;
+	color: rgba(255, 255, 255, 0.95);
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
+}
+
+.time-bars {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.time-bar-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.time-bar-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.time-period {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.9);
+	font-weight: 600;
+}
+
+.time-commits {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.8);
+}
+
+.time-percent {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.7);
+	font-weight: bold;
+}
+
+.time-bar-track {
+	height: 8px;
+	background: rgba(255, 80, 80, 0.1);
+	border-radius: 4px;
+	overflow: hidden;
+	position: relative;
+}
+
+.time-bar-fill {
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.9),
+		rgba(255, 120, 120, 0.7)
+	);
+	border-radius: 4px;
+	transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+	box-shadow: 0 0 10px rgba(255, 80, 80, 0.4);
+}
+
+.time-bar-fill::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.3),
+		transparent
+	);
+	animation: shimmer 2.5s infinite;
+}
+
+.time-hours {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 80, 80, 0.6);
+	margin-top: -0.25rem;
+}
+
+/* ================= All-Time Stats Section ================= */
+
+.all-time-stats {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 80, 80, 0.08) 0%,
+		rgba(255, 80, 80, 0.03) 100%
+	);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 10px;
+	padding: 1.5rem;
+	margin: 1.5rem 0;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.all-time-header {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 80, 80, 0.85);
+	font-weight: bold;
+	letter-spacing: 1px;
+	margin-bottom: 1rem;
+	text-transform: uppercase;
+}
+
+.all-time-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
+}
+
+.all-time-card {
+	background: rgba(255, 80, 80, 0.05);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 8px;
+	padding: 1.2rem;
+	text-align: center;
+	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.all-time-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 80, 80, 0.15),
+		transparent
+	);
+	transition: left 0.6s ease;
+}
+
+.all-time-card:hover::before {
+	left: 100%;
+}
+
+.all-time-card:hover {
+	background: rgba(255, 80, 80, 0.1);
+	border-color: rgba(255, 80, 80, 0.5);
+	transform: translateY(-3px);
+	box-shadow: 0 6px 20px rgba(255, 80, 80, 0.2);
+}
+
+.all-time-card.highlight {
+	background: rgba(255, 80, 80, 0.12);
+	border: 2px solid rgba(255, 80, 80, 0.5);
+	box-shadow: 0 0 20px rgba(255, 80, 80, 0.2);
+}
+
+.all-time-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.8rem;
+	color: rgba(255, 255, 255, 0.95);
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+	text-shadow: 0 0 10px rgba(255, 80, 80, 0.3);
+}
+
+.all-time-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.75rem;
+	color: rgba(255, 80, 80, 0.8);
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+/* ================= WakaTime Activity Section ================= */
+
+.wakatime-activity {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 80, 80, 0.2);
+	border-radius: 10px;
+	padding: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.activity-header {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.85);
+	font-weight: bold;
+	letter-spacing: 1px;
+	margin-bottom: 1rem;
+	text-transform: uppercase;
+}
+
+.activity-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.activity-card {
+	background: rgba(255, 80, 80, 0.05);
+	border: 1px solid rgba(255, 80, 80, 0.3);
+	border-radius: 6px;
+	padding: 1rem;
+	text-align: center;
+	transition: all 0.3s ease;
+}
+
+.activity-card:hover {
+	background: rgba(255, 80, 80, 0.08);
+	border-color: rgba(255, 80, 80, 0.5);
+	transform: translateY(-2px);
+}
+
+.activity-value {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 1.3rem;
+	color: rgba(255, 255, 255, 0.95);
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+}
+
+.activity-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.7rem;
+	color: rgba(255, 80, 80, 0.7);
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+}
+
+.waka-languages {
+	border-top: 1px solid rgba(255, 80, 80, 0.15);
+	padding-top: 1.5rem;
+}
+
+.waka-lang-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.7);
+	letter-spacing: 1px;
+	margin-bottom: 1rem;
+	font-weight: bold;
+}
+
+.waka-lang-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.waka-lang-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.waka-lang-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.waka-lang-name {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.waka-lang-time {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	color: rgba(255, 80, 80, 0.8);
+}
+
+.waka-lang-bar {
+	height: 6px;
+	background: rgba(255, 80, 80, 0.1);
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.waka-lang-fill {
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 80, 80, 0.8),
+		rgba(255, 120, 120, 0.6)
+	);
+	border-radius: 3px;
+	transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ================= WakaTime Section (OLD - Keep for backward compatibility) ================= */
 
 .wakatime-container {
 	background: rgba(255, 255, 255, 0.02);
