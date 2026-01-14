@@ -8,42 +8,64 @@ const STATS_API_URL = "https://stats.gollabharath.me/stats";
 const toolchainData = {
 	categories: [
 		{
-			name: "ENVIRONMENT",
+			name: "DEVELOPMENT ENVIRONMENT",
 			tools: [
-				{ name: "Linux (Ubuntu/Arch)", level: "PRIMARY" },
-				{ name: "VS Code / Neovim", level: "PRIMARY" },
-				{ name: "Git / GitHub", level: "PRIMARY" },
-				{ name: "Docker", level: "PRIMARY" },
+				{
+					name: "Linux (Debian+KDE)",
+					level: "DAILY DRIVER",
+					color: "GREEN",
+				},
+				{
+					name: "Linux (Ubuntu Server)",
+					level: "WORK/HOME SERVER",
+					color: "YELLOW",
+				},
+				{
+					name: "VS Code",
+					level: "PRIMARY CODE EDITOR",
+					color: "GREEN",
+				},
+				{
+					name: "GitHub / Gitea / Git Lab",
+					level: "VERSION CONTROL",
+					color: "RED",
+				},
+				{
+					name: "Docker / Kubernetes",
+					level: "CONTAINERIZATION",
+					color: "BLUE",
+				},
 			],
 		},
 		{
 			name: "LANGUAGES",
 			tools: [
-				{ name: "JavaScript / TypeScript", level: "PRIMARY" },
-				{ name: "Python", level: "PRIMARY" },
-				{ name: "Bash / Shell", level: "SECONDARY" },
-				{ name: "Go", level: "EXPLORING" },
+				{
+					name: "JavaScript / TypeScript",
+					level: "WEB DEV",
+					color: "GREEN",
+				},
+				{ name: "Go", level: "SYSTEMS / LEARNING", color: "YELLOW" },
+				{ name: "Bash / Python", level: "SCRIPTING", color: "BLUE" },
+				{ name: "Java", level: "DSA", color: "RED" },
 			],
 		},
 		{
-			name: "FRONTEND",
+			name: "TECH STACKS",
 			tools: [
-				{ name: "React / Next.js", level: "PRIMARY" },
-				{ name: "HTML / CSS", level: "PRIMARY" },
-				{ name: "Tailwind CSS", level: "SECONDARY" },
-				{ name: "WebGL / Three.js", level: "EXPLORING" },
-			],
-		},
-		{
-			name: "BACKEND / INFRA",
-			tools: [
-				{ name: "Node.js / Express", level: "PRIMARY" },
-				{ name: "PostgreSQL / MongoDB", level: "SECONDARY" },
-				{ name: "CI/CD Pipelines", level: "PRIMARY" },
-				{ name: "Nginx / Apache", level: "SECONDARY" },
+				{ name: "MERN Stack", level: "SMALL WEB APPS", color: "GREEN" },
+				{ name: "T3 Stack", level: "SERIOUS WEB APPS", color: "BLUE" },
+				{ name: "MORE", level: "EXPLORING", color: "YELLOW" },
 			],
 		},
 	],
+};
+
+// Map a tool's color flag to a CSS class so labels can stay custom
+const getToolLevelClass = (tool) => {
+	const color = (tool?.color || "NEUTRAL").toLowerCase();
+	const allowed = new Set(["green", "yellow", "red", "blue"]);
+	return allowed.has(color) ? `level-${color}` : "level-neutral";
 };
 
 function StatsPopup({ isOpen, onClose }) {
@@ -1329,7 +1351,9 @@ function StatsPopup({ isOpen, onClose }) {
 														<div key={toolIndex} className="tool-item">
 															<span className="tool-name">{tool.name}</span>
 															<span
-																className={`tool-level level-${tool.level.toLowerCase()}`}>
+																className={`tool-level ${getToolLevelClass(
+																	tool
+																)}`}>
 																{tool.level}
 															</span>
 														</div>
