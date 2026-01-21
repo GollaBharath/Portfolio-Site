@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import arrowRight from "../../assets/SVGs/toggle-arrow.svg";
 
 function SpotifyNowPlaying({
@@ -6,6 +7,30 @@ function SpotifyNowPlaying({
 	isCollapsed,
 	onToggle,
 }) {
+	const [elapsedTime, setElapsedTime] = useState(0);
+
+	useEffect(() => {
+		if (!liveStats.spotify?.is_playing || !liveStats.spotify?.current_track) {
+			setElapsedTime(0);
+			return;
+		}
+
+		// Initialize with current progress
+		setElapsedTime(liveStats.spotify.current_track.progress_ms);
+
+		// Increment every second
+		const interval = setInterval(() => {
+			setElapsedTime((prev) => {
+				const maxDuration = liveStats.spotify?.current_track?.duration_ms || 0;
+				const newTime = prev + 1000;
+				// Don't exceed track duration
+				return Math.min(newTime, maxDuration);
+			});
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, [liveStats.spotify?.is_playing, liveStats.spotify?.current_track]);
+
 	const formatDuration = (ms) => {
 		const seconds = Math.floor(ms / 1000);
 		const minutes = Math.floor(seconds / 60);
@@ -71,18 +96,14 @@ function SpotifyNowPlaying({
 											className="progress-bar"
 											style={{
 												"--progress": `${getProgressPercentage(
-													liveStats.spotify.current_track.progress_ms,
+													elapsedTime,
 													liveStats.spotify.current_track.duration_ms,
 												)}%`,
 											}}>
 											<div className="progress-fill"></div>
 										</div>
 										<div className="progress-time">
-											<span>
-												{formatDuration(
-													liveStats.spotify.current_track.progress_ms,
-												)}
-											</span>
+											<span>{formatDuration(elapsedTime)}</span>
 											<span>
 												{formatDuration(
 													liveStats.spotify.current_track.duration_ms,

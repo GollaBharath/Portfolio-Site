@@ -217,7 +217,12 @@ function StatsPopup({ isOpen, onClose }) {
 								isCollapsed={collapsedSections.has("discord")}
 								onToggle={() => toggleSection("discord")}
 							/>
-
+							<SpotifyNowPlaying
+								liveStats={liveStats}
+								wakatimeDetailed={wakatimeDetailed}
+								isCollapsed={collapsedSections.has("spotify")}
+								onToggle={() => toggleSection("spotify")}
+							/>
 							{/* Footer with last updated */}
 							<div className="stats-footer">
 								<span className="footer-note">
