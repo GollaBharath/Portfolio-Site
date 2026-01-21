@@ -14,7 +14,7 @@ const BASE_BOOT_LINES = [
 		status: "ok",
 	},
 	{
-		text: "[FAILED] Error - Read.Everything - Don't ignore any text.",
+		text: "[FAILED] Error - Read.Everything - Don't ignore my hard work.",
 		type: "log",
 		status: "failed",
 	},
@@ -71,7 +71,7 @@ function renderSegmentSlice(segments, visibleChars) {
 				</span>
 			) : (
 				slice
-			)
+			),
 		);
 		remaining -= slice.length;
 	}
@@ -174,7 +174,7 @@ export default function BootSequence({ onComplete }) {
 			...BASE_BOOT_LINES,
 			{ text: promptText, type: "prompt", status: "info" },
 		],
-		[promptText]
+		[promptText],
 	);
 
 	// Complete the boot sequence with fade out
@@ -207,7 +207,7 @@ export default function BootSequence({ onComplete }) {
 				setCurrentLine((prev) => prev + 1);
 			}, delay);
 		},
-		[bootLines.length]
+		[bootLines.length],
 	);
 
 	// Start the sequence
@@ -257,8 +257,8 @@ export default function BootSequence({ onComplete }) {
 						line.type === "user"
 							? "boot-line user-info"
 							: line.type === "prompt"
-							? "boot-line prompt-line"
-							: "boot-line";
+								? "boot-line prompt-line"
+								: "boot-line";
 
 					return (
 						<div

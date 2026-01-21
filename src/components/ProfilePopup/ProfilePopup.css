@@ -1,329 +1,559 @@
-/* ================= Overlay & Popup ================= */
+@keyframes haloPulse {
+	0% {
+		opacity: 0.28;
+		transform: scale(0.97);
+		box-shadow: 0 0 0 0 rgba(255, 56, 56, 0.18);
+	}
+	50% {
+		opacity: 0.5;
+		transform: scale(1);
+		box-shadow: 0 0 0 10px rgba(255, 56, 56, 0.08);
+	}
+	100% {
+		opacity: 0.24;
+		transform: scale(0.97);
+		box-shadow: 0 0 0 0 rgba(255, 56, 56, 0.05);
+	}
+}
 
 .profile-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10100;
-    padding: 1rem;
-    animation: fadeIn 0.3s ease-out;
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.82);
+	backdrop-filter: blur(12px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10100;
+	padding: 1.25rem;
 }
 
 .profile-popup {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 80, 80, 0.5);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 100px rgba(151, 5, 5, 0.4);
-    max-width: 700px;
-    width: 100%;
-    max-height: 90vh;
-    overflow: hidden;
-    position: relative;
-    z-index: 10101;
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	width: min(720px, calc(100% - 24px));
+	background: linear-gradient(
+		130deg,
+		rgba(8, 8, 8, 0.95) 0%,
+		rgba(10, 10, 10, 0.9) 50%,
+		rgba(12, 12, 12, 0.98) 100%
+	);
+	border: 1px solid rgba(255, 56, 56, 0.35);
+	border-radius: 16px;
+	box-shadow:
+		0 18px 60px rgba(0, 0, 0, 0.85),
+		0 0 120px rgba(255, 56, 56, 0.18);
+	color: rgba(235, 235, 235, 0.92);
+	position: relative;
+	overflow: hidden;
+	max-height: 90vh;
 }
 
-/* ================= Header ================= */
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: rgba(15, 15, 15, 0.95);
-    border-bottom: 2px solid rgba(255, 80, 80, 0.4);
+.profile-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid rgba(255, 56, 56, 0.25);
+	background: rgba(0, 0, 0, 0.4);
 }
 
-.terminal-controls {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
+.profile-topbar__status {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
 }
 
-.terminal-prompt {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: rgba(255, 80, 80, 0.95);
+.status-led {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: rgb(0, 255, 55);
+	box-shadow: 0 0 16px rgba(126, 255, 56, 0.594);
+	animation: haloPulse 6s ease-in-out infinite;
 }
 
-.terminal-title {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.95);
+.status-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	font-family:
+		"DM Mono", "Fira Code", "SFMono-Regular", Consolas, Menlo, "Courier New",
+		monospace;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.status-label {
+	color: rgba(255, 255, 255, 0.95);
+	font-weight: 700;
+	font-size: 0.95rem;
+}
+
+.status-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 0.78rem;
+}
+
+.status-meta__label {
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.status-pill {
+	padding: 0.15rem 0.6rem;
+	border-radius: 999px;
+	background: radial-gradient(
+		circle at 30% 30%,
+		rgba(46, 255, 171, 0.14),
+		rgba(10, 58, 36, 0.92)
+	);
+	box-shadow:
+		inset 0 0 0 1px rgba(83, 255, 64, 0.479),
+		0 0 10px rgba(64, 255, 80, 0.51);
+	color: #c6ffe8;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	font-size: 0.72rem;
+	text-transform: uppercase;
 }
 
 .profile-close {
-    background: transparent;
-    border: none;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: rgba(255, 80, 80, 0.7);
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    font-size: 1.2rem;
+	background: rgba(255, 56, 56, 0.08);
+	border: 1px solid rgba(255, 56, 56, 0.25);
+	color: rgba(255, 255, 255, 0.75);
+	border-radius: 10px;
+	width: 36px;
+	height: 36px;
+	display: grid;
+	place-items: center;
+	font-size: 1rem;
+	cursor: pointer;
+	transition:
+		border-color 0.2s ease,
+		color 0.2s ease,
+		background 0.2s ease;
 }
 
-.profile-close:hover {
-    background: rgba(255, 80, 80, 0.1);
-    color: rgba(255, 80, 80, 1);
-}
-
+.profile-close:hover,
 .profile-close:focus-visible {
-    outline: 2px solid rgba(255, 80, 80, 0.9);
-    outline-offset: 2px;
+	border-color: rgba(255, 56, 56, 0.6);
+	color: #fff;
+	background: rgba(255, 56, 56, 0.14);
+	outline: none;
 }
 
-/* ================= Content ================= */
-
-.profile-content {
-    padding: 2rem 1.5rem;
-    max-height: calc(90vh - 80px);
-    overflow-y: auto;
+.profile-body {
+	padding: 1.75rem 1.5rem 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.4rem;
 }
 
-/* ================= Profile Sections ================= */
-
-.profile-section {
-    margin-bottom: 2rem;
+.identity-section {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 1rem;
 }
 
-.profile-section:last-of-type {
-    margin-bottom: 0;
+.avatar-stack {
+	position: relative;
+	width: 148px;
+	height: 148px;
+	display: grid;
+	place-items: center;
 }
 
-.profile-name {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.95);
-    font-weight: bold;
-    letter-spacing: 0.5px;
+.avatar-ring,
+.avatar-halo {
+	position: absolute;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 56, 56, 0.35);
 }
 
-.section-header {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.95rem;
-    color: rgba(255, 80, 80, 0.85);
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 0.75rem;
+.avatar-ring {
+	width: 148px;
+	height: 148px;
+	filter: drop-shadow(0 0 18px rgba(255, 56, 56, 0.25));
 }
 
-/* ================= Lists ================= */
-
-.profile-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.avatar-halo {
+	width: 168px;
+	height: 168px;
+	background: radial-gradient(
+		circle,
+		rgba(255, 56, 56, 0.08) 0%,
+		rgba(255, 56, 56, 0.03) 52%,
+		transparent 70%
+	);
+	animation: haloPulse 8s ease-in-out infinite;
 }
 
-.profile-list-item {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.85);
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    line-height: 1.6;
+.profile-avatar {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid rgba(255, 56, 56, 0.6);
+	box-shadow:
+		0 10px 32px rgba(0, 0, 0, 0.6),
+		0 0 32px rgba(255, 56, 56, 0.25);
+	position: relative;
+	z-index: 1;
 }
 
-.list-bullet {
-    color: rgba(255, 80, 80, 0.7);
-    font-weight: bold;
-    flex-shrink: 0;
+.identity-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	font-family:
+		"DM Mono", "Fira Code", "SFMono-Regular", Consolas, Menlo, "Courier New",
+		monospace;
 }
 
-.list-text {
-    flex: 1;
+.identity-overline {
+	font-size: 0.8rem;
+	letter-spacing: 0.12em;
+	color: rgba(255, 255, 255, 0.6);
+	margin: 0;
 }
 
-/* ================= Metadata ================= */
-
-.profile-metadata {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.identity-name {
+	margin: 0;
+	font-size: 1.6rem;
+	font-weight: 700;
+	color: #fff;
 }
 
-.metadata-line {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.875rem;
-    display: flex;
-    gap: 0.5rem;
+.identity-alias {
+	color: rgba(255, 56, 56, 0.75);
+	font-weight: 600;
+	letter-spacing: 0.08em;
+}
+.identity-role {
+	margin: 0;
+	color: rgba(225, 225, 225, 0.82);
+	line-height: 1.5;
+	font-size: 0.95rem;
 }
 
-.metadata-key {
-    color: rgba(255, 80, 80, 0.7);
-    min-width: 100px;
-    font-weight: bold;
+.section-label {
+	font-family:
+		"DM Mono", "Fira Code", "SFMono-Regular", Consolas, Menlo, "Courier New",
+		monospace;
+	color: rgba(255, 56, 56, 0.8);
+	letter-spacing: 0.14em;
+	font-size: 0.78rem;
+	margin: 0 0 0.4rem;
 }
 
-.metadata-separator {
-    color: rgba(255, 255, 255, 0.4);
+.intent-section {
+	background: linear-gradient(120deg, rgba(255, 56, 56, 0.06), transparent);
+	border: 1px solid rgba(255, 56, 56, 0.16);
+	border-radius: 12px;
+	padding: 1rem 1.1rem;
+	line-height: 1.6;
+	color: rgba(230, 230, 230, 0.9);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.metadata-value {
-    color: rgba(255, 255, 255, 0.9);
-    flex: 1;
+.intent-copy {
+	margin: 0;
+	font-size: 0.98rem;
+	font-weight: 500;
 }
 
-/* ================= Footer ================= */
-
-.profile-footer {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 80, 80, 0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+.focus-section {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
 }
 
-.status-line {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 0.813rem;
-    display: flex;
-    gap: 0.5rem;
-    color: rgba(142, 136, 136, 0.8);
+.focus-grid {
+	display: flex;
+	gap: 0.4rem;
+	align-items: flex-start;
+	flex-wrap: nowrap;
+	overflow: hidden;
 }
 
-.status-key {
-    color: rgba(255, 80, 80, 0.6);
-    font-weight: bold;
+.focus-tile {
+	background: rgba(18, 18, 18, 0.85);
+	border: 1px solid rgba(255, 56, 56, 0.25);
+	border-radius: 10px;
+	padding: 0.6rem 0.7rem 0.55rem;
+	position: relative;
+	box-shadow: inset 0 0 0 1px rgba(255, 56, 56, 0.06);
+	display: grid;
+	grid-template-rows: auto auto auto;
+	align-content: start;
+	flex: 0 0 calc(25% - 0.6rem);
+	min-width: 0;
+	min-height: 10px;
+	transition: border-color 0.15s ease;
 }
 
-.status-separator {
-    color: rgba(255, 255, 255, 0.3);
+.focus-tile:hover,
+.focus-tile:focus-within {
+	border-color: rgba(255, 56, 56, 0.55);
+	box-shadow: inset 0 0 0 1px rgba(255, 56, 56, 0.1);
+	flex: 1 1 180px;
+	max-width: 260px;
 }
 
-.status-value {
-    color: rgba(255, 255, 255, 0.7);
+.tile-accent {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: linear-gradient(
+		180deg,
+		rgba(255, 56, 56, 0.85),
+		rgba(255, 56, 56, 0.35)
+	);
+	opacity: 0.9;
 }
 
-.status-value.status-active {
-    color: rgba(80, 255, 80, 0.9);
-    font-weight: bold;
+.focus-title {
+	margin: 0;
+	font-size: 0.98rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.95);
 }
 
-/* ================= Animations ================= */
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+.focus-sublabel {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.62);
+	font-size: 0.85rem;
+	letter-spacing: 0.02em;
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.focus-description {
+	margin: 0;
+	color: rgba(215, 215, 215, 0.82);
+	font-size: 0.9rem;
+	line-height: 1.45;
+	opacity: 0;
+	visibility: hidden;
+	margin-top: 0.4rem;
+	min-height: 52px;
 }
 
-/* ================= Scrollbar Styling ================= */
-
-.profile-content::-webkit-scrollbar {
-    width: 8px;
+.focus-tile:hover .focus-description,
+.focus-tile:focus-within .focus-description {
+	opacity: 1;
+	visibility: visible;
 }
 
-.profile-content::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+.focus-grid:hover .focus-tile {
+	opacity: 0.82;
 }
 
-.profile-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 80, 80, 0.3);
-    border-radius: 4px;
+.focus-grid:hover .focus-tile:hover,
+.focus-grid:hover .focus-tile:focus-within {
+	opacity: 1;
 }
 
-.profile-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 80, 80, 0.5);
+.focus-tile:hover + .focus-tile,
+.focus-tile:focus-within + .focus-tile {
+	opacity: 0;
+	visibility: hidden;
+	flex: 0 0 0;
+	max-width: 0;
+	min-width: 0;
+	pointer-events: none;
 }
 
-/* ================= Responsive ================= */
-
-@media (max-width: 768px) {
-    .profile-popup {
-        max-width: 95%;
-        max-height: 85vh;
-    }
-
-    .profile-content {
-        padding: 1.5rem 1rem;
-    }
-
-    .profile-name {
-        font-size: 1.3rem;
-    }
-
-    .section-header {
-        font-size: 0.875rem;
-    }
-
-    .profile-list-item {
-        font-size: 0.813rem;
-    }
-
-    .metadata-line {
-        font-size: 0.813rem;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .metadata-key {
-        min-width: auto;
-    }
+.nav-section {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
 }
 
-/* ================= Reduced Motion ================= */
+.nav-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 0.5rem;
+}
+
+.nav-hook {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.25rem;
+	border: 1px dashed rgba(255, 56, 56, 0.18);
+	background: transparent;
+	color: #f5f5f5;
+	border-radius: 8px;
+	padding: 0.65rem 0.75rem;
+	cursor: pointer;
+	text-align: left;
+	transition:
+		border-color 0.2s ease,
+		background 0.2s ease,
+		transform 0.2s ease,
+		color 0.2s ease;
+	font-family:
+		"DM Mono", "Fira Code", "SFMono-Regular", Consolas, Menlo, "Courier New",
+		monospace;
+}
+
+.nav-hook:hover,
+.nav-hook:focus-visible {
+	border-color: rgba(255, 56, 56, 0.55);
+	background: rgba(20, 20, 20, 0.35);
+	transform: translateY(-1px);
+	color: #fff;
+	outline: none;
+}
+
+.nav-hook__prompt {
+	font-weight: 700;
+	color: rgba(255, 56, 56, 0.9);
+	letter-spacing: 0.05em;
+}
+
+.nav-hook__detail {
+	color: rgba(220, 220, 220, 0.72);
+	font-size: 0.88rem;
+	line-height: 1.35;
+}
+
+.nav-hook__arrow {
+	position: absolute;
+	right: 0.75rem;
+	bottom: 0.75rem;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 0.95rem;
+}
+
+.section-divider {
+	height: 1px;
+	width: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 56, 56, 0.2),
+		transparent
+	);
+	opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+	.profile-popup {
+		width: calc(100% - 20px);
+		max-height: 88vh;
+	}
+
+	.profile-body {
+		padding: 1.25rem 1.1rem 1.1rem;
+		gap: 1.1rem;
+	}
+
+	.identity-name {
+		font-size: 1.35rem;
+	}
+
+	.identity-role,
+	.intent-copy,
+	.focus-description,
+	.nav-hook__detail {
+		font-size: 0.9rem;
+	}
+
+	.focus-tile {
+		flex: 1 1 180px;
+		max-width: 260px;
+
+		min-height: 10px;
+	}
+
+	.focus-tile:hover {
+		flex: 0 0 calc(100% - 0.6rem);
+	}
+
+	.focus-grid {
+		flex-wrap: wrap;
+		overflow: visible;
+	}
+}
+
+@media (max-height: 720px) {
+	.profile-popup {
+		overflow-y: auto;
+	}
+}
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
-}
-/* ================= Scrollbar Styling ================= */
+	.status-led,
+	.avatar-halo {
+		animation: none;
+	}
 
-.profile-content::-webkit-scrollbar {
-width: 8px;
+	.profile-close,
+	.focus-tile,
+	.nav-hook {
+		transition: none;
+	}
 }
-
-.profile-content::-webkit-scrollbar-track {
-background: rgba(0, 0, 0, 0.3);
-border-radius: 4px;
-}
-
-.profile-content::-webkit-scrollbar-thumb {
-background: rgba(255, 80, 80, 0.3);
-border-radius: 4px;
+.focus-tile {
+	display: flex;
+	flex-direction: column;
 }
 
-.profile-content::-webkit-scrollbar-thumb:hover {
-background: rgba(255, 80, 80, 0.5);
+.focus-description {
+	min-height: 0;
+	max-height: 0;
+	overflow: hidden;
 }
 
-/* Smooth scrolling */
-.profile-content {
-scroll-behavior: smooth;
+.focus-tile:hover .focus-description,
+.focus-tile:focus-within .focus-description {
+	max-height: 120px;
+}
+
+:root {
+	--focus-tile-height: 140px;
+}
+
+.focus-tile {
+	height: var(--focus-tile-height);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.focus-description {
+	margin-top: 0.4rem;
+	opacity: 0;
+	transform: translateY(6px);
+	pointer-events: none;
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease;
+}
+
+.focus-tile:hover .focus-description,
+.focus-tile:focus-within .focus-description {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+.focus-tile {
+	justify-content: center;
+	padding-top: 0.5rem;
+	padding-bottom: 0.6rem;
+}
+
+.focus-title {
+	margin-bottom: 0.15rem;
+}
+
+.focus-sublabel {
+	margin-bottom: 0.3rem;
 }

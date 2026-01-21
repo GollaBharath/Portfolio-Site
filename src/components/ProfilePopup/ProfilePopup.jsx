@@ -1,204 +1,178 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import profileImage from "../../assets/Profile.jpg";
 import "./ProfilePopup.css";
 
-// Profile identity data - structured as system metadata
-const profileData = {
-    identity: {
-        command: "> whoami",
-        name: "Bharath Golla",
-    },
-    roles: [
-        "Software Engineer",
-        "Systems Enthusiast",
-        "Frontend + Infra Hybrid",
-        "Open Source Contributor",
-    ],
-    principles: [
-        "Keyboard > Mouse",
-        "Systems over frameworks",
-        "UX is a performance problem",
-        "Prefer simple tools, deeply understood",
-        "Build for reliability, not just features",
-        "Documentation is code",
-    ],
-    currentState: {
-        building: "Terminal-first portfolio interfaces",
-        learning: "Container orchestration & CI/CD pipelines",
-        exploring: "WebGL graphics and system-level optimizations",
-    },
-    interests: [
-        "Custom Linux workflows",
-        "CLI-first interfaces",
-        "Automating infrastructure",
-        "Understanding system failure modes",
-        "Performance profiling and optimization",
-    ],
-    status: {
-        state: "ACTIVE",
-        lastUpdated: "2025-12-26",
-    },
-};
+const focusAreas = [
+	{
+		title: "Full-Stack Development",
+		sublabel: "Took on The Odin Project",
+		description:
+			"Web dev is one of the most basic skills everyone has. There is not much to it.",
+	},
+	{
+		title: "Linux Expert",
+		sublabel: "I use Debian btw",
+		description:
+			"I am constantly trying to improve my knowledge of Linux by operating, breaking, and fixing real systems.",
+	},
+	{
+		title: "Automation & Tooling",
+		sublabel: "I am too lazy to do things again.",
+		description:
+			"I take a task that takes 10 minutes and spend 10 hours trying to do it in 1 minute",
+	},
+	{
+		title: "Open Source",
+		sublabel: "Giving back to society",
+		description:
+			"I have a lot of open source projects that need contributors. Check out my github help out :)",
+	},
+];
+
+const navHooks = [
+	{
+		label: "explore projects",
+		detail: "My shipped builds and experiments.",
+		targetId: "projects",
+	},
+	{
+		label: "inspect activity",
+		detail: "My work experience until today.",
+		targetId: "experience",
+	},
+	{
+		label: "links",
+		detail: "Check out my socials.",
+		targetId: "socials",
+	},
+	{
+		label: "open CLI",
+		detail: "Return to the terminal interface.",
+		targetId: "terminal",
+	},
+];
 
 function ProfilePopup({ isOpen, onClose }) {
-    const popupRef = useRef(null);
+	useEffect(() => {
+		if (!isOpen) return undefined;
 
-    // Keyboard navigation - ESC to close
-    useEffect(() => {
-        if (!isOpen) return;
+		const handleKeyDown = (event) => {
+			if (event.key === "Escape") {
+				onClose();
+			}
+		};
 
-        const handleKeyDown = (e) => {
-            if (e.key === "Escape") {
-                onClose();
-                return;
-            }
-        };
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [isOpen, onClose]);
 
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [isOpen, onClose]);
+	const activateNav = (targetId) => {
+		if (!targetId) return;
 
-    // Focus trap
-    useEffect(() => {
-        if (!isOpen || !popupRef.current) return;
+		const targetElement =
+			document.querySelector(`[data-system-section="${targetId}"]`) ||
+			document.getElementById(targetId);
 
-        const focusableElements = popupRef.current.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
+		if (targetElement) {
+			targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+		}
 
-        const handleTabKey = (e) => {
-            if (e.key !== "Tab") return;
+		window.dispatchEvent(
+			new CustomEvent("system:navigate", { detail: { target: targetId } }),
+		);
 
-            if (e.shiftKey) {
-                if (document.activeElement === firstElement) {
-                    e.preventDefault();
-                    lastElement?.focus();
-                }
-            } else {
-                if (document.activeElement === lastElement) {
-                    e.preventDefault();
-                    firstElement?.focus();
-                }
-            }
-        };
+		onClose();
+	};
 
-        document.addEventListener("keydown", handleTabKey);
-        return () => document.removeEventListener("keydown", handleTabKey);
-    }, [isOpen]);
+	if (!isOpen) return null;
 
-    // Focus close button when popup opens
-    useEffect(() => {
-        if (isOpen && popupRef.current) {
-            const closeButton = popupRef.current.querySelector(".profile-close");
-            closeButton?.focus();
-        }
-    }, [isOpen]);
+	return (
+		<div className="profile-overlay" onClick={onClose}>
+			<div
+				className="profile-popup"
+				onClick={(event) => event.stopPropagation()}
+				role="dialog"
+				aria-modal="true"
+				aria-label="Identity handshake">
+				<header className="profile-topbar">
+					<div className="profile-topbar__status">
+						<span className="status-led" aria-hidden="true" />
+						<div className="status-text">
+							<span className="status-label">ACCESS GRANTED</span>
+							<div className="status-meta">
+								<span className="status-meta__label">session</span>
+								<span className="status-pill" aria-label="Session live">
+									LIVE
+								</span>
+							</div>
+						</div>
+					</div>
+					<button className="profile-close" type="button" onClick={onClose}>
+						✕
+					</button>
+				</header>
 
-    if (!isOpen) return null;
+				<div className="profile-body">
+					<section className="identity-section" aria-label="Identity">
+						<div className="avatar-stack" aria-hidden="true">
+							<span className="avatar-ring" />
+							<span className="avatar-halo" />
+							<img
+								src={profileImage}
+								alt="Golla Bharath"
+								className="profile-avatar"
+							/>
+						</div>
+						<div className="identity-text">
+							<h2 className="identity-name">Golla Bharath</h2>
+							<p className="identity-alias">A.K.A: Dead Indian</p>
+							<p className="identity-role">
+								CSE Student · Dev-Ops · Full-Stack · Open Source
+							</p>
+						</div>
+					</section>
 
-    return (
-        <div className="profile-overlay" onClick={onClose}>
-            <div
-                ref={popupRef}
-                className="profile-popup"
-                onClick={(e) => e.stopPropagation()}>
-                {/* Header */}
-                <div className="profile-header">
-                    <div className="terminal-controls">
-                        <span className="terminal-prompt">$</span>
-                        <span className="terminal-title">{profileData.identity.command}</span>
-                    </div>
-                    <button className="profile-close" onClick={onClose} aria-label="Close">
-                        ✕
-                    </button>
-                </div>
+					<section className="intent-section" aria-label="Intent">
+						<p className="section-label">INTENT</p>
+						<p className="intent-copy">
+							I am a Linux developer obsessed with control, automation, and
+							code.
+						</p>
+					</section>
 
-                {/* Content */}
-                <div className="profile-content">
-                    {/* Identity */}
-                    <div className="profile-section">
-                        <div className="profile-name">{profileData.identity.name}</div>
-                    </div>
+					<section className="focus-section" aria-label="Focus areas">
+						<p className="section-label">FOCUS AREAS</p>
+						<div className="focus-grid">
+							{focusAreas.map((area) => (
+								<div key={area.title} className="focus-tile">
+									<div className="tile-accent" aria-hidden="true" />
+									<h3 className="focus-title">{area.title}</h3>
+									<p className="focus-sublabel">{area.sublabel}</p>
+									<p className="focus-description">{area.description}</p>
+								</div>
+							))}
+						</div>
+					</section>
 
-                    {/* Roles */}
-                    <div className="profile-section">
-                        <div className="section-header">ROLESET:</div>
-                        <ul className="profile-list">
-                            {profileData.roles.map((role, index) => (
-                                <li key={index} className="profile-list-item">
-                                    <span className="list-bullet">•</span>
-                                    <span className="list-text">{role}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Operating Principles */}
-                    <div className="profile-section">
-                        <div className="section-header">OPERATING PRINCIPLES:</div>
-                        <ul className="profile-list">
-                            {profileData.principles.map((principle, index) => (
-                                <li key={index} className="profile-list-item">
-                                    <span className="list-bullet">•</span>
-                                    <span className="list-text">{principle}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Current State */}
-                    <div className="profile-section">
-                        <div className="section-header">CURRENT STATE:</div>
-                        <div className="profile-metadata">
-                            <div className="metadata-line">
-                                <span className="metadata-key">BUILDING</span>
-                                <span className="metadata-separator">:</span>
-                                <span className="metadata-value">{profileData.currentState.building}</span>
-                            </div>
-                            <div className="metadata-line">
-                                <span className="metadata-key">LEARNING</span>
-                                <span className="metadata-separator">:</span>
-                                <span className="metadata-value">{profileData.currentState.learning}</span>
-                            </div>
-                            <div className="metadata-line">
-                                <span className="metadata-key">EXPLORING</span>
-                                <span className="metadata-separator">:</span>
-                                <span className="metadata-value">{profileData.currentState.exploring}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Interests */}
-                    <div className="profile-section">
-                        <div className="section-header">TECHNICAL INTERESTS:</div>
-                        <ul className="profile-list">
-                            {profileData.interests.map((interest, index) => (
-                                <li key={index} className="profile-list-item">
-                                    <span className="list-bullet">•</span>
-                                    <span className="list-text">{interest}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Status Footer */}
-                    <div className="profile-footer">
-                        <div className="status-line">
-                            <span className="status-key">STATUS</span>
-                            <span className="status-separator">:</span>
-                            <span className="status-value status-active">{profileData.status.state}</span>
-                        </div>
-                        <div className="status-line">
-                            <span className="status-key">LAST UPDATED</span>
-                            <span className="status-separator">:</span>
-                            <span className="status-value">{profileData.status.lastUpdated}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+					<section className="nav-section" aria-label="Navigation hooks">
+						<p className="section-label">ACTION POINTS</p>
+						<div className="nav-grid">
+							{navHooks.map((hook) => (
+								<button
+									key={hook.label}
+									type="button"
+									className="nav-hook"
+									onClick={() => activateNav(hook.targetId)}>
+									<span className="nav-hook__prompt">{hook.label}</span>
+									<span className="nav-hook__detail">{hook.detail}</span>
+								</button>
+							))}
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default ProfilePopup;
